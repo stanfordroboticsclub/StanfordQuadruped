@@ -1,0 +1,13 @@
+[Unit]
+Description=Robot control service
+Requires=joystick.service
+After=joystick.service
+
+[Service]
+ExecStartPre=-sudo pigpiod
+ExecStart=/usr/bin/python3 /home/pi/StanfordQuadruped/run_robot.py
+KillSignal=2
+TimeoutStopSec=10
+
+[Install]
+WantedBy=multi-user.target
