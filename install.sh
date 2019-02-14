@@ -20,8 +20,10 @@ unzip v74.zip
 cd pigpio-74
 make
 sudo make install
+cd ..
 
-sudo cp robot.service /etc/systemd/system/robot.service
+cd StanfordQuadruped
+sudo ln -s $(realpath .)/robot.service /etc/systemd/system/
 sudo systemctl daemon-reload
 sudo systemctl enable robot
 sudo systemctl start robot
