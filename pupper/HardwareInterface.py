@@ -1,16 +1,32 @@
-import numpy as np
+import pigpio
+import subprocess
+from Config import ServoParams, PWMParams
+
+
+class HardwareInterface:
+
+    def __init__(self):
+        subprocess.Popen(["sudo pkill pigpiod"])
+        subprocess.Popen(["sudo pigpiod"])
+        self.pi = pigpio.pi()
+        self.pwm_params = PWMParams()
+        self.servo_params = ServoParams()
+        initialize_pwm(self.pi, self.pwm_params)
+
+    def set_actuator_postions(self, joint_angles):
+        send_servo_commands(self.pi, self.pwm_params, self.servo_params, joint_angles)
 
 
 def pwm_to_duty_cycle(pulsewidth_micros, pwm_params):
     """Converts a pwm signal (measured in microseconds) to a corresponding duty cycle on the gpio pwm pin
-    
+
     Parameters
     ----------
     pulsewidth_micros : float
         Width of the pwm signal in microseconds
     pwm_params : PWMParams
         PWMParams object
-    
+
     Returns
     -------
     float
@@ -21,7 +37,7 @@ def pwm_to_duty_cycle(pulsewidth_micros, pwm_params):
 
 def angle_to_pwm(angle, servo_params, axis_index, leg_index):
     """Converts a desired servo angle into the corresponding PWM command
-    
+
     Parameters
     ----------
     angle : float
@@ -32,7 +48,7 @@ def angle_to_pwm(angle, servo_params, axis_index, leg_index):
         Specifies which joint of leg to control. 0 is abduction servo, 1 is inner hip servo, 2 is outer hip servo.
     leg_index : int
         Specifies which leg to control. 0 is front-right, 1 is front-left, 2 is back-right, 3 is back-left.
-    
+
     Returns
     -------
     float

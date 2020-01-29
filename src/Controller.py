@@ -1,4 +1,3 @@
-from src.PupperConfig import SwingParams, StanceParams, GaitParams, MovementReference
 from src.Gaits import contacts, subphase_time
 from src.Kinematics import four_legs_inverse_kinematics
 from src.StanceController import stance_foot_location
@@ -12,11 +11,11 @@ class Controller:
     """Controller and planner object
     """
 
-    def __init__(self, robot_config):
-        self.swing_params = SwingParams()
-        self.stance_params = StanceParams()
-        self.gait_params = GaitParams()
-        self.movement_reference = MovementReference()
+    def __init__(self, robot_config, swing_params, stance_params, gait_params, movement_reference):
+        self.swing_params = swing_params
+        self.stance_params = stance_params
+        self.gait_params = gait_params
+        self.movement_reference = movement_reference
 
         self.ticks = 0
 
@@ -34,7 +33,7 @@ def step(
     ticks, foot_locations, swing_params, stance_params, gait_params, movement_reference
 ):
     """Calculate the desired foot locations for the next timestep
-    
+
     Parameters
     ----------
     ticks : int
@@ -49,7 +48,7 @@ def step(
         Gait parameters object.
     movement_reference : MovementReference
         Movement reference object.
-    
+
     Returns
     -------
     Numpy array (3, 4)
@@ -83,7 +82,7 @@ def step(
 
 def step_controller(controller, robot_config):
     """Steps the controller forward one timestep
-    
+
     Parameters
     ----------
     controller : Controller

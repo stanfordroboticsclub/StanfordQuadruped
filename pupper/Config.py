@@ -147,7 +147,7 @@ class GaitParams:
         return 2 * self.overlap_ticks + 2 * self.swing_ticks
 
 
-class PupperConfig:
+class Config:
     """Pupper hardware parameters
     """
 
@@ -158,11 +158,11 @@ class PupperConfig:
 
         # Robot geometry
         self.LEG_FB = 0.10  # front-back distance from center line to leg axis
-        self.LEG_LR = 0.04 #0.0419  # left-right distance from center line to leg plane
+        self.LEG_LR = 0.04  # 0.0419  # left-right distance from center line to leg plane
         self.LEG_L = 0.125
         self.LEG_L2 = 0.125
         self.LEG_L1 = 0.1235
-        self.ABDUCTION_OFFSET = 0.03 #0.027  # distance from abduction axis to leg
+        self.ABDUCTION_OFFSET = 0.03  # 0.027  # distance from abduction axis to leg
         self.FOOT_RADIUS = 0.01
 
         self.HIP_L = 0.0394
