@@ -1,4 +1,17 @@
-import numpy as np
+import pigpio
+from Config import ServoParams, PWMParams
+
+
+class HardwareInterface:
+
+    def __init__(self):
+        self.pi = pigpio.pi()
+        self.pwm_params = PWMParams()
+        self.servo_params = ServoParams()
+        initialize_pwm(self.pi, self.pwm_params)
+
+    def set_actuator_postions(self, joint_angles):
+        send_servo_commands(self.pi, self.pwm_params, self.servo_params, joint_angles)
 
 
 def pwm_to_duty_cycle(pulsewidth_micros, pwm_params):

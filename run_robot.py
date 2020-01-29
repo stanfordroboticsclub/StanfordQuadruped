@@ -1,17 +1,13 @@
-import pigpio
 import numpy as np
-import UDPComms
 import time
 from src.Controller import step_controller, Controller
-from src.HardwareInterface import send_servo_commands, initialize_pwm
-from src.PupperConfig import (
+from pupper.HardwareInterface import HardwareInterface
+from pupper.Config import (
     PupperConfig,
     MovementReference,
     GaitParams,
     StanceParams,
-    SwingParams,
-    ServoParams,
-    PWMParams,
+    SwingParams
 )
 from src.UserInput import UserInputs, get_input, update_controller
 
@@ -19,12 +15,9 @@ from src.UserInput import UserInputs, get_input, update_controller
 def main():
     """Main program
     """
-    pi_board = pigpio.pi()
-    pwm_params = PWMParams()
-    initialize_pwm(pi_board, pwm_params)
 
     robot_config = PupperConfig()
-    servo_params = ServoParams()
+    hardware_interface = HardwareInterface()
 
     controller = Controller(robot_config)
     controller.movement_reference = MovementReference()
@@ -58,7 +51,7 @@ def main():
         step_controller(controller, robot_config)
 
         # Update the pwm widths going to the servos
-        send_servo_commands(pi_board, pwm_params, servo_params, controller.joint_angles)
+        hardware_interface.set_actuator_postions(controller.joint_angles)
 
 
 main()
