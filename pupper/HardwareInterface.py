@@ -1,13 +1,10 @@
 import pigpio
-import subprocess
-from Config import ServoParams, PWMParams
+from pupper.Config import ServoParams, PWMParams
 
 
 class HardwareInterface:
 
     def __init__(self):
-        subprocess.Popen(["sudo pkill pigpiod"])
-        subprocess.Popen(["sudo pigpiod"])
         self.pi = pigpio.pi()
         self.pwm_params = PWMParams()
         self.servo_params = ServoParams()

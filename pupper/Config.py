@@ -1,6 +1,6 @@
 import numpy as np
 from scipy.linalg import solve
-from src.RobotConfig import MICROS_PER_RAD, NEUTRAL_ANGLE_DEGREES
+from pupper.RobotConfig import MICROS_PER_RAD, NEUTRAL_ANGLE_DEGREES
 
 
 class PWMParams:
@@ -57,7 +57,7 @@ class StanceParams:
         self.z_time_constant = 0.02
         self.z_speed = 0.03  # maximum speed [m/s]
         self.pitch_time_constant = 0.5
-        self.roll_speed = 0.16  # maximum roll rate [rad/s]
+        self.roll_speed = 0.3  # maximum roll rate [rad/s]
         self.delta_x = 0.1
         self.delta_y = 0.10
         self.x_shift = 0.0
@@ -79,7 +79,7 @@ class SwingParams:
 
     def __init__(self):
         self.z_coeffs = None
-        self.z_clearance = 0.01
+        self.z_clearance = 0.06
         self.alpha = (
             0.5
         )  # Ratio between touchdown distance and total horizontal stance movement
