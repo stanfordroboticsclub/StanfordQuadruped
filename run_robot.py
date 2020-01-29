@@ -1,7 +1,8 @@
 import time
 from src.Controller import step_controller, Controller
-from pupper.HardwareInterface import HardwareInterface
 from src.UserInput import UserInputs, get_input, update_controller
+from pupper.HardwareInterface import HardwareInterface
+from pupper.Kinematics import four_legs_inverse_kinematics
 from pupper.Config import (
     Config,
     SwingParams,
@@ -18,7 +19,7 @@ def main():
     robot_config = Config()
     hardware_interface = HardwareInterface()
 
-    controller = Controller(robot_config, SwingParams(), StanceParams(), GaitParams(), MovementReference())
+    controller = Controller(robot_config, SwingParams(), StanceParams(), GaitParams(), MovementReference(), four_legs_inverse_kinematics)
     user_input = UserInputs()
 
     last_loop = time.time()
