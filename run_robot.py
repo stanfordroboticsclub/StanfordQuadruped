@@ -3,7 +3,7 @@ import time
 from src.Controller import step_controller, Controller
 from pupper.HardwareInterface import HardwareInterface
 from pupper.Config import (
-    PupperConfig,
+    RobotConfig,
     MovementReference,
     GaitParams,
     StanceParams,
@@ -16,7 +16,7 @@ def main():
     """Main program
     """
 
-    robot_config = PupperConfig()
+    robot_config = RobotConfig()
     hardware_interface = HardwareInterface()
 
     controller = Controller(robot_config)
@@ -42,7 +42,7 @@ def main():
         if time.time() - last_loop < controller.gait_params.dt:
             continue
         last_loop = time.time()
-        
+
         # Parse the udp joystick commands and then update the robot controller's parameters
         get_input(user_input)
         update_controller(controller, user_input)

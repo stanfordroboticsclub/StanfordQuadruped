@@ -144,7 +144,7 @@ class GaitParams:
         return 2 * self.overlap_ticks + 2 * self.swing_ticks
 
 
-class PupperConfig:
+class RobotConfig:
     """Pupper hardware parameters
     """
 

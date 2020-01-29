@@ -34,7 +34,7 @@ def step(
     ticks, foot_locations, swing_params, stance_params, gait_params, movement_reference
 ):
     """Calculate the desired foot locations for the next timestep
-    
+
     Parameters
     ----------
     ticks : int
@@ -49,7 +49,7 @@ def step(
         Gait parameters object.
     movement_reference : MovementReference
         Movement reference object.
-    
+
     Returns
     -------
     Numpy array (3, 4)
@@ -83,7 +83,7 @@ def step(
 
 def step_controller(controller, robot_config):
     """Steps the controller forward one timestep
-    
+
     Parameters
     ----------
     controller : Controller
