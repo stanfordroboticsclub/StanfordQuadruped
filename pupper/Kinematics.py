@@ -2,17 +2,6 @@ import numpy as np
 from transforms3d.euler import euler2mat
 
 
-def _assert_valid_leg(i):
-    """Assert that the given leg index is valid
-    
-    Parameters
-    ----------
-    i : int
-        Leg index.
-    """
-    assert i in [0, 1, 2, 3]
-
-
 def leg_forward_kinematics(alpha, leg_index, config):
     """Find the body-centric coordinates of a given foot given the joint angles.
     
@@ -30,7 +19,6 @@ def leg_forward_kinematics(alpha, leg_index, config):
     Numpy array (3)
         Body-centric coordinates of the specified foot
     """
-    _assert_valid_leg(leg_index)
     y = config.ABDUCTION_OFFSET[leg_index]
     unrotated_leg = np.array([0, y, -config.LEG_L + alpha[2]])
     return euler2mat(alpha[0], alpha[1], "sxyz") * unrotated_leg
@@ -53,7 +41,6 @@ def leg_explicit_inverse_kinematics(r_body_foot, leg_index, config):
     numpy array (3)
         Array of corresponding joint angles.
     """
-    _assert_valid_leg(leg_index)
     (x, y, z) = r_body_foot
 
     # Distance from the leg origin to the foot, projected into the y-z plane

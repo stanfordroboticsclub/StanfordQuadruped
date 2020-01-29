@@ -1,5 +1,6 @@
 import numpy as np
 from scipy.linalg import solve
+from src.RobotConfig import MICROS_PER_RAD, NEUTRAL_ANGLE_DEGREES
 
 
 class PWMParams:
@@ -12,12 +13,10 @@ class PWMParams:
 class ServoParams:
     def __init__(self):
         self.neutral_position_pwm = 1500  # Middle position
-        self.micros_per_rad = 11.4 * 180.0 / np.pi  # Must be calibrated
+        self.micros_per_rad = MICROS_PER_RAD  # Must be calibrated
 
         # The neutral angle of the joint relative to the modeled zero-angle in degrees, for each joint
-        self.neutral_angle_degrees = np.array(
-            [[9, 5, 13, -9], [45, 47, 44, 52], [-14, -36, -15, -35]]
-        )
+        self.neutral_angle_degrees = NEUTRAL_ANGLE_DEGREES
 
         self.servo_multipliers = np.array(
             [[1, 1, 1, 1], [-1, 1, -1, 1], [1, -1, 1, -1]]
@@ -55,15 +54,19 @@ class StanceParams:
     """
 
     def __init__(self):
-        self.z_time_constant = 1.0
+        self.z_time_constant = 0.02
+        self.z_speed = 0.03  # maximum speed [m/s]
+        self.pitch_time_constant = 0.5
+        self.roll_speed = 0.16  # maximum roll rate [rad/s]
         self.delta_x = 0.1
-        self.delta_y = 0.09
+        self.delta_y = 0.10
+        self.x_shift = 0.0
 
     @property
     def default_stance(self):
         return np.array(
             [
-                [self.delta_x, self.delta_x, -self.delta_x, -self.delta_x],
+                [self.delta_x + self.x_shift, self.delta_x + self.x_shift, -self.delta_x + self.x_shift, -self.delta_x + self.x_shift],
                 [-self.delta_y, self.delta_y, -self.delta_y, self.delta_y],
                 [0, 0, 0, 0],
             ]
@@ -115,10 +118,10 @@ class GaitParams:
             [[1, 1, 1, 1], [1, 1, 1, 1], [1, 1, 1, 1], [1, 1, 1, 1]]
         )
         self.overlap_time = (
-            0.1
+            0.35
         )  # duration of the phase where all four feet are on the ground
         self.swing_time = (
-            0.2
+            0.1
         )  # duration of the phase when only two feet are on the ground
 
     @property
@@ -144,7 +147,7 @@ class GaitParams:
         return 2 * self.overlap_ticks + 2 * self.swing_ticks
 
 
-class RobotConfig:
+class PupperConfig:
     """Pupper hardware parameters
     """
 
@@ -155,11 +158,11 @@ class RobotConfig:
 
         # Robot geometry
         self.LEG_FB = 0.10  # front-back distance from center line to leg axis
-        self.LEG_LR = 0.0419  # left-right distance from center line to leg plane
+        self.LEG_LR = 0.04 #0.0419  # left-right distance from center line to leg plane
         self.LEG_L = 0.125
         self.LEG_L2 = 0.125
         self.LEG_L1 = 0.1235
-        self.ABDUCTION_OFFSET = 0.027  # distance from abduction axis to leg
+        self.ABDUCTION_OFFSET = 0.03 #0.027  # distance from abduction axis to leg
         self.FOOT_RADIUS = 0.01
 
         self.HIP_L = 0.0394

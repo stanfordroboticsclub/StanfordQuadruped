@@ -34,7 +34,7 @@ def step(
     ticks, foot_locations, swing_params, stance_params, gait_params, movement_reference
 ):
     """Calculate the desired foot locations for the next timestep
-
+    
     Parameters
     ----------
     ticks : int
@@ -49,7 +49,7 @@ def step(
         Gait parameters object.
     movement_reference : MovementReference
         Movement reference object.
-
+    
     Returns
     -------
     Numpy array (3, 4)
@@ -83,7 +83,7 @@ def step(
 
 def step_controller(controller, robot_config):
     """Steps the controller forward one timestep
-
+    
     Parameters
     ----------
     controller : Controller
@@ -113,7 +113,7 @@ def step_controller(controller, robot_config):
     controller.ticks += 1
 
 
-def setPoseToDefault(controller, robot_config):
+def set_pose_to_default(controller, robot_config):
     controller.foot_locations = (
         controller.stance_params.default_stance
         + np.array([0, 0, controller.movement_reference.z_ref])[:, np.newaxis]
