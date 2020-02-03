@@ -4,7 +4,7 @@ from src.UserInput import UserInputs, get_input, update_controller
 from pupper.HardwareInterface import HardwareInterface
 from pupper.Kinematics import four_legs_inverse_kinematics
 from pupper.Config import (
-    Config,
+    RobotConfig,
     SwingParams,
     StanceParams,
     GaitParams,
@@ -16,7 +16,7 @@ def main():
     """Main program
     """
 
-    robot_config = Config()
+    robot_config = RobotConfig()
     hardware_interface = HardwareInterface()
 
     controller = Controller(robot_config, SwingParams(), StanceParams(), GaitParams(), MovementReference(), four_legs_inverse_kinematics)

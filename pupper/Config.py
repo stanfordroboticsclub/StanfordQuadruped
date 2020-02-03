@@ -1,6 +1,6 @@
 import numpy as np
 from scipy.linalg import solve
-from pupper.RobotConfig import MICROS_PER_RAD, NEUTRAL_ANGLE_DEGREES
+from pupper.HardwareConfig import MICROS_PER_RAD, NEUTRAL_ANGLE_DEGREES
 
 
 class PWMParams:
@@ -147,7 +147,7 @@ class GaitParams:
         return 2 * self.overlap_ticks + 2 * self.swing_ticks
 
 
-class Config:
+class RobotConfig:
     """Pupper hardware parameters
     """
 
