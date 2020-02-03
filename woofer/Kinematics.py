@@ -4,7 +4,7 @@ from transforms3d.euler import euler2mat
 
 def leg_forward_kinematics(alpha, leg_index, config):
     """Find the body-centric coordinates of a given foot given the joint angles.
-    
+
     Parameters
     ----------
     alpha : Numpy array (3)
@@ -13,20 +13,18 @@ def leg_forward_kinematics(alpha, leg_index, config):
         Leg index.
     config : Config object
         Robot parameters object
-    
+
     Returns
     -------
     Numpy array (3)
         Body-centric coordinates of the specified foot
     """
-    y = config.ABDUCTION_OFFSET[leg_index]
-    unrotated_leg = np.array([0, y, -config.LEG_L + alpha[2]])
-    return euler2mat(alpha[0], alpha[1], "sxyz") * unrotated_leg
+    pass
 
 
 def leg_explicit_inverse_kinematics(r_body_foot, leg_index, config):
     """Find the joint angles corresponding to the given body-relative foot position for a given leg and configuration
-    
+
     Parameters
     ----------
     r_body_foot : [type]
@@ -68,25 +66,16 @@ def leg_explicit_inverse_kinematics(r_body_foot, leg_index, config):
     # Distance between the hip and foot
     R_hip_foot = (R_hip_foot_yz ** 2 + x ** 2) ** 0.5
 
-    # Angle between the line going from hip to foot and the link L1
-    trident = np.arccos(
-        (config.LEG_L1 ** 2 + R_hip_foot ** 2 - config.LEG_L2 ** 2)
-        / (2 * config.LEG_L1 * R_hip_foot)
-    )
+    # Using law of cosines to determine the angle between upper leg links
+    cos_param = (config.UPPER_LEG ** 2 + R_hip_foot ** 2 - config.LOWER_LEG ** 2) / (2.0*config.UPPER_LEG*R_hip_foot)
 
-    # Angle of the first link relative to the tilted negative z axis
-    hip_angle = theta + trident
+    # Ensure that the leg isn't over or under extending
+    assert abs(cos_param) < 1
 
-    # Angle between the leg links L1 and L2
-    beta = np.arccos(
-        (config.LEG_L1 ** 2 + config.LEG_L2 ** 2 - R_hip_foot ** 2)
-        / (2 * config.LEG_L1 * config.LEG_L2)
-    )
+    # gamma: Angle between upper leg links and the center of the leg
+    gamma = np.arccos(cos_param)
 
-    # Angle of the second link relative to the tilted negative z axis
-    knee_angle = hip_angle - (np.pi - beta)
-
-    return np.array([abduction_angle, hip_angle, knee_angle])
+    return np.array([abduction_angle, theta + gamma, theta - gamma])
 
 
 def four_legs_inverse_kinematics(r_body_foot, config):

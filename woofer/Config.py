@@ -1,30 +1,5 @@
 import numpy as np
 from scipy.linalg import solve
-from src.RobotConfig import MICROS_PER_RAD, NEUTRAL_ANGLE_DEGREES
-
-
-class PWMParams:
-    def __init__(self):
-        self.pins = np.array([[2, 14, 18, 23], [3, 15, 27, 24], [4, 17, 22, 25]])
-        self.range = 4000
-        self.freq = 250
-
-
-class ServoParams:
-    def __init__(self):
-        self.neutral_position_pwm = 1500  # Middle position
-        self.micros_per_rad = MICROS_PER_RAD  # Must be calibrated
-
-        # The neutral angle of the joint relative to the modeled zero-angle in degrees, for each joint
-        self.neutral_angle_degrees = NEUTRAL_ANGLE_DEGREES
-
-        self.servo_multipliers = np.array(
-            [[1, 1, 1, 1], [-1, 1, -1, 1], [1, -1, 1, -1]]
-        )
-
-    @property
-    def neutral_angles(self):
-        return self.neutral_angle_degrees * np.pi / 180.0  # Convert to radians
 
 
 class MovementCommand:
@@ -147,14 +122,11 @@ class GaitParams:
         return 2 * self.overlap_ticks + 2 * self.swing_ticks
 
 
-class PupperConfig:
-    """Pupper hardware parameters
+class RobotConfig:
+    """Woofer hardware parameters
     """
 
     def __init__(self):
-        # XML files
-        self.XML_IN = "pupper.xml"
-        self.XML_OUT = "pupper_out.xml"
 
         # Robot geometry
         self.LEG_FB = 0.10  # front-back distance from center line to leg axis
@@ -226,9 +198,6 @@ class PupperConfig:
         self.REV_DAMPING = (
             NATURAL_DAMPING + ELECTRICAL_DAMPING
         )  # Damping torque on the revolute joints
-
-        # Servo params
-        self.SERVO_REV_KP = 300  # Position gain [Nm/rad]
 
         # Force limits
         self.MAX_JOINT_TORQUE = 3.0
