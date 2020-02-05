@@ -1,87 +1,42 @@
+import odrive
+from odrive.enums import *
+from woofer.HardwareConfig import ODRIVE_SERIAL_NUMBERS
+import time
 import numpy as np
 
 
-def pwm_to_duty_cycle(pulsewidth_micros, pwm_params):
-    """Converts a pwm signal (measured in microseconds) to a corresponding duty cycle on the gpio pwm pin
-    
-    Parameters
-    ----------
-    pulsewidth_micros : float
-        Width of the pwm signal in microseconds
-    pwm_params : PWMParams
-        PWMParams object
-    
-    Returns
-    -------
-    float
-        PWM duty cycle corresponding to the pulse width
-    """
-    return int(pulsewidth_micros / 1e6 * pwm_params.freq * pwm_params.range)
+class HardwareInterface:
+
+    def __init__(self):
+        self.odrives = []
+        for sn in ODRIVE_SERIAL_NUMBERS:
+            o = odrive.find_any(serial_number=sn)
+            self.odrives.append(o)
+        calibrate_odrives(self.odrives)
+        set_position_control(self.odrives)
+
+    def set_actuator_postions(self, joint_angles):
+        set_all_odrive_positions(self.odrives, joint_angles)
 
 
-def angle_to_pwm(angle, servo_params, axis_index, leg_index):
-    """Converts a desired servo angle into the corresponding PWM command
-    
-    Parameters
-    ----------
-    angle : float
-        Desired servo angle, relative to the vertical (z) axis
-    servo_params : ServoParams
-        ServoParams object
-    axis_index : int
-        Specifies which joint of leg to control. 0 is abduction servo, 1 is inner hip servo, 2 is outer hip servo.
-    leg_index : int
-        Specifies which leg to control. 0 is front-right, 1 is front-left, 2 is back-right, 3 is back-left.
-    
-    Returns
-    -------
-    float
-        PWM width in microseconds
-    """
-    angle_deviation = (
-        angle - servo_params.neutral_angles[axis_index, leg_index]
-    ) * servo_params.servo_multipliers[axis_index, leg_index]
-    pulse_width_micros = (
-        servo_params.neutral_position_pwm
-        + servo_params.micros_per_rad * angle_deviation
-    )
-    return pulse_width_micros
+def calibrate_odrives(odrives):
+    for odrv in odrives:
+        odrv.axis0.requested_state = AXIS_STATE_FULL_CALIBRATION_SEQUENCE
+        odrv.axis1.requested_state = AXIS_STATE_FULL_CALIBRATION_SEQUENCE
+    for odrv in odrives:
+        while odrv.axis0.current_state != AXIS_STATE_IDLE or odrv.axis1.current_state != AXIS_STATE_IDLE:
+            time.sleep(0.1)  # busy waiting - not ideal
 
 
-def angle_to_duty_cycle(angle, pwm_params, servo_params, axis_index, leg_index):
-    return pwm_to_duty_cycle(
-        angle_to_pwm(angle, servo_params, axis_index, leg_index), pwm_params
-    )
+def set_position_control(odrives):
+    for odrv in odrive:
+        odrv.axis0.requested_state = AXIS_STATE_CLOSED_LOOP_CONTROL
+        odrv.axis1.requested_state = AXIS_STATE_CLOSED_LOOP_CONTROL
 
 
-def initialize_pwm(pi, pwm_params):
-    for leg_index in range(4):
-        for axis_index in range(3):
-            pi.set_PWM_frequency(
-                pwm_params.pins[axis_index, leg_index], pwm_params.freq
-            )
-            pi.set_PWM_range(pwm_params.pins[axis_index, leg_index], pwm_params.range)
+def set_all_odrive_positions(odrives, joint_angles):
+    pass
 
 
-def send_servo_commands(pi, pwm_params, servo_params, joint_angles):
-    for leg_index in range(4):
-        for axis_index in range(3):
-            duty_cycle = angle_to_duty_cycle(
-                joint_angles[axis_index, leg_index],
-                pwm_params,
-                servo_params,
-                axis_index,
-                leg_index,
-            )
-            pi.set_PWM_dutycycle(pwm_params.pins[axis_index, leg_index], duty_cycle)
-
-
-def send_servo_command(pi, pwm_params, servo_params, joint_angle, axis, leg):
-    duty_cycle = angle_to_duty_cycle(joint_angle, pwm_params, servo_params, axis, leg)
-    pi.set_PWM_dutycycle(pwm_params.pins[axis, leg], duty_cycle)
-
-
-def deactivate_servos(pi, pwm_params):
-    for leg_index in range(4):
-        for axis_index in range(3):
-            pi.set_PWM_dutycycle(pwm_params.pins[axis_index, leg_index], 0)
+def radians_to_encoder_count(angle):
+    pass
