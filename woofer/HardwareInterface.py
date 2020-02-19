@@ -1,7 +1,7 @@
 import odrive
 from odrive.enums import *
 from woofer.Config import RobotConfig
-from woofer.HardwareConfig import ODRIVE_SERIAL_NUMBERS, map_actuators_to_axes
+from woofer.HardwareConfig import ODRIVE_SERIAL_NUMBERS, ACTUATOR_DIRECTIONS, ANGLE_OFFSETS, map_actuators_to_axes
 import time
 import numpy as np
 
@@ -44,11 +44,16 @@ def assign_axes(odrives):
 
 
 def set_all_odrive_positions(axes, joint_angles, config):
-    for i in range(len(joint_angles)):
-        for j in range(len(joint_angles[i])):
-            # TODO add directions
-            axes[i][j].controller.pos_setpoint = radians_to_encoder_count(joint_angles[i][j] - np.pi/2, config)
+    for i in range(joint_angles.shape[0]):
+        for j in range(joint_angles.shape[1]):
+            axes[i][j].controller.pos_setpoint = actuator_angle_to_odrive(joint_angles, i, j, config)
 
 
 def radians_to_encoder_count(angle, config):
     return (angle / (2 * np.pi)) * config.ENCODER_CPR * config.MOTOR_REDUCTION
+
+
+def actuator_angle_to_odrive(joint_angles, i, j, config):
+    offset_angle = joint_angles[i][j] + ANGLE_OFFSETS[i][j]
+    odrive_radians = offset_angle * ACTUATOR_DIRECTIONS[i][j]
+    return radians_to_encoder_count(odrive_radians, config)

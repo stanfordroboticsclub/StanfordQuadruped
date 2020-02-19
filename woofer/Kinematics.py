@@ -76,7 +76,7 @@ def leg_explicit_inverse_kinematics(r_body_foot, leg_index, config):
     # gamma: Angle between upper leg links and the center of the leg
     gamma = np.arccos(cos_param)
 
-    return np.array([abduction_angle, theta + gamma, theta - gamma])
+    return np.array([abduction_angle, theta - gamma, theta + gamma])
 
 
 def four_legs_inverse_kinematics(r_body_foot, config):
