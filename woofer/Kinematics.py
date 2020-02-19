@@ -1,5 +1,4 @@
 import numpy as np
-from transforms3d.euler import euler2mat
 
 
 def leg_forward_kinematics(alpha, leg_index, config):
@@ -33,7 +32,7 @@ def leg_explicit_inverse_kinematics(r_body_foot, leg_index, config):
         [description]
     config : [type]
         [description]
-    
+
     Returns
     -------
     numpy array (3)
@@ -48,6 +47,7 @@ def leg_explicit_inverse_kinematics(r_body_foot, leg_index, config):
     R_hip_foot_yz = (R_body_foot_yz ** 2 - config.ABDUCTION_OFFSET ** 2) ** 0.5
 
     # Ensure that the target point is reachable
+    # TODO: Don't let this crash the robot
     assert R_body_foot_yz >= abs(config.ABDUCTION_OFFSET)
 
     # Interior angle of the right triangle formed in the y-z plane by the leg that is coincident to the ab/adduction axis
@@ -70,6 +70,7 @@ def leg_explicit_inverse_kinematics(r_body_foot, leg_index, config):
     cos_param = (config.UPPER_LEG ** 2 + R_hip_foot ** 2 - config.LOWER_LEG ** 2) / (2.0*config.UPPER_LEG*R_hip_foot)
 
     # Ensure that the leg isn't over or under extending
+    # TODO: Don't let this crash the robot
     assert abs(cos_param) < 1
 
     # gamma: Angle between upper leg links and the center of the leg
@@ -80,14 +81,14 @@ def leg_explicit_inverse_kinematics(r_body_foot, leg_index, config):
 
 def four_legs_inverse_kinematics(r_body_foot, config):
     """Find the joint angles for all twelve DOF correspoinding to the given matrix of body-relative foot positions.
-    
+
     Parameters
     ----------
     r_body_foot : numpy array (3,4)
         Matrix of the body-frame foot positions. Each column corresponds to a separate foot.
     config : Config object
         Object of robot configuration parameters.
-    
+
     Returns
     -------
     numpy array (3,4)

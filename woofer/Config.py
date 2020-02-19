@@ -130,12 +130,16 @@ class RobotConfig:
 
         # Robot geometry
         self.LEG_FB = 0.10  # front-back distance from center line to leg axis
-        self.LEG_LR = 0.04 #0.0419  # left-right distance from center line to leg plane
+        self.LEG_LR = 0.04  # 0.0419  # left-right distance from center line to leg plane
         self.LEG_L = 0.125
         self.LEG_L2 = 0.125
         self.LEG_L1 = 0.1235
-        self.ABDUCTION_OFFSET = 0.03 #0.027  # distance from abduction axis to leg
+        self.ABDUCTION_OFFSET = 0.03  # 0.027  # distance from abduction axis to leg
         self.FOOT_RADIUS = 0.01
+
+        # TODO: Make these parameters the correct length. If you change the names make sure to update in HardwareInterface.py
+        self.UPPER_LEG = 0.0
+        self.LOWER_LEG = 0.0
 
         self.HIP_L = 0.0394
         self.HIP_W = 0.0744
@@ -202,6 +206,9 @@ class RobotConfig:
         # Force limits
         self.MAX_JOINT_TORQUE = 3.0
         self.REVOLUTE_RANGE = 1.57
+
+        self.ENCODER_CPR = 2000
+        self.MOTOR_REDUCTION = 4
 
 
 class EnvironmentConfig:

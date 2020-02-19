@@ -1,6 +1,7 @@
 import odrive
 from odrive.enums import *
-from woofer.HardwareConfig import ODRIVE_SERIAL_NUMBERS
+from woofer.Config import RobotConfig
+from woofer.HardwareConfig import ODRIVE_SERIAL_NUMBERS, map_actuators_to_axes
 import time
 import numpy as np
 
@@ -8,6 +9,7 @@ import numpy as np
 class HardwareInterface:
 
     def __init__(self):
+        self.config = RobotConfig()
         self.odrives = []
         for sn in ODRIVE_SERIAL_NUMBERS:
             o = odrive.find_any(serial_number=sn)
@@ -20,7 +22,7 @@ class HardwareInterface:
         assign_axes(self.odrives, self.axes)
 
     def set_actuator_postions(self, joint_angles):
-        set_all_odrive_positions(self.axes, joint_angles)
+        set_all_odrive_positions(self.axes, joint_angles, self.config)
 
 
 def calibrate_odrives(odrives):
@@ -39,14 +41,14 @@ def set_position_control(odrives):
 
 
 def assign_axes(odrives, axes):
-    assert False  # YOU MUST MAKE ABSOLUTELY SURE THIS MATCHES THE WIRING
+    map_actuators_to_axes(odrives, axes)
 
 
-def set_all_odrive_positions(axes, joint_angles):
+def set_all_odrive_positions(axes, joint_angles, config):
     for i in range(len(joint_angles)):
         for j in range(len(joint_angles[i])):
-            axes[i][j].controller.pos_setpoint = joint_angles[i][j]
+            axes[i][j].controller.pos_setpoint = radians_to_encoder_count(joint_angles[i][j] - np.pi/2, config)
 
 
-def radians_to_encoder_count(angle):
-    pass
+def radians_to_encoder_count(angle, config):
+    return (2*np.pi / angle) * config.ENCODER_CPR * config.MOTOR_REDUCTION
