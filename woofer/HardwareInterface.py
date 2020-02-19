@@ -18,8 +18,7 @@ class HardwareInterface:
         calibrate_odrives(self.odrives)
         set_position_control(self.odrives)
 
-        self.axes = [[None for _ in range(3)] for _ in range(4)]
-        assign_axes(self.odrives, self.axes)
+        self.axes = assign_axes(self.odrives)
 
     def set_actuator_postions(self, joint_angles):
         set_all_odrive_positions(self.axes, joint_angles, self.config)
@@ -40,15 +39,16 @@ def set_position_control(odrives):
         odrv.axis1.requested_state = AXIS_STATE_CLOSED_LOOP_CONTROL
 
 
-def assign_axes(odrives, axes):
-    map_actuators_to_axes(odrives, axes)
+def assign_axes(odrives):
+    return map_actuators_to_axes(odrives)
 
 
 def set_all_odrive_positions(axes, joint_angles, config):
     for i in range(len(joint_angles)):
         for j in range(len(joint_angles[i])):
+            # TODO add directions
             axes[i][j].controller.pos_setpoint = radians_to_encoder_count(joint_angles[i][j] - np.pi/2, config)
 
 
 def radians_to_encoder_count(angle, config):
-    return (2*np.pi / angle) * config.ENCODER_CPR * config.MOTOR_REDUCTION
+    return (angle / (2 * np.pi)) * config.ENCODER_CPR * config.MOTOR_REDUCTION

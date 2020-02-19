@@ -9,7 +9,7 @@ class MovementCommand:
     def __init__(self):
         self.v_xy_ref = np.array([0, 0])
         self.wz_ref = 0.0
-        self.z_ref = -0.16
+        self.z_ref = -0.32
 
 
 class MovementReference:
@@ -19,7 +19,7 @@ class MovementReference:
     def __init__(self):
         self.v_xy_ref = np.array([0, 0])
         self.wz_ref = 0.0
-        self.z_ref = -0.16
+        self.z_ref = -0.32
         self.pitch = 0.0
         self.roll = 0.0
 
@@ -33,8 +33,8 @@ class StanceParams:
         self.z_speed = 0.03  # maximum speed [m/s]
         self.pitch_time_constant = 0.5
         self.roll_speed = 0.16  # maximum roll rate [rad/s]
-        self.delta_x = 0.1
-        self.delta_y = 0.10
+        self.delta_x = 0.23
+        self.delta_y = 0.109
         self.x_shift = 0.0
 
     @property
@@ -54,7 +54,7 @@ class SwingParams:
 
     def __init__(self):
         self.z_coeffs = None
-        self.z_clearance = 0.01
+        self.z_clearance = 0.03
         self.alpha = (
             0.5
         )  # Ratio between touchdown distance and total horizontal stance movement
@@ -93,10 +93,10 @@ class GaitParams:
             [[1, 1, 1, 1], [1, 1, 1, 1], [1, 1, 1, 1], [1, 1, 1, 1]]
         )
         self.overlap_time = (
-            0.35
+            2.0
         )  # duration of the phase where all four feet are on the ground
         self.swing_time = (
-            0.1
+            2.0
         )  # duration of the phase when only two feet are on the ground
 
     @property
@@ -129,26 +129,23 @@ class RobotConfig:
     def __init__(self):
 
         # Robot geometry
-        self.LEG_FB = 0.10  # front-back distance from center line to leg axis
-        self.LEG_LR = 0.04  # 0.0419  # left-right distance from center line to leg plane
-        self.LEG_L = 0.125
-        self.LEG_L2 = 0.125
-        self.LEG_L1 = 0.1235
-        self.ABDUCTION_OFFSET = 0.03  # 0.027  # distance from abduction axis to leg
-        self.FOOT_RADIUS = 0.01
+        self.LEG_FB = 0.23  # front-back distance from center line to leg axis
+        self.LEG_LR = 0.109  # left-right distance from center line to leg plane
+        self.ABDUCTION_OFFSET = 0.064  # distance from abduction axis to leg
+        self.FOOT_RADIUS = 0.02
 
-        # TODO: Make these parameters the correct length. If you change the names make sure to update in HardwareInterface.py
-        self.UPPER_LEG = 0.0
-        self.LOWER_LEG = 0.0
+        self.UPPER_LEG = 0.18
+        self.LOWER_LEG = 0.32
 
+        # Update hip geometry
         self.HIP_L = 0.0394
         self.HIP_W = 0.0744
         self.HIP_T = 0.0214
         self.HIP_OFFSET = 0.0132
 
-        self.L = 0.276
-        self.W = 0.100
-        self.T = 0.050
+        self.L = 0.66
+        self.W = 0.176
+        self.T = 0.092
 
         self.LEG_ORIGINS = np.array(
             [
@@ -170,9 +167,9 @@ class RobotConfig:
         self.START_HEIGHT = 0.3
 
         # Robot inertia params
-        self.FRAME_MASS = 0.560  # kg
-        self.MODULE_MASS = 0.080  # kg
-        self.LEG_MASS = 0.030  # kg
+        self.FRAME_MASS = 3.0  # kg
+        self.MODULE_MASS = 1.033  # kg
+        self.LEG_MASS = 0.15  # kg
         self.MASS = self.FRAME_MASS + (self.MODULE_MASS + self.LEG_MASS) * 4
 
         # Compensation factor of 3 because the inertia measurement was just
@@ -204,8 +201,8 @@ class RobotConfig:
         )  # Damping torque on the revolute joints
 
         # Force limits
-        self.MAX_JOINT_TORQUE = 3.0
-        self.REVOLUTE_RANGE = 1.57
+        self.MAX_JOINT_TORQUE = 12.0
+        self.REVOLUTE_RANGE = 3
 
         self.ENCODER_CPR = 2000
         self.MOTOR_REDUCTION = 4

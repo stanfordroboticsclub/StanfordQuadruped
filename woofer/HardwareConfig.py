@@ -10,7 +10,8 @@ ODRIVE_SERIAL_NUMBERS = ["35619029856331",
                          "35795121942603"]
 
 
-def map_actuators_to_axes(odrives, axes):
+def map_actuators_to_axes(odrives):
+    axes = np.zeros((4, 3))
     axes[0][0] = odrives[1].axis1
     axes[0][1] = odrives[0].axis0
     axes[0][2] = odrives[0].axis1
@@ -26,3 +27,4 @@ def map_actuators_to_axes(odrives, axes):
     axes[3][0] = odrives[4].axis0
     axes[3][1] = odrives[3].axis1
     axes[3][2] = odrives[3].axis0
+    return axes
