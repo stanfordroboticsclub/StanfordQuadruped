@@ -1,9 +1,9 @@
 import time
 from src.Controller import step_controller, Controller
 from src.UserInput import UserInputs, get_input, update_controller
-from pupper.HardwareInterface import HardwareInterface
-from pupper.Kinematics import four_legs_inverse_kinematics
-from pupper.Config import (
+from woofer.HardwareInterface import HardwareInterface
+from woofer.Kinematics import four_legs_inverse_kinematics
+from woofer.Config import (
     RobotConfig,
     SwingParams,
     StanceParams,
