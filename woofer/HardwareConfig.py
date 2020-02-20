@@ -4,20 +4,24 @@ Per-robot configuration file that is particular to each individual robot, not ju
 
 import numpy as np
 
-ODRIVE_SERIAL_NUMBERS = ["35619029856331",
-                         "35799416713291",
-                         "59752448340023",
-                         "35726434842440",
-                         "35799416778827",
-                         "35795121942603"]
+ODRIVE_SERIAL_NUMBERS = [
+    "35619029856331",
+    "35799416713291",
+    "59752448340023",
+    "35726434842440",
+    "35799416778827",
+    "35795121942603",
+]
 
-ACTUATOR_DIRECTIONS = np.array([[ 1,  1, -1, -1],
-                                [-1, -1, -1, -1],
-                                [ 1,  1,  1,  1]])
+ACTUATOR_DIRECTIONS = np.array([[1, 1, -1, -1], [-1, -1, -1, -1], [1, 1, 1, 1]])
 
-ANGLE_OFFSETS = np.array([[        0,        0,        0,        0],
-                          [  np.pi/2,  np.pi/2,  np.pi/2,  np.pi/2],
-                          [ -np.pi/2, -np.pi/2, -np.pi/2, -np.pi/2]])
+ANGLE_OFFSETS = np.array(
+    [
+        [0, 0, 0, 0],
+        [np.pi / 2, np.pi / 2, np.pi / 2, np.pi / 2],
+        [-np.pi / 2, -np.pi / 2, -np.pi / 2, -np.pi / 2],
+    ]
+)
 
 
 def map_actuators_to_axes(odrives):

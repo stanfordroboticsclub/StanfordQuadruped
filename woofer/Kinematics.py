@@ -52,7 +52,9 @@ def leg_explicit_inverse_kinematics(r_body_foot, leg_index, config):
 
     # Interior angle of the right triangle formed in the y-z plane by the leg that is coincident to the ab/adduction axis
     # For feet 2 (front left) and 4 (back left), the abduction offset is positive, for the right feet, the abduction offset is negative.
-    phi = np.arccos(config.ABDUCTION_OFFSETS[leg_index] / R_body_foot_yz)
+    arccos_argument = config.ABDUCTION_OFFSETS[leg_index] / R_body_foot_yz
+    assert abs(arccos_argument) < 1
+    phi = np.arccos(arccos_argument)
 
     # Angle of the y-z projection of the hip-to-foot vector, relative to the positive y-axis
     hip_foot_angle = np.arctan2(z, y)
@@ -67,7 +69,9 @@ def leg_explicit_inverse_kinematics(r_body_foot, leg_index, config):
     R_hip_foot = (R_hip_foot_yz ** 2 + x ** 2) ** 0.5
 
     # Using law of cosines to determine the angle between upper leg links
-    cos_param = (config.UPPER_LEG ** 2 + R_hip_foot ** 2 - config.LOWER_LEG ** 2) / (2.0*config.UPPER_LEG*R_hip_foot)
+    cos_param = (config.UPPER_LEG ** 2 + R_hip_foot ** 2 - config.LOWER_LEG ** 2) / (
+        2.0 * config.UPPER_LEG * R_hip_foot
+    )
 
     # Ensure that the leg isn't over or under extending
     # TODO: Don't let this crash the robot

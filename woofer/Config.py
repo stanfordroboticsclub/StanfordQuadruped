@@ -2,14 +2,19 @@ import numpy as np
 from scipy.linalg import solve
 
 
-class MovementCommand:
-    """Stores movement command
-    """
+class BehaviorState(Enum):
+    REST = 0
+    TROT = 1
+    HOP = 2
+    FINISHHOP = 3
 
+
+class UserInputParams:
     def __init__(self):
-        self.v_xy_ref = np.array([0, 0])
-        self.wz_ref = 0.0
-        self.z_ref = -0.32
+        self.max_x_velocity = 0.5
+        self.max_y_velocity = 0.24
+        self.max_yaw_rate = 0.2
+        self.max_pitch = 30.0 * np.pi / 180.0
 
 
 class MovementReference:
@@ -31,55 +36,28 @@ class StanceParams:
     def __init__(self):
         self.z_time_constant = 0.02
         self.z_speed = 0.03  # maximum speed [m/s]
-        self.pitch_time_constant = 0.5
+        self.pitch_deadband = 0.02
+        self.pitch_time_constant = 0.25
+        self.max_pitch_rate = 0.15
         self.roll_speed = 0.16  # maximum roll rate [rad/s]
-        self.delta_x = 0.23
-        self.delta_y = 0.109
-        self.x_shift = 0.0
+        self.delta_x = 0.1
+        self.delta_y = 0.10
+        self.x_shift = -0.01
 
     @property
     def default_stance(self):
         return np.array(
             [
-                [self.delta_x + self.x_shift, self.delta_x + self.x_shift, -self.delta_x + self.x_shift, -self.delta_x + self.x_shift],
+                [
+                    self.delta_x + self.x_shift,
+                    self.delta_x + self.x_shift,
+                    -self.delta_x + self.x_shift,
+                    -self.delta_x + self.x_shift,
+                ],
                 [-self.delta_y, self.delta_y, -self.delta_y, self.delta_y],
                 [0, 0, 0, 0],
             ]
         )
-
-
-class SwingParams:
-    """Swing Parameters
-    """
-
-    def __init__(self):
-        self.z_coeffs = None
-        self.z_clearance = 0.03
-        self.alpha = (
-            0.5
-        )  # Ratio between touchdown distance and total horizontal stance movement
-        self.beta = (
-            0.5
-        )  # Ratio between touchdown distance and total horizontal stance movement
-
-    @property
-    def z_clearance(self):
-        return self.__z_clearance
-
-    @z_clearance.setter
-    def z_clearance(self, z):
-        self.__z_clearance = z
-        b_z = np.array([0, 0, 0, 0, self.__z_clearance])
-        A_z = np.array(
-            [
-                [0, 0, 0, 0, 1],
-                [1, 1, 1, 1, 1],
-                [0, 0, 0, 1, 0],
-                [4, 3, 2, 1, 0],
-                [0.5 ** 4, 0.5 ** 3, 0.5 ** 2, 0.5 ** 1, 0.5 ** 0],
-            ]
-        )
-        self.z_coeffs = solve(A_z, b_z)
 
 
 class GaitParams:
@@ -93,11 +71,11 @@ class GaitParams:
             [[1, 1, 1, 1], [1, 1, 1, 1], [1, 1, 1, 1], [1, 1, 1, 1]]
         )
         self.overlap_time = (
-            2.0
-        )  # duration of the phase where all four feet are on the ground
+            2.0  # duration of the phase where all four feet are on the ground
+        )
         self.swing_time = (
-            2.0
-        )  # duration of the phase when only two feet are on the ground
+            2.0  # duration of the phase when only two feet are on the ground
+        )
 
     @property
     def overlap_ticks(self):
