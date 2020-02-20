@@ -13,6 +13,9 @@ class HardwareInterface:
     def set_actuator_postions(self, joint_angles):
         send_servo_commands(self.pi, self.pwm_params, self.servo_params, joint_angles)
 
+    def deactivate_actuators(self):
+        pass
+
 
 def pwm_to_duty_cycle(pulsewidth_micros, pwm_params):
     """Converts a pwm signal (measured in microseconds) to a corresponding duty cycle on the gpio pwm pin

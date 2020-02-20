@@ -19,7 +19,7 @@ class MovementReference:
     def __init__(self):
         self.v_xy_ref = np.array([0, 0])
         self.wz_ref = 0.0
-        self.z_ref = -0.32
+        self.z_ref = -0.265
         self.pitch = 0.0
         self.roll = 0.0
 
@@ -34,7 +34,7 @@ class StanceParams:
         self.pitch_time_constant = 0.5
         self.roll_speed = 0.16  # maximum roll rate [rad/s]
         self.delta_x = 0.23
-        self.delta_y = 0.109
+        self.delta_y = 0.173
         self.x_shift = 0.0
 
     @property
@@ -54,7 +54,7 @@ class SwingParams:
 
     def __init__(self):
         self.z_coeffs = None
-        self.z_clearance = 0.03
+        self.z_clearance = 0.05
         self.alpha = (
             0.5
         )  # Ratio between touchdown distance and total horizontal stance movement
@@ -93,10 +93,10 @@ class GaitParams:
             [[1, 1, 1, 1], [1, 1, 1, 1], [1, 1, 1, 1], [1, 1, 1, 1]]
         )
         self.overlap_time = (
-            2.0
+            0.2
         )  # duration of the phase where all four feet are on the ground
         self.swing_time = (
-            2.0
+            0.2
         )  # duration of the phase when only two feet are on the ground
 
     @property
@@ -182,7 +182,7 @@ class RobotConfig:
 
         leg_z = 1e-6
         leg_mass = 0.010
-        leg_x = 1 / 12 * self.LEG_L ** 2 * leg_mass
+        leg_x = 0  # 1 / 12 * self.LEG_L ** 2 * leg_mass
         leg_y = leg_x
         self.LEG_INERTIA = (leg_x, leg_y, leg_z)
 

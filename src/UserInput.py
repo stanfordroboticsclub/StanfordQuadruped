@@ -35,7 +35,8 @@ def get_input(user_input_obj):
         user_input_obj.previous_gait_toggle = user_input_obj.gait_toggle
 
     except UDPComms.timeout:
-        print("UDP Timed out")
+        pass
+        #print("UDP Timed out")
 
 
 def update_controller(controller, user_input_obj):
