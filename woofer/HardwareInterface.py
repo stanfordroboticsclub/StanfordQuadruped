@@ -3,6 +3,7 @@ from odrive.enums import *
 from woofer.Config import RobotConfig
 from woofer.HardwareConfig import ODRIVE_SERIAL_NUMBERS, ACTUATOR_DIRECTIONS, ANGLE_OFFSETS, map_actuators_to_axes
 import time
+import threading
 import numpy as np
 
 
@@ -10,12 +11,15 @@ class HardwareInterface:
 
     def __init__(self):
         self.config = RobotConfig()
-        self.odrives = []
-        for sn in ODRIVE_SERIAL_NUMBERS:
-            o = odrive.find_any(serial_number=sn)
-            print("Found odrive: ", sn)
-            self.odrives.append(o)
-        assert len(self.odrives) == 6
+        assert len(ODRIVE_SERIAL_NUMBERS) == self.config.NUM_ODRIVES
+        self.odrives = [None for _ in range(self.config.NUM_ODRIVES)]
+        threads = []
+        for i in self.config.NUM_ODRIVES:
+            t = threading.Thread(target=find_odrive, args=(i, self.odrives))
+            threads.append(t)
+            t.start()
+        for t in threads:
+            t.join()
         input("Press enter to calibrate odrives...")
         calibrate_odrives(self.odrives)
         set_position_control(self.odrives)
@@ -27,6 +31,12 @@ class HardwareInterface:
 
     def deactivate_actuators(self):
         set_odrives_idle(self.odrives)
+
+
+def find_odrive(i, odrives):
+    o = odrive.find_any(serial_number=ODRIVE_SERIAL_NUMBERS[i])
+    print("Found odrive: ", i)
+    odrives[i] = o
 
 
 def calibrate_odrives(odrives):

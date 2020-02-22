@@ -204,6 +204,7 @@ class RobotConfig:
         self.MAX_JOINT_TORQUE = 12.0
         self.REVOLUTE_RANGE = 3
 
+        self.NUM_ODRIVES = 6
         self.ENCODER_CPR = 2000
         self.MOTOR_REDUCTION = 4
 
