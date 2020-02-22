@@ -20,13 +20,13 @@ class UserInputs:
 def get_input(user_input_obj):
     try:
         msg = user_input_obj.udp_handle.get()
-        user_input_obj.x_vel = msg["y"] * 0.14
-        user_input_obj.y_vel = msg["x"] * -0.14
-        user_input_obj.yaw_rate = msg["twist"] * -0.8
-        user_input_obj.pitch = msg["pitch"] * 30 * np.pi / 180.0
-        user_input_obj.gait_toggle = msg["gait_toggle"]
-        user_input_obj.stance_movement = msg["stance_movement"]
-        user_input_obj.roll_movement = msg["roll_movement"]
+        user_input_obj.x_vel = msg["ly"] * 0.3
+        user_input_obj.y_vel = msg["lx"] * -0.2
+        user_input_obj.yaw_rate = msg["rx"] * -1.0
+        user_input_obj.pitch = msg["ry"] * 30 * np.pi / 180.0
+        user_input_obj.gait_toggle = msg["R1"]
+        user_input_obj.stance_movement = msg["dpady"]
+        user_input_obj.roll_movement = msg["dpadx"]
         user_input_obj.message_rate = msg["message_rate"]
 
         # Update gait mode
