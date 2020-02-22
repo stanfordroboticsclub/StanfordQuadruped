@@ -36,17 +36,15 @@ def main():
             get_input(user_input)
             update_controller(controller, user_input)
 
-            controller.movement_reference.v_xy_ref = np.array([0.1, 0])
-            controller.gait_params.contact_phases = np.array(
-                [[1, 1, 1, 0], [1, 0, 1, 1], [1, 0, 1, 1], [1, 1, 1, 0]]
-            )
             # Step the controller forward by dt
             step_controller(controller, robot_config)
 
             # Update the pwm widths going to the servos
+            print(controller.joint_angles)
             hardware_interface.set_actuator_postions(controller.joint_angles)
 
     finally:
+        pass
         hardware_interface.deactivate_actuators()
 
 
