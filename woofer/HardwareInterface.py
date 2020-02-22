@@ -40,12 +40,14 @@ def calibrate_odrives(odrives):
 
 def set_position_control(odrives):
     for odrv in odrives:
-        odrv.axis0.controller.config.pos_gain = 200
-        odrv.axis0.controller.config.vel_gain = 0.001
-        odrv.axis0.controller.config.vel_limit_tolerance = 0
-        odrv.axis1.controller.config.pos_gain = 200
-        odrv.axis1.controller.config.vel_gain = 0.001
-        odrv.axis1.controller.config.vel_limit_tolerance = 0
+        for axis in [odrv.axis0, odrv.axis1]:
+            axis.controller.config.pos_gain = 60
+            axis.controller.config.vel_gain = 0.002
+            axis.controller.config.vel_limit_tolerance = 0
+            axis.controller.config.vel_integrator_gain = 0
+            axis.motor.config.current_lim = 15
+        print("Updated gains")
+        
         odrv.axis0.requested_state = AXIS_STATE_CLOSED_LOOP_CONTROL
         odrv.axis1.requested_state = AXIS_STATE_CLOSED_LOOP_CONTROL
 
