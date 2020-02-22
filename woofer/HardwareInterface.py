@@ -14,7 +14,7 @@ class HardwareInterface:
         assert len(ODRIVE_SERIAL_NUMBERS) == self.config.NUM_ODRIVES
         self.odrives = [None for _ in range(self.config.NUM_ODRIVES)]
         threads = []
-        for i in self.config.NUM_ODRIVES:
+        for i in range(self.config.NUM_ODRIVES):
             t = threading.Thread(target=find_odrive, args=(i, self.odrives))
             threads.append(t)
             t.start()
