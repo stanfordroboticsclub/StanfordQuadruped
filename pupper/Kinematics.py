@@ -49,7 +49,9 @@ def leg_explicit_inverse_kinematics(r_body_foot, leg_index, config):
     R_hip_foot = (R_hip_foot_yz ** 2 + x ** 2) ** 0.5
 
     # Angle between the line going from hip to foot and the link L1
-    arccos_argument = (config.LEG_L1 ** 2 + R_hip_foot ** 2 - config.LEG_L2 ** 2) / (2 * config.LEG_L1 * R_hip_foot)
+    arccos_argument = (config.LEG_L1 ** 2 + R_hip_foot ** 2 - config.LEG_L2 ** 2) / (
+        2 * config.LEG_L1 * R_hip_foot
+    )
     arccos_argument = np.clip(arccos_argument, -0.99, 0.99)
     trident = np.arccos(arccos_argument)
 
@@ -57,7 +59,9 @@ def leg_explicit_inverse_kinematics(r_body_foot, leg_index, config):
     hip_angle = theta + trident
 
     # Angle between the leg links L1 and L2
-    arccos_argument = (config.LEG_L1 ** 2 + config.LEG_L2 ** 2 - R_hip_foot ** 2) / (2 * config.LEG_L1 * config.LEG_L2)
+    arccos_argument = (config.LEG_L1 ** 2 + config.LEG_L2 ** 2 - R_hip_foot ** 2) / (
+        2 * config.LEG_L1 * config.LEG_L2
+    )
     arccos_argument = np.clip(arccos_argument, -0.99, 0.99)
     beta = np.arccos(arccos_argument)
 

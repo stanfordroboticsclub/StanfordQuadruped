@@ -3,12 +3,14 @@ from scipy.linalg import solve
 from pupper.HardwareConfig import MICROS_PER_RAD, NEUTRAL_ANGLE_DEGREES
 from enum import Enum
 
+
 class UserInputParams:
     def __init__(self):
         self.max_x_velocity = 0.5
         self.max_y_velocity = 0.24
         self.max_yaw_rate = 0.2
         self.max_pitch = 30.0 * np.pi / 180.0
+
 
 class PWMParams:
     def __init__(self):
@@ -75,7 +77,7 @@ class StanceParams:
         self.max_pitch_rate = 0.15
         self.roll_speed = 0.16  # maximum roll rate [rad/s]
         self.delta_x = 0.1
-        self.delta_y = 0.10
+        self.delta_y = 0.09
         self.x_shift = -0.01
 
     @property
@@ -136,16 +138,13 @@ class GaitParams:
         self.dt = 0.01
         self.num_phases = 4
         self.contact_phases = np.array(
-            [[1, 1, 1, 0],
-            [1, 0, 1, 1],
-            [1, 0, 1, 1],
-            [1, 1, 1, 0]]
+            [[1, 1, 1, 0], [1, 0, 1, 1], [1, 0, 1, 1], [1, 1, 1, 0]]
         )
         self.overlap_time = (
             0.10  # duration of the phase where all four feet are on the ground
         )
         self.swing_time = (
-            0.20  # duration of the phase when only two feet are on the ground
+            0.15  # duration of the phase when only two feet are on the ground
         )
 
     @property

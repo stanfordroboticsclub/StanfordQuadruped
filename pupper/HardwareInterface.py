@@ -3,7 +3,6 @@ from pupper.Config import ServoParams, PWMParams
 
 
 class HardwareInterface:
-
     def __init__(self):
         self.pi = pigpio.pi()
         self.pwm_params = PWMParams()
