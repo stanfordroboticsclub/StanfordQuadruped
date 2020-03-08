@@ -27,9 +27,6 @@ def leg_explicit_inverse_kinematics(r_body_foot, leg_index, config):
     # Distance from the leg's forward/back point of rotation to the foot
     R_hip_foot_yz = (R_body_foot_yz ** 2 - config.ABDUCTION_OFFSET ** 2) ** 0.5
 
-    # Ensure that the target point is reachable
-    assert R_body_foot_yz >= abs(config.ABDUCTION_OFFSET)
-
     # Interior angle of the right triangle formed in the y-z plane by the leg that is coincident to the ab/adduction axis
     # For feet 2 (front left) and 4 (back left), the abduction offset is positive, for the right feet, the abduction offset is negative.
     arccos_argument = config.ABDUCTION_OFFSETS[leg_index] / R_body_foot_yz

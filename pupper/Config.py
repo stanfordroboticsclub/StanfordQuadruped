@@ -39,20 +39,29 @@ class Command:
         self.pitch = 0.0
         self.roll = 0.0
         self.activation = 0
+        
+        self.hop_event = False
+        self.trot_event = False
+        self.activate_event = False
 
 
 class Configuration:
-    def __init__(self):
+    def __init__(self):        
+        #################### COMMANDS ####################
         self.max_x_velocity = 0.5
         self.max_y_velocity = 0.24
         self.max_yaw_rate = 0.2
         self.max_pitch = 30.0 * np.pi / 180.0
+        
+        #################### MOVEMENT PARAMS ####################
         self.z_time_constant = 0.02
         self.z_speed = 0.03  # maximum speed [m/s]
         self.pitch_deadband = 0.02
         self.pitch_time_constant = 0.25
         self.max_pitch_rate = 0.15
         self.roll_speed = 0.16  # maximum roll rate [rad/s]
+
+        #################### STANCE ####################
         self.delta_x = 0.1
         self.delta_y = 0.09
         self.x_shift = -0.01

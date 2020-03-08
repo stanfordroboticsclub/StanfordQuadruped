@@ -1,13 +1,13 @@
-from src.Gaits import contacts, subphase_time
-from src.StanceController import stance_foot_location
-from src.SwingLegController import swing_foot_location
+from src.Gaits import GaitController
+from src.StanceController import StanceController
+from src.SwingLegController import SwingController
 from src.Utilities import clipped_first_order_filter
+from pupper.Kinematics import four_legs_inverse_kinematics
 
 import numpy as np
 from transforms3d.euler import euler2mat, quat2euler
 from transforms3d.quaternions import qconjugate, quat2axangle
 from transforms3d.axangles import axangle2mat
-
 
 class Controller:
     """Controller and planner object
@@ -15,17 +15,12 @@ class Controller:
 
     def __init__(
         self,
-        robot_config,
-        swing_params,
-        stance_params,
-        gait_params,
-        movement_reference,
+        config,
         four_legs_inverse_kinematics,
     ):
         self.swing_params = swing_params
         self.stance_params = stance_params
         self.gait_params = gait_params
-        self.movement_reference = movement_reference
         self.smoothed_yaw = 0.0  # for REST mode only
 
         self.four_legs_inverse_kinematics = four_legs_inverse_kinematics
@@ -45,9 +40,13 @@ class Controller:
             self.foot_locations, robot_config
         )
 
-        gait_controller = GaitController()
-        swing_controller = SwingController()
-        stance_controller = StanceController()
+        self.gait_controller = GaitController()
+        self.swing_controller = SwingController()
+        self.stance_controller = StanceController()
+
+        self.hop_transition_mapping = {BehaviorState.REST: BehaviorState.HOP, BehaviorState.HOP: BehaviorState.FINISHHOP, BehaviorState.FINISHHOP: BehaviorState.REST}
+        self.trot_transition_mapping = {BehaviorState.REST: BehaviorState.TROT, BehaviorState.TROT: BehaviorState.REST}
+        self.activate_transition_mapping = {BehaviorState.DEACTIVATED: BehaviorState.REST, BehaviorState.REST: BehaviorState.DEACTIVATED}
 
 
     def step_gait(self, ticks, foot_locations, command):
@@ -87,6 +86,15 @@ class Controller:
         controller : Controller
             Robot controller object.
         """
+
+        ########## Update operating state based on command ######
+        if command.activate_event:
+            state.state = self.activate_transition_mapping[state.behavior_state]
+        elif command.trot_event:
+            state.state = self.trot_transition_mapping[state.state]
+        elif command.hop_event:
+            state.state = self.hop_transition_mapping[state.state]
+
         if state.state == BehaviorState.TROT:
             foot_locations, contact_modes = self.step_gait(
                 state.ticks,

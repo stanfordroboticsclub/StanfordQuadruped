@@ -2,25 +2,17 @@ import numpy as np
 import UDPComms
 import time
 from src.IMU import IMU
-from src.Controller import step_controller, Controller
-from src.UserInput import UserInputs, get_input, update_controller
-from woofer.HardwareInterface import HardwareInterface
-from woofer.Config import (
-    RobotConfig,
-    MovementReference,
-    GaitParams,
-    StanceParams,
-    SwingParams,
-    UserInputParams,
-)
-
+from src.Controller import Controller
+from src.JoystickReader import JoystickReader
+from pupper.HardwareInterface import HardwareInterface
+from pupper.Config import Configuration, Command
 
 def main(use_imu=False):
     """Main program
     """
 
     # Create config
-    robot_config = RobotConfig()
+    config = Configuration()
     hardware_interface = HardwareInterface()
 
     # Create imu handle
@@ -30,11 +22,7 @@ def main(use_imu=False):
 
     # Create controller and user input handles
     controller = Controller(
-        robot_config,
-        SwingParams(),
-        StanceParams(),
-        GaitParams(),
-        MovementReference(),
+        config,
         four_legs_inverse_kinematics,
     )
     input_params = UserInputParams()
