@@ -31,9 +31,9 @@ class ServoParams:
 class Configuration:
     def __init__(self):        
         #################### COMMANDS ####################
-        self.max_x_velocity = 0.5
-        self.max_y_velocity = 0.24
-        self.max_yaw_rate = 0.2
+        self.max_x_velocity = 0.4
+        self.max_y_velocity = 0.3
+        self.max_yaw_rate = 2.0
         self.max_pitch = 30.0 * np.pi / 180.0
         
         #################### MOVEMENT PARAMS ####################
@@ -43,6 +43,8 @@ class Configuration:
         self.pitch_time_constant = 0.25
         self.max_pitch_rate = 0.15
         self.roll_speed = 0.16  # maximum roll rate [rad/s]
+        self.yaw_time_constant = 0.25
+        self.max_yaw_rate = 2
 
         #################### STANCE ####################
         self.delta_x = 0.1
@@ -52,7 +54,7 @@ class Configuration:
 
         #################### SWING ######################
         self.z_coeffs = None
-        self.z_clearance = 0.05
+        self.z_clearance = 0.07
         self.alpha = (
             0.5  # Ratio between touchdown distance and total horizontal stance movement
         )

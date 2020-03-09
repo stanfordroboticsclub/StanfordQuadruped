@@ -6,7 +6,7 @@ from src.Command import Command
 from src.Utilities import deadband, clipped_first_order_filter
 
 
-class JoystickReader:
+class JoystickInterface:
     def __init__(
         self, config, udp_port=8830
     ):
@@ -38,13 +38,14 @@ class JoystickReader:
             command.activate_event = (activate_toggle == 1 and self.previous_activate_toggle == 0)
 
             # Update previous values for toggles and state
-            previous_gait_toggle = gait_toggle
-            previous_hop_toggle = hop_toggle
-            previous_activate_toggle = activate_toggle
+            self.previous_gait_toggle = gait_toggle
+            self.previous_hop_toggle = hop_toggle
+            self.previous_activate_toggle = activate_toggle
 
             ####### Handle continuous commands ########
-            command.horizontal_velocity[0] = msg["ly"] * self.config.max_x_velocity
-            command.horizontal_velocity[1] = msg["lx"] * -self.config.max_y_velocity
+            x_vel = msg["ly"] * self.config.max_x_velocity
+            y_vel = msg["lx"] * -self.config.max_y_velocity
+            command.horizontal_velocity = np.array([x_vel, y_vel])
             command.yaw_rate = msg["rx"] * -self.config.max_yaw_rate
 
             message_rate = msg["message_rate"]

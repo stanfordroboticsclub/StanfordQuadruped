@@ -3,7 +3,7 @@ class GaitController:
         self.config = config
 
 
-    def phase_index(ticks):
+    def phase_index(self, ticks):
         """Calculates which part of the gait cycle the robot should be in given the time in ticks.
         
         Parameters
@@ -21,13 +21,13 @@ class GaitController:
         phase_time = ticks % self.config.phase_length
         phase_sum = 0
         for i in range(self.config.num_phases):
-            phase_sum += self.config.phase_times[i]
+            phase_sum += self.config.phase_ticks[i]
             if phase_time < phase_sum:
                 return i
         assert False
 
 
-    def subphase_ticks(ticks):
+    def subphase_ticks(self, ticks):
         """Calculates the number of ticks (timesteps) since the start of the current phase.
 
         Parameters
@@ -46,14 +46,14 @@ class GaitController:
         phase_sum = 0
         subphase_ticks = 0
         for i in range(self.config.num_phases):
-            phase_sum += self.config.phase_times[i]
+            phase_sum += self.config.phase_ticks[i]
             if phase_time < phase_sum:
-                subphase_ticks = phase_time - phase_sum + self.config.phase_times[i]
+                subphase_ticks = phase_time - phase_sum + self.config.phase_ticks[i]
                 return subphase_ticks
         assert False
 
 
-    def contacts(ticks):
+    def contacts(self, ticks):
         """Calculates which feet should be in contact at the given number of ticks
         
         Parameters

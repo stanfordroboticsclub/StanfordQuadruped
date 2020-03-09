@@ -3,7 +3,7 @@ import UDPComms
 import time
 from src.IMU import IMU
 from src.Controller import Controller
-from src.JoystickReader import JoystickReader
+from src.JoystickInterface import JoystickInterface
 from src.State import State
 from pupper.HardwareInterface import HardwareInterface
 from pupper.Config import Configuration
@@ -28,7 +28,7 @@ def main(use_imu=False):
         four_legs_inverse_kinematics,
     )
     state = State()
-    joystick_reader = JoystickReader(config)
+    joystick_interface = JoystickInterface(config)
 
     last_loop = time.time()
 
@@ -42,7 +42,7 @@ def main(use_imu=False):
     while True:
         print("Waiting for L1 to activate robot.")
         while True:
-            command = joystick_reader.get_command(state)
+            command = joystick_interface.get_command(state)
             if command.activate_event == 1:
                 break
         print("Robot activated.")
@@ -54,8 +54,9 @@ def main(use_imu=False):
             last_loop = time.time()
 
             # Parse the udp joystick commands and then update the robot controller's parameters
-            command = joystick_reader.get_command(state)
-            if command.activate_event == 0:
+            command = joystick_interface.get_command(state)
+            if command.activate_event == 1:
+                print("Deactivating Robot")
                 break
 
             # Read imu data. Orientation will be None if no data was available
@@ -68,7 +69,7 @@ def main(use_imu=False):
             controller.run(state, command)
 
             # Update the pwm widths going to the servos
-            hardware_interface.set_actuator_postions(controller.joint_angles)
+            hardware_interface.set_actuator_postions(state.joint_angles)
 
 
 main()

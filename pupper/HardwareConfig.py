@@ -4,7 +4,7 @@ Per-robot configuration file that is particular to each individual robot, not ju
 import numpy as np
 
 
-MICROS_PER_RAD = 10.0 * 180.0 / np.pi  # Must be calibrated
+MICROS_PER_RAD = 11.333 * 180.0 / np.pi  # Must be calibrated
 NEUTRAL_ANGLE_DEGREES = np.array(
-    [[5, 3.5, -3, 12], [65.5, 47, 34, 53.5], [-29, -20, -35, -43]]
+    [[ -0,   7,   2,   3], [ 17,  57, 46,  52], [-39, -35, -33, -64]]
 )

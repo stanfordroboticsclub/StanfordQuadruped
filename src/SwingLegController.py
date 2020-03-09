@@ -6,7 +6,7 @@ class SwingController:
         self.config = config
 
     def raibert_touchdown_location(
-        leg_index, command
+        self, leg_index, command
     ):
         delta_p_2d = (
             self.config.alpha
@@ -35,17 +35,18 @@ class SwingController:
 
 
     def next_foot_location(
+        self,
         swing_prop,
-        foot_location,
         leg_index,
+        state,
         command,
     ):
         assert swing_prop >= 0 and swing_prop <= 1
-
+        foot_location = state.foot_locations[:, leg_index]
         swing_height_ = self.swing_height(swing_prop)
         touchdown_location = self.raibert_touchdown_location(leg_index, command)
         time_left = self.config.dt * self.config.swing_ticks * (1.0 - swing_prop)
         v = (touchdown_location - foot_location) / time_left * np.array([1, 1, 0])
         delta_foot_location = v * self.config.dt
-        z_vector = np.array([0, 0, swing_height_ + self.config.z_ref])
+        z_vector = np.array([0, 0, swing_height_ + command.height])
         return foot_location * np.array([1, 1, 0]) + z_vector + delta_foot_location
