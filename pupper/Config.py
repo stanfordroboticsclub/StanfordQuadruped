@@ -46,8 +46,9 @@ class Configuration:
         self.pitch_time_constant = 0.25
         self.max_pitch_rate = 0.15
         self.roll_speed = 0.16  # maximum roll rate [rad/s]
-        self.yaw_time_constant = 0.25
-        self.max_yaw_rate = 2
+        self.yaw_time_constant = 0.3
+        self.max_stance_yaw = 1.2
+        self.max_stance_yaw_rate = 2.0
 
         #################### STANCE ####################
         self.delta_x = 0.1

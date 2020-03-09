@@ -132,13 +132,13 @@ class Controller:
             if self.previous_state != BehaviorState.REST:
                 self.smoothed_yaw = 0
 
-            yaw_factor = -0.25
+            yaw_proportion = command.yaw_rate / self.config.max_yaw_rate
             self.smoothed_yaw += (
                 self.config.dt
                 * clipped_first_order_filter(
                     self.smoothed_yaw,
-                    command.yaw_rate * yaw_factor,
-                    self.config.max_yaw_rate,
+                    yaw_proportion * -self.config.max_stance_yaw,
+                    self.config.max_stance_yaw_rate,
                     self.config.yaw_time_constant,
                 )
             )
@@ -163,6 +163,7 @@ class Controller:
         state.ticks += 1
         state.pitch = command.pitch
         state.roll = command.roll
+        state.height = command.height
 
     def set_pose_to_default(self):
         state.foot_locations = (
