@@ -24,15 +24,13 @@ class Controller:
         self.smoothed_yaw = 0.0  # for REST mode only
         self.inverse_kinematics = inverse_kinematics
 
-        self.previous_state = BehaviorState.REST
-
         self.contact_modes = np.zeros(4)
         self.gait_controller = GaitController(self.config)
         self.swing_controller = SwingController(self.config)
         self.stance_controller = StanceController(self.config)
 
-        self.hop_transition_mapping = {BehaviorState.REST: BehaviorState.HOP, BehaviorState.HOP: BehaviorState.FINISHHOP, BehaviorState.FINISHHOP: BehaviorState.REST}
-        self.trot_transition_mapping = {BehaviorState.REST: BehaviorState.TROT, BehaviorState.TROT: BehaviorState.REST}
+        self.hop_transition_mapping = {BehaviorState.REST: BehaviorState.HOP, BehaviorState.HOP: BehaviorState.FINISHHOP, BehaviorState.FINISHHOP: BehaviorState.REST, BehaviorState.TROT: BehaviorState.HOP}
+        self.trot_transition_mapping = {BehaviorState.REST: BehaviorState.TROT, BehaviorState.TROT: BehaviorState.REST, BehaviorState.HOP: BehaviorState.TROT, BehaviorState.FINISHHOP: BehaviorState.TROT}
         self.activate_transition_mapping = {BehaviorState.DEACTIVATED: BehaviorState.REST, BehaviorState.REST: BehaviorState.DEACTIVATED}
 
 
@@ -129,9 +127,6 @@ class Controller:
             )
 
         elif state.behavior_state == BehaviorState.REST:
-            if self.previous_state != BehaviorState.REST:
-                self.smoothed_yaw = 0
-
             yaw_proportion = command.yaw_rate / self.config.max_yaw_rate
             self.smoothed_yaw += (
                 self.config.dt
