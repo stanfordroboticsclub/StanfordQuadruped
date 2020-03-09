@@ -67,7 +67,7 @@ class JoystickInterface:
             height_movement = msg["dpady"]
             command.height = state.height - message_dt * self.config.z_speed * height_movement
             
-            roll_movement = msg["dpadx"]
+            roll_movement = - msg["dpadx"]
             command.roll = state.roll + message_dt * self.config.roll_speed * roll_movement
 
             return command
