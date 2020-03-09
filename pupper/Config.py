@@ -28,23 +28,6 @@ class ServoParams:
         return self.neutral_angle_degrees * np.pi / 180.0  # Convert to radians
 
 
-class Command:
-    """Stores movement command
-    """
-
-    def __init__(self):
-        self.horizontal_velocity = np.array([0, 0])
-        self.yaw_rate = 0.0
-        self.height = -0.16
-        self.pitch = 0.0
-        self.roll = 0.0
-        self.activation = 0
-        
-        self.hop_event = False
-        self.trot_event = False
-        self.activate_event = False
-
-
 class Configuration:
     def __init__(self):        
         #################### COMMANDS ####################
@@ -65,6 +48,7 @@ class Configuration:
         self.delta_x = 0.1
         self.delta_y = 0.09
         self.x_shift = -0.01
+        self.default_z_ref = -0.16
 
         #################### SWING ######################
         self.z_coeffs = None

@@ -1,7 +1,8 @@
 import UDPComms
 import numpy as np
 import time
-from src.State import BehaviorState
+from src.State import BehaviorState, State
+from src.Command import Command
 from src.Utilities import deadband, clipped_first_order_filter
 
 
@@ -9,20 +10,17 @@ class JoystickReader:
     def __init__(
         self, config, udp_port=8830
     ):
-       
+        self.config = config
         self.previous_gait_toggle = 0
-
         self.previous_state = BehaviorState.REST
-
         self.previous_hop_toggle = 0
-
-        self.last_activate = 0
+        self.previous_activate_toggle = 0
 
         self.message_rate = 50
         self.udp_handle = UDPComms.Subscriber(udp_port, timeout=0.3)
 
 
-    def get_command(self, do_print=False):
+    def get_command(self, state, do_print=False):
         try:
             msg = self.udp_handle.get()
             command = Command()
@@ -30,17 +28,16 @@ class JoystickReader:
             ####### Handle discrete commands ########
             # Check if requesting a state transition to trotting, or from trotting to resting
             gait_toggle = msg["R1"]
-            command.trot_event = (gait_toggle == 1 and previous_gait_toggle == 0)
+            command.trot_event = (gait_toggle == 1 and self.previous_gait_toggle == 0)
 
             # Check if requesting a state transition to hopping, from trotting or resting
             hop_toggle = msg["x"]
-            command.hop_event = (hop_toggle == 1 and previous_hop_toggle == 0)            
+            command.hop_event = (hop_toggle == 1 and self.previous_hop_toggle == 0)            
             
             activate_toggle = msg["L1"]
-            command.activate_event = (activate_toggle == 1 and previous_activate_toggle == 0)
+            command.activate_event = (activate_toggle == 1 and self.previous_activate_toggle == 0)
 
             # Update previous values for toggles and state
-            previous_state = current_state
             previous_gait_toggle = gait_toggle
             previous_hop_toggle = hop_toggle
             previous_activate_toggle = activate_toggle
@@ -66,7 +63,7 @@ class JoystickReader:
             command.pitch = state.pitch + message_dt * pitch_rate
 
             height_movement = msg["dpady"]
-            command.z_ref = state.z_ref - message_dt * self.config.z_speed * height_movement
+            command.height = state.height - message_dt * self.config.z_speed * height_movement
             
             roll_movement = msg["dpadx"]
             command.roll = state.roll + message_dt * self.config.roll_speed * roll_movement

@@ -3,11 +3,13 @@ from src.StanceController import StanceController
 from src.SwingLegController import SwingController
 from src.Utilities import clipped_first_order_filter
 from pupper.Kinematics import four_legs_inverse_kinematics
+from src.State import BehaviorState, State
 
 import numpy as np
 from transforms3d.euler import euler2mat, quat2euler
 from transforms3d.quaternions import qconjugate, quat2axangle
 from transforms3d.axangles import axangle2mat
+
 
 class Controller:
     """Controller and planner object
@@ -18,31 +20,27 @@ class Controller:
         config,
         four_legs_inverse_kinematics,
     ):
-        self.swing_params = swing_params
-        self.stance_params = stance_params
-        self.gait_params = gait_params
+        self.config = config
+
         self.smoothed_yaw = 0.0  # for REST mode only
 
         self.four_legs_inverse_kinematics = four_legs_inverse_kinematics
 
         self.previous_state = BehaviorState.REST
-        self.state = BehaviorState.REST
-
-        self.ticks = 0
 
         # Set default for foot locations and joint angles
         self.foot_locations = (
-            self.stance_params.default_stance
-            + np.array([0, 0, self.movement_reference.z_ref])[:, np.newaxis]
+            self.config.default_stance
+            + np.array([0, 0, self.config.default_z_ref])[:, np.newaxis]
         )
         self.contact_modes = np.zeros(4)
         self.joint_angles = self.four_legs_inverse_kinematics(
-            self.foot_locations, robot_config
+            self.foot_locations, self.config
         )
 
-        self.gait_controller = GaitController()
-        self.swing_controller = SwingController()
-        self.stance_controller = StanceController()
+        self.gait_controller = GaitController(self.config)
+        self.swing_controller = SwingController(self.config)
+        self.stance_controller = StanceController(self.config)
 
         self.hop_transition_mapping = {BehaviorState.REST: BehaviorState.HOP, BehaviorState.HOP: BehaviorState.FINISHHOP, BehaviorState.FINISHHOP: BehaviorState.REST}
         self.trot_transition_mapping = {BehaviorState.REST: BehaviorState.TROT, BehaviorState.TROT: BehaviorState.REST}
@@ -66,7 +64,7 @@ class Controller:
                 new_location = self.stance_controller.next_foot_location(foot_location, config, command)
             else:
                 swing_proportion = (
-                    gait_controller.subphase_time(ticks) / gait_params.swing_ticks
+                    self.gait_controller.subphase_time(ticks) / self.config.swing_ticks
                 )
                 new_location = swing_controller.next_foot_location(
                     swing_proportion,
@@ -78,7 +76,7 @@ class Controller:
         return new_foot_locations, contact_modes
 
 
-    def step_controller(self, state, command):
+    def run(self, state, command):
         """Steps the controller forward one timestep
 
         Parameters
@@ -127,7 +125,7 @@ class Controller:
             )
 
         elif state.state == BehaviorState.HOP:
-            hop_foot_locations = (
+            state.foot_locations = (
                 self.config.default_stance
                 + np.array([0, 0, -0.09])[:, np.newaxis]
             )
@@ -135,56 +133,55 @@ class Controller:
                 hop_foot_locations, config
             )
 
-        elif controller.state == BehaviorState.FINISHHOP:
-            hop_foot_locations = (
+        elif state.state == BehaviorState.FINISHHOP:
+            state.foot_locations = (
                 self.config.default_stance
                 + np.array([0, 0, -0.22])[:, np.newaxis]
             )
             state.joint_angles = inverse_kinematics(
-                hop_foot_locations, self.config
+                state.foot_locations, self.config
             )
 
         elif state.state == BehaviorState.REST:
-            if controller.previous_state != BehaviorState.REST:
+            if self.previous_state != BehaviorState.REST:
                 controller.smoothed_yaw = 0
 
             yaw_factor = -0.25
-            controller.smoothed_yaw += (
-                controller.gait_params.dt
+            self.smoothed_yaw += (
+                self.config.dt
                 * clipped_first_order_filter(
-                    controller.smoothed_yaw,
-                    controller.movement_reference.wz_ref * yaw_factor,
+                    self.smoothed_yaw,
+                    self.yaw_rate * yaw_factor,
                     1.5,
                     0.25,
                 )
             )
             # Set the foot locations to the default stance plus the standard height
-            controller.foot_locations = (
+            state.foot_locations = (
                 controller.stance_params.default_stance
                 + np.array([0, 0, controller.movement_reference.z_ref])[:, np.newaxis]
             )
             # Apply the desired body rotation
             rotated_foot_locations = (
                 euler2mat(
-                    controller.movement_reference.roll,
-                    controller.movement_reference.pitch,
-                    controller.smoothed_yaw,
+                    command.roll,
+                    command.pitch,
+                    self.smoothed_yaw,
                 )
-                @ controller.foot_locations
+                @ state.foot_locations
             )
-            controller.joint_angles = controller.four_legs_inverse_kinematics(
-                rotated_foot_locations, robot_config
+            state.joint_angles = self.four_legs_inverse_kinematics(
+                rotated_foot_locations, self.config
             )
 
-        controller.ticks += 1
-        controller.previous_state = controller.state
+        state.ticks += 1
 
 
-    def set_pose_to_default(controller, robot_config):
+    def set_pose_to_default(self):
         controller.foot_locations = (
             controller.stance_params.default_stance
-            + np.array([0, 0, controller.movement_reference.z_ref])[:, np.newaxis]
+            + np.array([0, 0, self.config.default_z_ref])[:, np.newaxis]
         )
         controller.joint_angles = controller.four_legs_inverse_kinematics(
-            controller.foot_locations, robot_config
+            state.foot_locations, self.config
         )
