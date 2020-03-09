@@ -8,7 +8,7 @@ from src.Utilities import deadband, clipped_first_order_filter
 
 class JoystickInterface:
     def __init__(
-        self, config, udp_port=8830
+        self, config, udp_port=8830, udp_publisher_port = 8840,
     ):
         self.config = config
         self.previous_gait_toggle = 0
@@ -18,6 +18,7 @@ class JoystickInterface:
 
         self.message_rate = 50
         self.udp_handle = UDPComms.Subscriber(udp_port, timeout=0.3)
+        self.udp_publisher = UDPComms.Publisher(udp_publisher_port)
 
 
     def get_command(self, state, do_print=False):
@@ -75,3 +76,8 @@ class JoystickInterface:
             if do_print:
                 print("UDP Timed out")
             return Command()
+
+
+    def set_color(self, color):
+        joystick_msg = {"ps4_color": color}
+        self.udp_publisher.send(joystick_msg)

@@ -44,9 +44,12 @@ def main(use_imu=False):
         print("Waiting for L1 to activate robot.")
         while True:
             command = joystick_interface.get_command(state)
+            joystick_interface.set_color(config.ps4_deactivated_color)
             if command.activate_event == 1:
                 break
+            time.sleep(0.1)
         print("Robot activated.")
+        joystick_interface.set_color(config.ps4_color)
 
         while True:
             now = time.time()
