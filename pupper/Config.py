@@ -1,6 +1,5 @@
 import numpy as np
-from scipy.linalg import solve
-from pupper.HardwareConfig import MICROS_PER_RAD, NEUTRAL_ANGLE_DEGREES
+from pupper.HardwareConfig import MICROS_PER_RAD, NEUTRAL_ANGLE_DEGREES, PS4_COLOR
 from enum import Enum
 
 # TODO: put these somewhere else
@@ -29,7 +28,10 @@ class ServoParams:
 
 
 class Configuration:
-    def __init__(self):        
+    def __init__(self):
+        ################# CONTROLLER BASE COLOR ##############
+        self.ps4_color = PS4_COLOR        
+
         #################### COMMANDS ####################
         self.max_x_velocity = 0.4
         self.max_y_velocity = 0.3
@@ -152,17 +154,17 @@ class Configuration:
     @z_clearance.setter
     def z_clearance(self, z):
         self.__z_clearance = z
-        b_z = np.array([0, 0, 0, 0, self.__z_clearance])
-        A_z = np.array(
-            [
-                [0, 0, 0, 0, 1],
-                [1, 1, 1, 1, 1],
-                [0, 0, 0, 1, 0],
-                [4, 3, 2, 1, 0],
-                [0.5 ** 4, 0.5 ** 3, 0.5 ** 2, 0.5 ** 1, 0.5 ** 0],
-            ]
-        )
-        self.z_coeffs = solve(A_z, b_z)
+        # b_z = np.array([0, 0, 0, 0, self.__z_clearance])
+        # A_z = np.array(
+        #     [
+        #         [0, 0, 0, 0, 1],
+        #         [1, 1, 1, 1, 1],
+        #         [0, 0, 0, 1, 0],
+        #         [4, 3, 2, 1, 0],
+        #         [0.5 ** 4, 0.5 ** 3, 0.5 ** 2, 0.5 ** 1, 0.5 ** 0],
+        #     ]
+        # )
+        # self.z_coeffs = solve(A_z, b_z)
 
     ########################### GAIT ####################
     @property

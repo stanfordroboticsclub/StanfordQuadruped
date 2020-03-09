@@ -1,5 +1,4 @@
 import numpy as np
-import UDPComms
 import time
 from src.IMU import IMU
 from src.Controller import Controller
@@ -28,7 +27,9 @@ def main(use_imu=False):
         four_legs_inverse_kinematics,
     )
     state = State()
+    print("Creating joystick listener...")
     joystick_interface = JoystickInterface(config)
+    print("Done.")
 
     last_loop = time.time()
 
