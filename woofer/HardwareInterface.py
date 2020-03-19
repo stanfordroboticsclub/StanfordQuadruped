@@ -1,14 +1,18 @@
 import odrive
 from odrive.enums import *
 from woofer.Config import RobotConfig
-from woofer.HardwareConfig import ODRIVE_SERIAL_NUMBERS, ACTUATOR_DIRECTIONS, ANGLE_OFFSETS, map_actuators_to_axes
+from woofer.HardwareConfig import (
+    ODRIVE_SERIAL_NUMBERS,
+    ACTUATOR_DIRECTIONS,
+    ANGLE_OFFSETS,
+    map_actuators_to_axes,
+)
 import time
 import threading
 import numpy as np
 
 
 class HardwareInterface:
-
     def __init__(self):
         self.config = RobotConfig()
         assert len(ODRIVE_SERIAL_NUMBERS) == self.config.NUM_ODRIVES
@@ -44,7 +48,10 @@ def calibrate_odrives(odrives):
         odrv.axis0.requested_state = AXIS_STATE_FULL_CALIBRATION_SEQUENCE
         odrv.axis1.requested_state = AXIS_STATE_FULL_CALIBRATION_SEQUENCE
     for odrv in odrives:
-        while odrv.axis0.current_state != AXIS_STATE_IDLE or odrv.axis1.current_state != AXIS_STATE_IDLE:
+        while (
+            odrv.axis0.current_state != AXIS_STATE_IDLE
+            or odrv.axis1.current_state != AXIS_STATE_IDLE
+        ):
             time.sleep(0.1)  # busy waiting - not ideal
 
 
@@ -57,7 +64,7 @@ def set_position_control(odrives):
             axis.controller.config.vel_integrator_gain = 0
             axis.motor.config.current_lim = 15
         print("Updated gains")
-        
+
         odrv.axis0.requested_state = AXIS_STATE_CLOSED_LOOP_CONTROL
         odrv.axis1.requested_state = AXIS_STATE_CLOSED_LOOP_CONTROL
 
@@ -75,7 +82,9 @@ def assign_axes(odrives):
 def set_all_odrive_positions(axes, joint_angles, config):
     for i in range(joint_angles.shape[0]):
         for j in range(joint_angles.shape[1]):
-            axes[i][j].controller.pos_setpoint = actuator_angle_to_odrive(joint_angles, i, j, config)
+            axes[i][j].controller.pos_setpoint = actuator_angle_to_odrive(
+                joint_angles, i, j, config
+            )
 
 
 def radians_to_encoder_count(angle, config):

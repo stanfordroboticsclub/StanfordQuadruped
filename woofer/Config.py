@@ -2,14 +2,19 @@ import numpy as np
 from scipy.linalg import solve
 
 
-class MovementCommand:
-    """Stores movement command
-    """
+class BehaviorState(Enum):
+    REST = 0
+    TROT = 1
+    HOP = 2
+    FINISHHOP = 3
 
+
+class UserInputParams:
     def __init__(self):
-        self.v_xy_ref = np.array([0, 0])
-        self.wz_ref = 0.0
-        self.z_ref = -0.32
+        self.max_x_velocity = 0.5
+        self.max_y_velocity = 0.24
+        self.max_yaw_rate = 0.2
+        self.max_pitch = 30.0 * np.pi / 180.0
 
 
 class MovementReference:
@@ -22,30 +27,6 @@ class MovementReference:
         self.z_ref = -0.265
         self.pitch = 0.0
         self.roll = 0.0
-
-
-class StanceParams:
-    """Stance parameters
-    """
-
-    def __init__(self):
-        self.z_time_constant = 0.02
-        self.z_speed = 0.03  # maximum speed [m/s]
-        self.pitch_time_constant = 0.5
-        self.roll_speed = 0.16  # maximum roll rate [rad/s]
-        self.delta_x = 0.23
-        self.delta_y = 0.173
-        self.x_shift = 0.0
-
-    @property
-    def default_stance(self):
-        return np.array(
-            [
-                [self.delta_x + self.x_shift, self.delta_x + self.x_shift, -self.delta_x + self.x_shift, -self.delta_x + self.x_shift],
-                [-self.delta_y, self.delta_y, -self.delta_y, self.delta_y],
-                [0, 0, 0, 0],
-            ]
-        )
 
 
 class SwingParams:
@@ -82,6 +63,37 @@ class SwingParams:
         self.z_coeffs = solve(A_z, b_z)
 
 
+class StanceParams:
+    """Stance parameters
+    """
+
+    def __init__(self):
+        self.z_time_constant = 0.02
+        self.z_speed = 0.03  # maximum speed [m/s]
+        self.pitch_deadband = 0.02
+        self.pitch_time_constant = 0.25
+        self.max_pitch_rate = 0.15
+        self.roll_speed = 0.16  # maximum roll rate [rad/s]
+        self.delta_x = 0.23
+        self.delta_y = 0.173
+        self.x_shift = -0.01
+
+    @property
+    def default_stance(self):
+        return np.array(
+            [
+                [
+                    self.delta_x + self.x_shift,
+                    self.delta_x + self.x_shift,
+                    -self.delta_x + self.x_shift,
+                    -self.delta_x + self.x_shift,
+                ],
+                [-self.delta_y, self.delta_y, -self.delta_y, self.delta_y],
+                [0, 0, 0, 0],
+            ]
+        )
+
+
 class GaitParams:
     """Gait Parameters
     """
@@ -93,11 +105,11 @@ class GaitParams:
             [[1, 1, 1, 1], [1, 1, 1, 1], [1, 1, 1, 1], [1, 1, 1, 1]]
         )
         self.overlap_time = (
-            0.2
-        )  # duration of the phase where all four feet are on the ground
+            0.5  # duration of the phase where all four feet are on the ground
+        )
         self.swing_time = (
-            0.2
-        )  # duration of the phase when only two feet are on the ground
+            0.5  # duration of the phase when only two feet are on the ground
+        )
 
     @property
     def overlap_ticks(self):
@@ -182,7 +194,7 @@ class RobotConfig:
 
         leg_z = 1e-6
         leg_mass = 0.010
-        leg_x = 0  # 1 / 12 * self.LEG_L ** 2 * leg_mass
+        leg_x = 1 / 12 * self.LOWER_LEG ** 2 * leg_mass
         leg_y = leg_x
         self.LEG_INERTIA = (leg_x, leg_y, leg_z)
 
@@ -203,7 +215,6 @@ class RobotConfig:
         # Force limits
         self.MAX_JOINT_TORQUE = 12.0
         self.REVOLUTE_RANGE = 3
-
         self.NUM_ODRIVES = 6
         self.ENCODER_CPR = 2000
         self.MOTOR_REDUCTION = 4

@@ -3,7 +3,6 @@ from pupper.Config import ServoParams, PWMParams
 
 
 class HardwareInterface:
-
     def __init__(self):
         self.pi = pigpio.pi()
         self.pwm_params = PWMParams()
@@ -12,6 +11,9 @@ class HardwareInterface:
 
     def set_actuator_postions(self, joint_angles):
         send_servo_commands(self.pi, self.pwm_params, self.servo_params, joint_angles)
+    
+    def set_actuator_position(self, joint_angle, axis, leg):
+        send_servo_command(self.pi, self.pwm_params, self.servo_params, joint_angle, axis, leg)
 
     def deactivate_actuators(self):
         pass

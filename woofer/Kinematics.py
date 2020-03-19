@@ -3,7 +3,6 @@ import numpy as np
 
 def leg_forward_kinematics(alpha, leg_index, config):
     """Find the body-centric coordinates of a given foot given the joint angles.
-
     Parameters
     ----------
     alpha : Numpy array (3)
@@ -12,7 +11,6 @@ def leg_forward_kinematics(alpha, leg_index, config):
         Leg index.
     config : Config object
         Robot parameters object
-
     Returns
     -------
     Numpy array (3)
@@ -23,7 +21,6 @@ def leg_forward_kinematics(alpha, leg_index, config):
 
 def leg_explicit_inverse_kinematics(r_body_foot, leg_index, config):
     """Find the joint angles corresponding to the given body-relative foot position for a given leg and configuration
-
     Parameters
     ----------
     r_body_foot : [type]
@@ -32,7 +29,6 @@ def leg_explicit_inverse_kinematics(r_body_foot, leg_index, config):
         [description]
     config : [type]
         [description]
-
     Returns
     -------
     numpy array (3)
@@ -82,14 +78,12 @@ def leg_explicit_inverse_kinematics(r_body_foot, leg_index, config):
 
 def four_legs_inverse_kinematics(r_body_foot, config):
     """Find the joint angles for all twelve DOF correspoinding to the given matrix of body-relative foot positions.
-
     Parameters
     ----------
     r_body_foot : numpy array (3,4)
         Matrix of the body-frame foot positions. Each column corresponds to a separate foot.
     config : Config object
         Object of robot configuration parameters.
-
     Returns
     -------
     numpy array (3,4)
