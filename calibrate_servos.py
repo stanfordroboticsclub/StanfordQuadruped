@@ -1,6 +1,6 @@
 import pigpio
-from src.HardwareInterface import initialize_pwm, send_servo_command
-from src.PupperConfig import PWMParams, ServoParams
+from pupper.HardwareInterface import HardwareInterface
+from pupper.Config import PWMParams, ServoParams
 import numpy as np
 
 
@@ -12,8 +12,8 @@ def get_motor_name(i, j):
 
 
 def get_motor_setpoint(i, j):
-    data = [[0, 0, 0, 0], [45, 45, 45, 45], [45, 45, 45, 45]]
-    return data[i][j]
+    data = np.array([[0, 0, 0, 0], [45, 45, 45, 45], [45, 45, 45, 45]])
+    return data[i, j]
 
 
 def degrees_to_radians(input_array):
@@ -32,7 +32,7 @@ def degrees_to_radians(input_array):
     return np.pi / 180.0 * input_array
 
 
-def step_until(servo_params, pi_board, pwm_params, kValue, i_index, j_index, set_point):
+def step_until(hardware_interface, kValue, axis, leg, set_point):
     """Returns the angle offset needed to correct a given link by asking the user for input.
 
     Returns
@@ -47,29 +47,23 @@ def step_until(servo_params, pi_board, pwm_params, kValue, i_index, j_index, set
         above_or_below = str(
             input(
                 "Desired position: "
-                + set_names[i_index]
-                + ". Enter 'a' or 'b' to raise or lower the link. Enter 'd' when done. Input: "
+                + set_names[axis]
+                + ". Enter 'a' or 'b' to move the link until the desired position is met. Enter 'd' when done. Input: "
             )
         )
         if above_or_below == "above" or above_or_below == "a":
             offset += 1.0
-            send_servo_command(
-                pi_board,
-                pwm_params,
-                servo_params,
+            hardware_interface.set_actuator_position(
                 degrees_to_radians(set_point + offset),
-                i_index,
-                j_index,
+                axis,
+                leg,
             )
         elif above_or_below == "below" or above_or_below == "b":
             offset -= 1.0
-            send_servo_command(
-                pi_board,
-                pwm_params,
-                servo_params,
+            hardware_interface.set_actuator_position(
                 degrees_to_radians(set_point + offset),
-                i_index,
-                j_index,
+                axis,
+                leg,
             )
         elif above_or_below == "done" or above_or_below == "d":
             found_position = True
@@ -78,7 +72,7 @@ def step_until(servo_params, pi_board, pwm_params, kValue, i_index, j_index, set
     return offset
 
 
-def calibrate_b(servo_params, pi_board, pwm_params):
+def calibrate_b(hardware_interface):
     """Calibrate the angle offset for the twelve motors on the robot. Note that servo_params is modified in-place.
     Parameters
     ----------
@@ -94,9 +88,9 @@ def calibrate_b(servo_params, pi_board, pwm_params):
     kValue = float(
         input("Please provide a K value (microseconds per degree) for your servos: ")
     )
-    servo_params.micros_per_rad = kValue * 180 / np.pi
+    hardware_interface.servo_params.micros_per_rad = kValue * 180 / np.pi
 
-    servo_params.neutral_angle_degrees = np.zeros((3, 4))
+    hardware_interface.servo_params.neutral_angle_degrees = np.zeros((3, 4))
 
     for j in range(4):
         for i in range(3):
@@ -108,10 +102,7 @@ def calibrate_b(servo_params, pi_board, pwm_params):
                 set_point = get_motor_setpoint(i, j)
 
                 # Move servo to set_point angle
-                send_servo_command(
-                    pi_board,
-                    pwm_params,
-                    servo_params,
+                hardware_interface.set_actuator_position(
                     degrees_to_radians(set_point),
                     i,
                     j,
@@ -125,16 +116,13 @@ def calibrate_b(servo_params, pi_board, pwm_params):
 
                 # The upper leg link has a different equation because we're calibrating to make it horizontal, not vertical
                 if i == 1:
-                    servo_params.neutral_angle_degrees[i, j] = set_point - offset
+                    hardware_interface.servo_params.neutral_angle_degrees[i, j] = set_point - offset
                 else:
-                    servo_params.neutral_angle_degrees[i, j] = -(set_point + offset)
+                    hardware_interface.servo_params.neutral_angle_degrees[i, j] = -(set_point + offset)
                 print("New beta angle: ", servo_params.neutral_angle_degrees[i, j])
 
                 # Send the servo command using the new beta value and check that it's ok
-                send_servo_command(
-                    pi_board,
-                    pwm_params,
-                    servo_params,
+                hardware_interface.set_actuator_position(
                     degrees_to_radians([0, 45, -45][i]),
                     i,
                     j,
@@ -150,14 +138,11 @@ def calibrate_b(servo_params, pi_board, pwm_params):
 def main():
     """Main program
     """
-    pi_board = pigpio.pi()
-    pwm_params = PWMParams()
-    servo_params = ServoParams()
-    initialize_pwm(pi_board, pwm_params)
+    hardware_interface = HardwareInterface()
 
-    calibrate_b(servo_params, pi_board, pwm_params)
+    calibrate_b(hardware_interface)
     print("Calibrated neutral angles:")
-    print(servo_params.neutral_angle_degrees)
+    print(hardware_interface.servo_params.neutral_angle_degrees)
 
 
 main()

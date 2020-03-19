@@ -11,6 +11,9 @@ class HardwareInterface:
 
     def set_actuator_postions(self, joint_angles):
         send_servo_commands(self.pi, self.pwm_params, self.servo_params, joint_angles)
+    
+    def set_actuator_position(self, joint_angle, axis, leg):
+        send_servo_command(self.pi, self.pwm_params, self.servo_params, joint_angle, axis, leg)
 
 
 def pwm_to_duty_cycle(pulsewidth_micros, pwm_params):
