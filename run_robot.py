@@ -31,7 +31,6 @@ def main(use_imu=False):
     joystick_interface = JoystickInterface(config)
     print("Done.")
 
-    input("Press enter to start control loop...")
     last_loop = time.time()
 
     print("Summary of gait parameters:")
