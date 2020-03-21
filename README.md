@@ -113,10 +113,24 @@ Link to project page: https://stanfordstudentrobotics.org/pupper
             ```bash
             sudo systemctl restart robot
             ```
+## Calibration
+Calibration is an important and necessary step to do before running the robot. The reason calibration is necessary is that we don't have a precise measurement of how you assembled the servo arms and discs onto the servo splines (the output shafts). Running the calibration script will help you determine this rotational offset by prompting you to align each of the 12 degrees of freedom with a known angle, such as the horizontal or the vertical. 
+### Materials
+1. Finished robot
+2. Some sort of stand to hold the robot up so that its legs can extend without touching the ground/table. 
+### Steps
+1. Plug in your 2S Lipo battery
+2. SSH into the robot as done in the installation section
+3. Run the calibration script
+    ```bash
+    cd StanfordQudruped
+    sudo pigpiod
+    python3 calibrate_servos.py
+    ```
+    - The calibration script will prompt you through calibrating each of pupper's 12 servo motors. When it asks you to move a link to the horizontal position, you might be wondering what exactly counts as making the link horizontal. The answer is to align the *joint centers* of each link. For example, when aligning the upper link to the horizontal, you'll want to the line between the servo spline and bolt that connects the upper link to the lower link to be as horizontal as possible. 
 
-## Starting the robot
+## Running the robot
 1. Plug in your 2S Lipo battery. 
-    - If you power the robot with anything higher than 8.4V (aka >2S) you'll almost certainly fry all your expensive servos!
     - If you followed the instructions above, the code will automatically start running on boot. If you want to turn this feature off, ssh into the robot, go into rw mode, and then do
         ```bash
         sudo systemctl disable robot
@@ -139,4 +153,17 @@ Link to project page: https://stanfordstudentrobotics.org/pupper
 - Left joystick
     - Forward/back: moves the robot forward/backwards when in Trot mode
     - Left/right: moves the robot left/right when in Trot mode
+
+## Notes
+- PS4 controller pairing instructions (repeat of instructions above)
+    - To put it into pairing mode, hold the share button and circular Playstation button at the same time until it starts making quick double flashes. 
+    - If it starts making slow single flashes, hold the Playstation button down until it stops blinking and try again.
+- Battery voltage
+    - If you power the robot with anything higher than 8.4V (aka >2S) you'll almost certainly fry all your expensive servos!
+    - Also note that you should attach a lipo battery alarm to your battery when running the robot so that you are know when the battery is depleted. Discharging your battery too much runs the risk of starting a fire, especially if you try to charge it again after it's been completely discharged. A good rule-of-thumb for know when a lipo is discharged is checking whether the individual cell voltages are below 3.6V.
+
+## Help
+- Feel free to raise an issue (https://github.com/stanfordroboticsclub/StanfordQuadruped/issues/new/choose) or email me at nathankau [at] stanford [dot] edu
+- We also have a Google group set up here: https://groups.google.com/forum/#!forum/stanford-quadrupeds
+
 
