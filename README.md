@@ -15,14 +15,15 @@ Link to project page: https://stanfordstudentrobotics.org/pupper
 - Ethernet cable
 
 ### Steps
-1. Install and set up Raspbian on the Pi
-    - Follow the instructions on this repo to put the self-setup code on the Pi: https://github.com/stanfordroboticsclub/RPI-Setup 
+1. Set up the Raspberry Pi
+    - Follow the instructions on this repo to put the self-setup code on the Pi: https://github.com/stanfordroboticsclub/RPI-Setup
     - Instead of using the linked version of Raspbian, just use the latest version of "Raspbian Buster Lite" from https://www.raspberrypi.org/downloads/raspbian/
     - If you're not on Stanford campus, use 
         ```bash
         sudo raspi-config
         ```
         to connect the Raspberry Pi to your home wifi network.
+    - Note: The robot code won't work without following the RPI-Setup instructions linked above because the robot's inter-process communication layer (UDPComms) needs the Pi to have a certain ethernet configuration.
 2. Test that the Pi works and connects to the internet
     ```bash
     ping www.google.com
