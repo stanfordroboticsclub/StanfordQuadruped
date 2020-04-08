@@ -17,13 +17,12 @@ Link to project page: https://stanfordstudentrobotics.org/pupper
 ### Steps
 1. Set up the Raspberry Pi
     - Follow the instructions on this repo to put the self-setup code on the Pi: https://github.com/stanfordroboticsclub/RPI-Setup
-    - Instead of using the linked version of Raspbian, just use the latest version of "Raspbian Buster Lite" from https://www.raspberrypi.org/downloads/raspbian/
     - If you're not on Stanford campus, use 
         ```bash
         sudo raspi-config
         ```
-        to connect the Raspberry Pi to your home wifi network.
-    - Note: The robot code won't work without following the RPI-Setup instructions linked above because the robot's inter-process communication layer (UDPComms) needs the Pi to have a certain ethernet configuration.
+        to connect the Raspberry Pi to your home wifi network. It's important to connect to the internet over wifi and leave your ethernet port unused. This is because our UDPComms library checks that the ethernet adapter has a certain ip and subnet mask so it can do inter-process and inter-device communication.
+    - Note: The robot code won't work without following the RPI-Setup instructions linked above because the robot's inter-process communication layer (UDPComms) needs the Pi to have a certain ethernet configuration. If you're having problems with the networking, specifically with UDPComms failing, check out this issue: https://groups.google.com/forum/#!topic/stanford-quadrupeds/GO5GPiBUcnc
 2. Test that the Pi works and connects to the internet
     ```bash
     ping www.google.com
@@ -51,7 +50,7 @@ Link to project page: https://stanfordstudentrobotics.org/pupper
     sudo bash install.sh
     ```
 6. Power-cycle the robot
-7. Reconnect to the robot and check that everything is running correctly.
+7. Reconnect to the robot (over ethernet) and check that everything is running correctly. (If your computer can't connect to the Pi, check that you correctly changed your computer's ethernet adapter's IP and subnet mask as described in step 1). 
     - SSH into the robot
         ```bash
         ssh pi@10.0.0.xx
@@ -115,20 +114,29 @@ Link to project page: https://stanfordstudentrobotics.org/pupper
             sudo systemctl restart robot
             ```
 ## Calibration
-Calibration is an important and necessary step to do before running the robot. The reason calibration is necessary is that we don't have a precise measurement of how you assembled the servo arms and discs onto the servo splines (the output shafts). Running the calibration script will help you determine this rotational offset by prompting you to align each of the 12 degrees of freedom with a known angle, such as the horizontal or the vertical. 
+Calibration is a necessary step before running the robot because that we don't yet have a precise measurement of how the servos arms are fixed relative to the servo output shafts. Running the calibration script will help you determine this rotational offset by prompting you to align each of the 12 degrees of freedom with a known angle, such as the horizontal or the vertical. 
 ### Materials
 1. Finished robot
 2. Some sort of stand to hold the robot up so that its legs can extend without touching the ground/table. 
 ### Steps
 1. Plug in your 2S Lipo battery
 2. SSH into the robot as done in the installation section
-3. Run the calibration script
+3. Stop the robot script from taking over the PWM outputs
+    ```bash
+    rw
+    sudo systemctl stop robot
+    ```
+4. Run the calibration script
     ```bash
     cd StanfordQudruped
     sudo pigpiod
     python3 calibrate_servos.py
     ```
     - The calibration script will prompt you through calibrating each of pupper's 12 servo motors. When it asks you to move a link to the horizontal position, you might be wondering what exactly counts as making the link horizontal. The answer is to align the *joint centers* of each link. For example, when aligning the upper link to the horizontal, you'll want to the line between the servo spline and bolt that connects the upper link to the lower link to be as horizontal as possible. 
+5. Re-enable the robot script
+    ```bash
+    sudo systemctl start robot
+    ```
 
 ## Running the robot
 1. Plug in your 2S Lipo battery. 
@@ -162,6 +170,8 @@ Calibration is an important and necessary step to do before running the robot. T
 - Battery voltage
     - If you power the robot with anything higher than 8.4V (aka >2S) you'll almost certainly fry all your expensive servos!
     - Also note that you should attach a lipo battery alarm to your battery when running the robot so that you are know when the battery is depleted. Discharging your battery too much runs the risk of starting a fire, especially if you try to charge it again after it's been completely discharged. A good rule-of-thumb for know when a lipo is discharged is checking whether the individual cell voltages are below 3.6V.
+- Feet!
+    - Using the bare carbon fiber as feet works well for grippy surfaces, including carpet. If you want to use the robot on a more slippery surface, we recommend buying rubber grommets (McMaster #90131A101) and fastening them to the pre-drilled holes in the feet. 
 
 ## Help
 - Feel free to raise an issue (https://github.com/stanfordroboticsclub/StanfordQuadruped/issues/new/choose) or email me at nathankau [at] stanford [dot] edu
