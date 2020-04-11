@@ -1,9 +1,9 @@
 import numpy as np
 import time
-from src.IMU import IMU
-from src.Controller import Controller
-from src.JoystickInterface import JoystickInterface
-from src.State import State
+from common.IMU import IMU
+from common.Controller import Controller
+from common.JoystickInterface import JoystickInterface
+from common.State import State
 from pupper.HardwareInterface import HardwareInterface
 from pupper.Config import Configuration
 from pupper.Kinematics import four_legs_inverse_kinematics
@@ -75,5 +75,5 @@ def main(use_imu=False):
             # Update the pwm widths going to the servos
             hardware_interface.set_actuator_postions(state.joint_angles)
 
-
-main()
+if __name__ == "__main__":
+    main()

@@ -1,10 +1,11 @@
-from src.Gaits import GaitController
-from src.StanceController import StanceController
-from src.SwingLegController import SwingController
-from src.Utilities import clipped_first_order_filter
-from src.State import BehaviorState, State
+from common.Gaits import GaitController
+from common.StanceController import StanceController
+from common.SwingLegController import SwingController
+from common.Utilities import clipped_first_order_filter
+from common.State import BehaviorState, State
 
 import numpy as np
+from collections import defaultdict
 from transforms3d.euler import euler2mat, quat2euler
 from transforms3d.quaternions import qconjugate, quat2axangle
 from transforms3d.axangles import axangle2mat
@@ -31,7 +32,7 @@ class Controller:
 
         self.hop_transition_mapping = {BehaviorState.REST: BehaviorState.HOP, BehaviorState.HOP: BehaviorState.FINISHHOP, BehaviorState.FINISHHOP: BehaviorState.REST, BehaviorState.TROT: BehaviorState.HOP}
         self.trot_transition_mapping = {BehaviorState.REST: BehaviorState.TROT, BehaviorState.TROT: BehaviorState.REST, BehaviorState.HOP: BehaviorState.TROT, BehaviorState.FINISHHOP: BehaviorState.TROT}
-        self.activate_transition_mapping = {BehaviorState.DEACTIVATED: BehaviorState.REST, BehaviorState.REST: BehaviorState.DEACTIVATED}
+        self.activate_transition_mapping = defaultdict(lambda: BehaviorState.DEACTIVATED, {BehaviorState.DEACTIVATED: BehaviorState.REST})
 
 
     def step_gait(self, state, command):
