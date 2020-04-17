@@ -26,8 +26,13 @@ The swing controller picks up the feet that just finished their stance phase, an
 Both the stance and swing controllers generate target positions for the feet in cartesian coordinates relative the body center of mass. It's convenient to work in cartesian coordinates for the stance and swing planning, but we now need to convert them to motor angles. This is done by using an inverse kinematics model, which maps between cartesian body coordinates and motor angles. These motor angles, also called joint angles, are then populated into the ```state``` variable and returned by the model. 
 
 
+## How to Build Pupper
+Instructions: https://docs.google.com/document/d/1Ofrtlmh0dQoEvRji5PUVH9bgwHnR-8KkTXR1eMLzXh0/edit#. This document provides an overview of the project and links to build instructions as well as a bill of materials. 
 
-## Installation
+While you can find the bill of materials by looking through the document linked above, it's also linked here for convenience: https://docs.google.com/spreadsheets/d/1zZ2e00XdzA7zwb35Ly_HdzfDJcsxMIR_5vjwnf-KW70/edit#gid=1141991382 
+
+
+## Software Installation
 ### Materials
 - Raspberry Pi 4
 - SD Card (32GB recommended)
