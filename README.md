@@ -27,7 +27,7 @@ Both the stance and swing controllers generate target positions for the feet in 
 
 
 ## How to Build Pupper
-Instructions: https://docs.google.com/document/d/1Ofrtlmh0dQoEvRji5PUVH9bgwHnR-8KkTXR1eMLzXh0/edit#. This document provides an overview of the project and links to build instructions as well as a bill of materials. 
+Instructions: https://pupper.readthedocs.io/en/latest/. This document provides an overview of the project and links to build instructions as well as a bill of materials. 
 
 While you can find the bill of materials by looking through the document linked above, it's also linked here for convenience: https://docs.google.com/spreadsheets/d/1zZ2e00XdzA7zwb35Ly_HdzfDJcsxMIR_5vjwnf-KW70/edit#gid=1141991382 
 
