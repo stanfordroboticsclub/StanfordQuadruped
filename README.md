@@ -7,7 +7,9 @@ This repository hosts the code for Stanford Pupper and Stanford Woofer, Raspberr
 
 Video of pupper in action: https://youtu.be/NIjodHA78UE
 
-Link to project page: https://stanfordstudentrobotics.org/pupper
+Project page: https://stanfordstudentrobotics.org/pupper
+
+Documentation: https://pupper.readthedocs.io/en/latest/
 
 ## How it works
 ![Overview diagram](imgs/diagram1.jpg)
