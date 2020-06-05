@@ -43,7 +43,7 @@ While you can find the bill of materials by looking through the document linked 
 
 ### Steps
 1. Set up the Raspberry Pi
-    - Follow the instructions on this repo to put the self-setup code on the Pi: https://github.com/stanfordroboticsclub/RPI-Setup
+    - Follow the instructions on this repo the Pi's SD card: https://github.com/stanfordroboticsclub/RPI-Setup
     - If you're not on Stanford campus, use 
         ```bash
         sudo raspi-config
