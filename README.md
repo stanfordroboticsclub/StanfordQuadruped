@@ -43,17 +43,15 @@ While you can find the bill of materials by looking through the document linked 
 
 ### Steps
 1. Set up the Raspberry Pi
-    - Follow the instructions on this repo the Pi's SD card: https://github.com/stanfordroboticsclub/RPI-Setup
-    - If you're not on Stanford campus, use 
-        ```bash
-        sudo raspi-config
-        ```
-        to connect the Raspberry Pi to your home wifi network. It's important to connect to the internet over wifi and leave your ethernet port unused. This is because our UDPComms library checks that the ethernet adapter has a certain ip and subnet mask so it can do inter-process and inter-device communication.
-    - Note: The robot code won't work without following the RPI-Setup instructions linked above because the robot's inter-process communication layer (UDPComms) needs the Pi to have a certain ethernet configuration. If you're having problems with the networking, specifically with UDPComms failing, check out this issue: https://groups.google.com/forum/#!topic/stanford-quadrupeds/GO5GPiBUcnc
+    - Follow the instructions on this repo to prepare the Pi's SD card: https://github.com/stanfordroboticsclub/RPI-Setup
+    - Note: It's important to connect to the internet over wifi instead of over ethernet because we modify the ethernet port's settings to allow us to use the UDPComms library for inter- and intra-device communication. If you're having problems with the networking, specifically with UDPComms failing, check out this issue: https://groups.google.com/forum/#!topic/stanford-quadrupeds/GO5GPiBUcnc
 2. Connect to the Pi over SSH and check that it has access to the internet. If you're having trouble SSH-ing into the Pi, please check the instructions for setting the Pi's ethernet settings linked in the previous step.
     ```bash
-    ssh pi@10.0.0.10
-    [then enter the default password: raspberry]
+    ssh pi@10.0.0.xx
+    ```
+    - Here, "xx" is the IP address you chose for the Pi when running the install_packages.sh script. When prompted for the password, enter the default password "raspberry" or the one you set in the install_packages.sh script.
+    - Next, you can test for the internet connection:
+    ```bash
     ping www.google.com
     ```
     - If that doesn't work, do
