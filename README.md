@@ -48,8 +48,10 @@ While you can find the bill of materials by looking through the document linked 
         ```
         to connect the Raspberry Pi to your home wifi network. It's important to connect to the internet over wifi and leave your ethernet port unused. This is because our UDPComms library checks that the ethernet adapter has a certain ip and subnet mask so it can do inter-process and inter-device communication.
     - Note: The robot code won't work without following the RPI-Setup instructions linked above because the robot's inter-process communication layer (UDPComms) needs the Pi to have a certain ethernet configuration. If you're having problems with the networking, specifically with UDPComms failing, check out this issue: https://groups.google.com/forum/#!topic/stanford-quadrupeds/GO5GPiBUcnc
-2. Test that the Pi works and connects to the internet
+2. Connect to the Pi over SSH and check that it has access to the internet. If you're having trouble SSH-ing into the Pi, please check the instructions for setting the Pi's ethernet settings linked in the previous step.
     ```bash
+    ssh pi@10.0.0.10
+    [then enter the default password: raspberry]
     ping www.google.com
     ```
     - If that doesn't work, do
@@ -57,25 +59,17 @@ While you can find the bill of materials by looking through the document linked 
     ifconfig
     ```
     and check the wlan0 portion to check if you have an IP address and other debugging info. 
-3. (Optional) Install the PREEMPT-RT kernel onto the Pi
-    - Download the kernel patch https://github.com/lemariva/RT-Tools-RPi/tree/master/preempt-rt/kernel_4_19_59-rt23-v7l%2B
-    - Follow these instructions starting from “Transfer the Kernel” https://lemariva.com/blog/2019/09/raspberry-pi-4b-preempt-rt-kernel-419y-performance-test
-    - Test by running in the shell:
-        ```bash
-        uname -r
-        ```
-    - We haven't yet characterized the benefits of using the preempt-rt kernel on the Pi so skipping it is totally fine.
-4. Clone this code
+3. Clone this repo (on the Pi)
     ```bash
     git clone https://github.com/stanfordroboticsclub/StanfordQuadruped.git
     ```
-5. Install requirements
+4. Install requirements
     ```bash
     cd StanfordQuadruped
     sudo bash install.sh
     ```
-6. Power-cycle the robot
-7. Reconnect to the robot (over ethernet) and check that everything is running correctly. (If your computer can't connect to the Pi, check that you correctly changed your computer's ethernet adapter's IP and subnet mask as described in step 1). 
+5. Power-cycle the robot
+6. Reconnect to the robot (over ethernet) and check that everything is running correctly. 
     - SSH into the robot
         ```bash
         ssh pi@10.0.0.xx
