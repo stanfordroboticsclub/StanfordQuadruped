@@ -75,5 +75,5 @@ def main(use_imu=False):
             # Update the pwm widths going to the servos
             hardware_interface.set_actuator_postions(state.joint_angles)
 
-
-main()
+if __name__ == "__main__":
+    main()
