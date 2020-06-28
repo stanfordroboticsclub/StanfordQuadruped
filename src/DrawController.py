@@ -30,7 +30,7 @@ class DrawController:
         self.previous_position = state.foot_locations[:, self.draw_leg_index]
         self.previous_position[2] = self.PEN_DOWN_HEIGHT
 
-    def get_next_position(self, previous_position):
+    def get_next_position(self):
         previous_position = self.previous_position
         if (self.drawing_index >= self.vertices.shape[0]):
             return previous_position
