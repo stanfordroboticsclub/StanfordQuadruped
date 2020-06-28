@@ -1,10 +1,10 @@
 import numpy as np
 
 class DrawController:
-    PEN_DOWN_HEIGHT = 0
-    PEN_UP_HEIGHT = 0.01
+    PEN_DOWN_HEIGHT = 0.003
+    PEN_UP_HEIGHT = 0.0175
 
-    MAX_LIN_DIST = 0.0005
+    MAX_LIN_DIST = 0.00075
     MAX_DRAW_SIZE = 0.1
     def __init__(self, config, fname='/home/pi/StanfordQuadruped/draw_test.csv'):
         self.config = config
@@ -28,7 +28,7 @@ class DrawController:
     def reset_drawing(self, state):
         self.drawing_index = 0
         self.previous_position = state.foot_locations[:, self.draw_leg_index]
-        self.previous_position[2] = self.PEN_DOWN_HEIGHT
+        self.previous_position[2] = 0
 
     def get_next_position(self):
         previous_position = self.previous_position
