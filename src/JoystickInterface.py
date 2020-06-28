@@ -33,7 +33,10 @@ class JoystickInterface:
 
             # Check if requesting a state transition to hopping, from trotting or resting
             hop_toggle = msg["x"]
-            command.hop_event = (hop_toggle == 1 and self.previous_hop_toggle == 0)            
+            command.hop_event = (hop_toggle == 1 and self.previous_hop_toggle == 0)
+
+            draw_toggle = msg["circle"]
+            command.draw_event = (draw_toggle == 1 and self.previous_draw_toggle == 0)            
             
             activate_toggle = msg["L1"]
             command.activate_event = (activate_toggle == 1 and self.previous_activate_toggle == 0)
@@ -42,6 +45,7 @@ class JoystickInterface:
             self.previous_gait_toggle = gait_toggle
             self.previous_hop_toggle = hop_toggle
             self.previous_activate_toggle = activate_toggle
+            self.previous_draw_toggle = draw_toggle
 
             ####### Handle continuous commands ########
             x_vel = msg["ly"] * self.config.max_x_velocity

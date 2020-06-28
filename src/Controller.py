@@ -1,6 +1,7 @@
 from src.Gaits import GaitController
 from src.StanceController import StanceController
 from src.SwingLegController import SwingController
+from src.DrawController import DrawController
 from src.Utilities import clipped_first_order_filter
 from src.State import BehaviorState, State
 
@@ -8,6 +9,7 @@ import numpy as np
 from transforms3d.euler import euler2mat, quat2euler
 from transforms3d.quaternions import qconjugate, quat2axangle
 from transforms3d.axangles import axangle2mat
+from collections import defaultdict
 
 
 class Controller:
@@ -28,10 +30,15 @@ class Controller:
         self.gait_controller = GaitController(self.config)
         self.swing_controller = SwingController(self.config)
         self.stance_controller = StanceController(self.config)
+        self.draw_controller = DrawController(self.config)
 
-        self.hop_transition_mapping = {BehaviorState.REST: BehaviorState.HOP, BehaviorState.HOP: BehaviorState.FINISHHOP, BehaviorState.FINISHHOP: BehaviorState.REST, BehaviorState.TROT: BehaviorState.HOP}
-        self.trot_transition_mapping = {BehaviorState.REST: BehaviorState.TROT, BehaviorState.TROT: BehaviorState.REST, BehaviorState.HOP: BehaviorState.TROT, BehaviorState.FINISHHOP: BehaviorState.TROT}
-        self.activate_transition_mapping = {BehaviorState.DEACTIVATED: BehaviorState.REST, BehaviorState.REST: BehaviorState.DEACTIVATED}
+        # self.hop_transition_mapping = {BehaviorState.REST: BehaviorState.HOP, BehaviorState.HOP: BehaviorState.FINISHHOP, BehaviorState.FINISHHOP: BehaviorState.REST, BehaviorState.TROT: BehaviorState.HOP}
+        self.hop_transition_mapping = defaultdict(lambda: BehaviorState.HOP, {BehaviorState.HOP: BehaviorState.FINISHHOP, BehaviorState.FINISHHOP: BehaviorState.REST})
+        # self.trot_transition_mapping = {BehaviorState.REST: BehaviorState.TROT, BehaviorState.TROT: BehaviorState.REST, BehaviorState.HOP: BehaviorState.TROT, BehaviorState.FINISHHOP: BehaviorState.TROT}
+        self.trot_transition_mapping = defaultdict(lambda: BehaviorState.TROT, {BehaviorState.TROT: BehaviorState.REST})
+        # self.activate_transition_mapping = {BehaviorState.DEACTIVATED: BehaviorState.REST, BehaviorState.REST: BehaviorState.DEACTIVATED}
+        self.activate_transition_mapping = defaultdict(lambda: BehaviorState.DEACTIVATED, {BehaviorState.DEACTIVATED: BehaviorState.REST})
+        self.draw_transition_mapping = defaultdict(lambda: BehaviorState.REST, {BehaviorState.REST: BehaviorState.DRAW})
 
 
     def step_gait(self, state, command):
@@ -79,6 +86,9 @@ class Controller:
             state.behavior_state = self.trot_transition_mapping[state.behavior_state]
         elif command.hop_event:
             state.behavior_state = self.hop_transition_mapping[state.behavior_state]
+        elif command.draw_event:
+            self.draw_controller.reset_drawing()
+            state.behavior_state = self.draw_transition_mapping[state.behavior_state]
 
         if state.behavior_state == BehaviorState.TROT:
             state.foot_locations, contact_modes = self.step_gait(
@@ -126,7 +136,7 @@ class Controller:
                 state.foot_locations, self.config
             )
 
-        elif state.behavior_state == BehaviorState.REST:
+        elif state.behavior_state == BehaviorState.REST or state.behavior_state == BehaviorState.DRAW:
             yaw_proportion = command.yaw_rate / self.config.max_yaw_rate
             self.smoothed_yaw += (
                 self.config.dt
@@ -138,10 +148,13 @@ class Controller:
                 )
             )
             # Set the foot locations to the default stance plus the standard height
-            state.foot_locations = (
-                self.config.default_stance
-                + np.array([0, 0, command.height])[:, np.newaxis]
-            )
+            state.foot_locations = self.config.default_stance
+
+            if state.behavior_state == BehaviorState.DRAW:
+                state.foot_locations[:, self.draw_controller.draw_leg_index] = self.draw_controller.get_next_position()
+
+            state.foot_locations += np.array([0, 0, command.height])[:, np.newaxis]
+
             # Apply the desired body rotation
             rotated_foot_locations = (
                 euler2mat(

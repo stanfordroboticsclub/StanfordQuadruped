@@ -25,3 +25,5 @@ class BehaviorState(Enum):
     TROT = 1
     HOP = 2
     FINISHHOP = 3
+
+    DRAW = 4
