@@ -1,8 +1,8 @@
 import numpy as np
 
 class DrawController:
-    PEN_DOWN_HEIGHT = 0.003 + 0.02
-    PEN_UP_HEIGHT = 0.02 + 0.02
+    PEN_DOWN_HEIGHT = 0.003 + 0.01
+    PEN_UP_HEIGHT = 0.02 + 0.01
 
     MAX_LIN_DIST = 0.00075
     MAX_DRAW_SIZE = 0.1
