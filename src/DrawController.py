@@ -9,7 +9,7 @@ class DrawController:
     def __init__(self, config, fname='/home/pi/StanfordQuadruped/draw_test.csv'):
         self.config = config
         self.draw_leg_index = 0
-        self.vertices = np.loadtxt(fname, dtype=np.float)
+        self.vertices = np.loadtxt(fname, dtype=np.float, delimiter=',')
         self._normalize_drawing()
         self.drawing_index = 0
         self.previous_position = None
