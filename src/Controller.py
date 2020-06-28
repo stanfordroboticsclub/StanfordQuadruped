@@ -87,7 +87,7 @@ class Controller:
         elif command.hop_event:
             state.behavior_state = self.hop_transition_mapping[state.behavior_state]
         elif command.draw_event:
-            self.draw_controller.reset_drawing()
+            self.draw_controller.reset_drawing(state)
             state.behavior_state = self.draw_transition_mapping[state.behavior_state]
 
         if state.behavior_state == BehaviorState.TROT:
