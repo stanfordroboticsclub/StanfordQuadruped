@@ -152,7 +152,7 @@ class Controller:
 
             if state.behavior_state == BehaviorState.DRAW:
                 state.foot_locations[:, self.draw_controller.draw_leg_index] = self.draw_controller.get_next_position()
-                state.foot_locations += np.array([2, -2, 0])[:, np.newaxis]
+                state.foot_locations += np.array([0.02, -0.02, 0])[:, np.newaxis]
 
             state.foot_locations += np.array([0, 0, command.height])[:, np.newaxis]
 
