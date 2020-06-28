@@ -22,7 +22,7 @@ class DrawController:
         self.vertices[:, :2] -= mean_xy
         self.vertices[:, :2] *= scale
         self.vertices = np.insert(self.vertices, 0, [0, 0, 1], axis=0)
-        self.vertices[:, :2] += self.config.default_stance[:2, self.draw_leg_index]
+        self.vertices[:, :2] += self.config.default_stance[:2, self.draw_leg_index] + np.array([0, 0.03])
         self.vertices[:, 2] = (self.PEN_UP_HEIGHT - self.PEN_DOWN_HEIGHT) * self.vertices[:, 2] + self.PEN_DOWN_HEIGHT
 
     def reset_drawing(self, state):
