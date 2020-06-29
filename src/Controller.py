@@ -174,11 +174,11 @@ class Controller:
         state.roll = command.roll
         state.height = command.height
 
-    def set_pose_to_default(self):
+    def set_pose_to_default(self, state):
         state.foot_locations = (
             self.config.default_stance
             + np.array([0, 0, self.config.default_z_ref])[:, np.newaxis]
         )
-        state.joint_angles = controller.inverse_kinematics(
+        state.joint_angles = self.inverse_kinematics(
             state.foot_locations, self.config
         )

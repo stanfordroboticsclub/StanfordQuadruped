@@ -5,8 +5,8 @@ class DrawController:
     PEN_UP_HEIGHT = 0.02 + 0.01
 
     MAX_LIN_DIST = 0.00075
-    MAX_DRAW_SIZE = 0.1
-    def __init__(self, config, fname='/home/pi/StanfordQuadruped/draw_test.csv'):
+    MAX_DRAW_SIZE = 0.15
+    def __init__(self, config, fname='/home/pi/StanfordQuadruped/smiley.csv'):
         self.config = config
         self.draw_leg_index = 0
         self.vertices = np.loadtxt(fname, dtype=np.float, delimiter=',')
