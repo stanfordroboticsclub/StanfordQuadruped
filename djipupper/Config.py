@@ -1,5 +1,5 @@
 import numpy as np
-from pupper.HardwareConfig import PS4_COLOR, PS4_DEACTIVATED_COLOR
+from djipupper.IndividualConfig import PS4_COLOR, PS4_DEACTIVATED_COLOR, SERIAL_PORT
 from enum import Enum
 
 class Configuration:
