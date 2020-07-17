@@ -3,10 +3,10 @@ from enum import Enum
 
 
 class State:
-    def __init__(self):
+    def __init__(self, height):
         self.horizontal_velocity = np.array([0.0, 0.0])
         self.yaw_rate = 0.0
-        self.height = -0.16
+        self.height = height
         self.pitch = 0.0
         self.roll = 0.0
         self.activation = 0

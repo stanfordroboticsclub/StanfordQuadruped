@@ -24,7 +24,7 @@ class JoystickInterface:
     def get_command(self, state, do_print=False):
         try:
             msg = self.udp_handle.get()
-            command = Command()
+            command = Command(height=self.config.default_z_ref)
             
             ####### Handle discrete commands ########
             # Check if requesting a state transition to trotting, or from trotting to resting
@@ -75,7 +75,7 @@ class JoystickInterface:
         except UDPComms.timeout:
             if do_print:
                 print("UDP Timed out")
-            return Command()
+            return Command(height=self.config.default_z_ref)
 
 
     def set_color(self, color):

@@ -19,37 +19,32 @@ def main(use_imu=False):
 
     # Create controller and user input handles
     controller = Controller(config, four_legs_inverse_kinematics)
-    state = State()
-    print("Creating joystick listener...")
+    state = State(height=config.default_z_ref)
+    print("Creating joystick listener...", end="")
     joystick_interface = JoystickInterface(config)
     print("Done.")
 
-    last_loop = time.time()
-
+    # Print summary of configuration to console for tuning purposes
     print("Summary of gait parameters:")
     print("overlap time: ", config.overlap_time)
     print("swing time: ", config.swing_time)
     print("z clearance: ", config.z_clearance)
+    print("default height: ", config.default_z_ref)
     print("x shift: ", config.x_shift)
-
 
     # TODO: bind the zero-ing to its own button
     hardware_interface.zero_motors()
     print("Zeroed motors")
-
-
     print("Waiting for L1 to activate robot.")
 
-    # Wait until the activate button has been pressed
+    last_loop = time.time()
     while True:
         if state.activation == 0:
             joystick_interface.set_color(config.ps4_deactivated_color)
-
             command = joystick_interface.get_command(state)
             if command.activate_event == 1:
                 print("Robot activated.")
                 joystick_interface.set_color(config.ps4_color)
-
                 hardware_interface.activate()
                 state.activation = 1
                 continue
@@ -61,14 +56,12 @@ def main(use_imu=False):
             if now - last_loop >= config.dt:
                 # Parse the udp joystick commands and then update the robot controller's parameters
                 command = joystick_interface.get_command(state)
-                # print(command)
                 # while hardware_interface.serial_handle.in_waiting > 0:
                 #     print(hardware_interface.serial_handle.readline().decode(),end="")
 
                 if command.activate_event == 1:
                     print("Deactivating Robot")
                     print("Waiting for L1 to activate robot.")
-
                     hardware_interface.deactivate()
                     state.activation = 0
                     continue
@@ -77,6 +70,7 @@ def main(use_imu=False):
                 controller.run(state, command)
 
                 # Update the pwm widths going to the servos
+                # print(state.joint_angles)
                 hardware_interface.set_actuator_postions(state.joint_angles)
 
                 last_loop = now
