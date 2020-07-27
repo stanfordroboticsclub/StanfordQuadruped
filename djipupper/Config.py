@@ -9,9 +9,9 @@ class Configuration:
         self.ps4_deactivated_color = PS4_DEACTIVATED_COLOR    
 
         #################### COMMANDS ####################
-        self.max_x_velocity = 0.3
-        self.max_y_velocity = 0.2
-        self.max_yaw_rate = 1.5
+        self.max_x_velocity = 0.5
+        self.max_y_velocity = 0.4
+        self.max_yaw_rate = 2.5
         self.max_pitch = 30.0 * np.pi / 180.0
         
         #################### MOVEMENT PARAMS ####################
@@ -28,7 +28,7 @@ class Configuration:
         #################### STANCE ####################
         self.delta_x = 0.1
         self.delta_y = 0.07
-        self.x_shift = -0.035
+        self.x_shift = -0.03
         self.default_z_ref = -0.14
 
         #################### SWING ######################
@@ -185,7 +185,6 @@ class SimulationConfig:
         m_rotor = 0.016  # Servo rotor mass
         r_rotor = 0.005  # Rotor radius
         self.ARMATURE = G ** 2 * m_rotor * r_rotor ** 2  # Inertia of rotational joints
-        # print("Servo armature", self.ARMATURE)
 
         NATURAL_DAMPING = 1.0  # Damping resulting from friction
         ELECTRICAL_DAMPING = 0.049  # Damping resulting from back-EMF

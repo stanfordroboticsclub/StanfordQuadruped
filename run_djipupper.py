@@ -7,9 +7,10 @@ from djipupper.HardwareInterface import HardwareInterface
 from djipupper.IndividualConfig import SERIAL_PORT  # make the configs more consistent
 from djipupper.Config import Configuration
 from djipupper.Kinematics import four_legs_inverse_kinematics
+import argparse
 
 
-def main(use_imu=False):
+def main(FLAGS):
     """Main program
     """
 
@@ -24,17 +25,15 @@ def main(use_imu=False):
     joystick_interface = JoystickInterface(config)
     print("Done.")
 
-    # Print summary of configuration to console for tuning purposes
-    print("Summary of gait parameters:")
-    print("overlap time: ", config.overlap_time)
-    print("swing time: ", config.swing_time)
-    print("z clearance: ", config.z_clearance)
-    print("default height: ", config.default_z_ref)
-    print("x shift: ", config.x_shift)
+    summarize_config(config)
 
     # TODO: bind the zero-ing to its own button
-    hardware_interface.zero_motors()
-    print("Zeroed motors")
+    if FLAGS.zero:
+        print("Zeroing motors...",end="")
+        hardware_interface.zero_motors()
+        print("Done.")
+    else:
+        print("Not zeroing motors!")
     print("Waiting for L1 to activate robot.")
 
     last_loop = time.time()
@@ -56,8 +55,6 @@ def main(use_imu=False):
             if now - last_loop >= config.dt:
                 # Parse the udp joystick commands and then update the robot controller's parameters
                 command = joystick_interface.get_command(state)
-                # while hardware_interface.serial_handle.in_waiting > 0:
-                #     print(hardware_interface.serial_handle.readline().decode(),end="")
 
                 if command.activate_event == 1:
                     print("Deactivating Robot")
@@ -69,12 +66,24 @@ def main(use_imu=False):
                 # Step the controller forward by dt
                 controller.run(state, command)
 
-                # Update the pwm widths going to the servos
-                # print(state.joint_angles)
+                # Send desired motor angles to the Teensy
                 hardware_interface.set_actuator_postions(state.joint_angles)
 
                 last_loop = now
 
 
+def summarize_config(config):
+    # Print summary of configuration to console for tuning purposes
+    print("Summary of gait parameters:")
+    print("overlap time: ", config.overlap_time)
+    print("swing time: ", config.swing_time)
+    print("z clearance: ", config.z_clearance)
+    print("default height: ", config.default_z_ref)
+    print("x shift: ", config.x_shift)
+
+
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--zero",help="zero the motors", action="store_true")
+    FLAGS = parser.parse_args()
+    main(FLAGS)

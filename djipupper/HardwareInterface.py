@@ -2,7 +2,7 @@ import serial
 import msgpack
 import numpy as np
 
-from djipupper.HardwareConfig import MAX_CURRENT, POSITION_KP, POSITION_KD
+from djipupper.HardwareConfig import MAX_CURRENT, POSITION_KP, POSITION_KD, MOTOR_ORIENTATION_CORRECTION
 
 class HardwareInterface:
     def __init__(self, port, baudrate=500000, start_byte=0x00):
@@ -42,11 +42,6 @@ class HardwareInterface:
         joint_angles : [numpy array (3, 4)]
             Joint angles, radians, with body axes RH rule convention
         """
-        direction_multiplier = np.array(
-            [[1, 1, -1, -1], [-1, 1, -1, 1], [1, -1, 1, -1]]
-        )
-        motor_frame_angles = joint_angles * direction_multiplier
+        motor_frame_angles = joint_angles * MOTOR_ORIENTATION_CORRECTION
         joint_angles_vector = motor_frame_angles.flatten("F").tolist()
-        # self.send_dict({"pos": [-0.18, -0.76, -0.91, 0.0, 0.76, 0.91, 0, 0, 0, 0, 0, 0]})
-        # self.send_dict({"pos": [0.0, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]})
         self.send_dict({"pos": joint_angles_vector})
