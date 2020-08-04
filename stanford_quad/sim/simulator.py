@@ -3,9 +3,12 @@ import pybullet_data
 
 
 class PySim:
-    def __init__(self, xml_path, kp=0.25, kv=0.5, max_torque=10, g=-9.81):
+    def __init__(self, xml_path, headless=False, kp=0.25, kv=0.5, max_torque=10, g=-9.81):
         # Set up PyBullet Simulator
-        pybullet.connect(pybullet.GUI)  # or p.DIRECT for non-graphical version
+        if not headless:
+            pybullet.connect(pybullet.GUI)  # or p.DIRECT for non-graphical version
+        else:
+            pybullet.connect(pybullet.DIRECT)  # or p.DIRECT for non-graphical version
         pybullet.setAdditionalSearchPath(pybullet_data.getDataPath())  # optionally
         pybullet.setGravity(0, 0, g)
         self.model = pybullet.loadMJCF(xml_path)

@@ -15,9 +15,7 @@ class Controller:
     """Controller and planner object
     """
 
-    def __init__(
-        self, config, inverse_kinematics,
-    ):
+    def __init__(self, config, inverse_kinematics):
         self.config = config
 
         self.smoothed_yaw = 0.0  # for REST mode only

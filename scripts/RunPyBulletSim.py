@@ -14,13 +14,13 @@ from stanford_quad.sim.simulator import PySim
 
 USE_IMU = False
 DEFAULT_VEL = np.array([0.15, 0])
-DEFAULT_YAW_RATE=0.0
+DEFAULT_YAW_RATE = 0.0
 
 # Create config
 config = Configuration()
 config.z_clearance = 0.02
 
-sim = PySim(xml_path=os.path.join(ASSET_DIR, "pupper_pybullet_out.xml"))
+sim = PySim(xml_path=os.path.join(ASSET_DIR, "pupper_pybullet_out.xml"), headless=False)
 hardware_interface = HardwareInterface(sim.model, sim.joint_indices)
 
 # Create imu handle
@@ -28,7 +28,7 @@ if USE_IMU:
     imu = IMU()
 
 # Create controller and user input handles
-controller = Controller(config, four_legs_inverse_kinematics,)
+controller = Controller(config, four_legs_inverse_kinematics)
 state = State()
 command = Command()
 
@@ -55,11 +55,13 @@ print("swing time: ", config.swing_time)
 print("z clearance: ", config.z_clearance)
 print("x shift: ", config.x_shift)
 
+SIM_FPS = 240
+
 # Run the simulation
-timesteps = 240 * 60 * 10  # simulate for a max of 10 minutes
+timesteps = 120 * 60 * 10  # simulate for a max of 10 minutes
 
 # Sim seconds per sim step
-sim_steps_per_sim_second = 240
+sim_steps_per_sim_second = 120
 sim_dt = 1.0 / sim_steps_per_sim_second
 last_control_update = 0
 start = time.time()
@@ -82,12 +84,9 @@ for steps in range(timesteps):
     sim.step()
 
     # Performance testing
-    elapsed = time.time() - start
-    if (steps % 60) == 0:
-        print(
-            "Sim seconds elapsed: {}, Real seconds elapsed: {}".format(
-                round(sim_time_elapsed, 3), round(elapsed, 3)
-            )
-        )
-        # print("Average steps per second: {0}, elapsed: {1}, i:{2}".format(steps / elapsed, elapsed, i))
 
+    if ((steps+1) % 100) == 0:
+        elapsed = (time.time() - start) / 100
+        # print("Sim seconds elapsed: {}, Real seconds elapsed: {}".format(round(sim_time_elapsed, 3), round(elapsed, 3)))
+        print (f"Sim running at {1/elapsed} Hz")
+        start = time.time()
