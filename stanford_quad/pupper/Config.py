@@ -1,8 +1,9 @@
 import numpy as np
-from pupper.HardwareConfig import MICROS_PER_RAD, NEUTRAL_ANGLE_DEGREES, PS4_COLOR, PS4_DEACTIVATED_COLOR
-from enum import Enum
 
 # TODO: put these somewhere else
+from stanford_quad.pupper.HardwareConfig import MICROS_PER_RAD, NEUTRAL_ANGLE_DEGREES, PS4_COLOR, PS4_DEACTIVATED_COLOR
+
+
 class PWMParams:
     def __init__(self):
         self.pins = np.array([[2, 14, 18, 23], [3, 15, 27, 24], [4, 17, 22, 25]])
@@ -18,9 +19,7 @@ class ServoParams:
         # The neutral angle of the joint relative to the modeled zero-angle in degrees, for each joint
         self.neutral_angle_degrees = NEUTRAL_ANGLE_DEGREES
 
-        self.servo_multipliers = np.array(
-            [[1, 1, 1, 1], [-1, 1, -1, 1], [1, -1, 1, -1]]
-        )
+        self.servo_multipliers = np.array([[1, 1, 1, 1], [-1, 1, -1, 1], [1, -1, 1, -1]])
 
     @property
     def neutral_angles(self):
@@ -30,15 +29,15 @@ class ServoParams:
 class Configuration:
     def __init__(self):
         ################# CONTROLLER BASE COLOR ##############
-        self.ps4_color = PS4_COLOR    
-        self.ps4_deactivated_color = PS4_DEACTIVATED_COLOR    
+        self.ps4_color = PS4_COLOR
+        self.ps4_deactivated_color = PS4_DEACTIVATED_COLOR
 
         #################### COMMANDS ####################
         self.max_x_velocity = 0.4
         self.max_y_velocity = 0.3
         self.max_yaw_rate = 2.0
         self.max_pitch = 30.0 * np.pi / 180.0
-        
+
         #################### MOVEMENT PARAMS ####################
         self.z_time_constant = 0.02
         self.z_speed = 0.03  # maximum speed [m/s]
@@ -59,25 +58,15 @@ class Configuration:
         #################### SWING ######################
         self.z_coeffs = None
         self.z_clearance = 0.07
-        self.alpha = (
-            0.5  # Ratio between touchdown distance and total horizontal stance movement
-        )
-        self.beta = (
-            0.5  # Ratio between touchdown distance and total horizontal stance movement
-        )
+        self.alpha = 0.5  # Ratio between touchdown distance and total horizontal stance movement
+        self.beta = 0.5  # Ratio between touchdown distance and total horizontal stance movement
 
         #################### GAIT #######################
         self.dt = 0.01
         self.num_phases = 4
-        self.contact_phases = np.array(
-            [[1, 1, 1, 0], [1, 0, 1, 1], [1, 0, 1, 1], [1, 1, 1, 0]]
-        )
-        self.overlap_time = (
-            0.10  # duration of the phase where all four feet are on the ground
-        )
-        self.swing_time = (
-            0.15  # duration of the phase when only two feet are on the ground
-        )
+        self.contact_phases = np.array([[1, 1, 1, 0], [1, 0, 1, 1], [1, 0, 1, 1], [1, 1, 1, 0]])
+        self.overlap_time = 0.10  # duration of the phase where all four feet are on the ground
+        self.swing_time = 0.15  # duration of the phase when only two feet are on the ground
 
         ######################## GEOMETRY ######################
         self.LEG_FB = 0.10  # front-back distance from center line to leg axis
@@ -105,12 +94,7 @@ class Configuration:
         )
 
         self.ABDUCTION_OFFSETS = np.array(
-            [
-                -self.ABDUCTION_OFFSET,
-                self.ABDUCTION_OFFSET,
-                -self.ABDUCTION_OFFSET,
-                self.ABDUCTION_OFFSET,
-            ]
+            [-self.ABDUCTION_OFFSET, self.ABDUCTION_OFFSET, -self.ABDUCTION_OFFSET, self.ABDUCTION_OFFSET,]
         )
 
         ################### INERTIAL ####################
@@ -122,9 +106,7 @@ class Configuration:
         # Compensation factor of 3 because the inertia measurement was just
         # of the carbon fiber and plastic parts of the frame and did not
         # include the hip servos and electronics
-        self.FRAME_INERTIA = tuple(
-            map(lambda x: 3.0 * x, (1.844e-4, 1.254e-3, 1.337e-3))
-        )
+        self.FRAME_INERTIA = tuple(map(lambda x: 3.0 * x, (1.844e-4, 1.254e-3, 1.337e-3)))
         self.MODULE_INERTIA = (3.698e-5, 7.127e-6, 4.075e-5)
 
         leg_z = 1e-6
@@ -183,15 +165,13 @@ class Configuration:
 
     @property
     def phase_ticks(self):
-        return np.array(
-            [self.overlap_ticks, self.swing_ticks, self.overlap_ticks, self.swing_ticks]
-        )
+        return np.array([self.overlap_ticks, self.swing_ticks, self.overlap_ticks, self.swing_ticks])
 
     @property
     def phase_length(self):
         return 2 * self.overlap_ticks + 2 * self.swing_ticks
 
-        
+
 class SimulationConfig:
     def __init__(self):
         self.XML_IN = "pupper.xml"
@@ -204,7 +184,7 @@ class SimulationConfig:
         self.JOINT_SOLIMP = "0.9 0.95 0.001"  # joint constraint parameters
         self.GEOM_SOLREF = "0.01 1"  # time constant and damping ratio for geom contacts
         self.GEOM_SOLIMP = "0.9 0.95 0.001"  # geometry contact parameters
-        
+
         # Joint params
         G = 220  # Servo gear ratio
         m_rotor = 0.016  # Servo rotor mass
@@ -215,9 +195,7 @@ class SimulationConfig:
         NATURAL_DAMPING = 1.0  # Damping resulting from friction
         ELECTRICAL_DAMPING = 0.049  # Damping resulting from back-EMF
 
-        self.REV_DAMPING = (
-            NATURAL_DAMPING + ELECTRICAL_DAMPING
-        )  # Damping torque on the revolute joints
+        self.REV_DAMPING = NATURAL_DAMPING + ELECTRICAL_DAMPING  # Damping torque on the revolute joints
 
         # Servo params
         self.SERVO_REV_KP = 300  # Position gain [Nm/rad]

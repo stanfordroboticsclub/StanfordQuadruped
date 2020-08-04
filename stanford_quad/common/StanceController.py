@@ -1,6 +1,7 @@
 import numpy as np
 from transforms3d.euler import euler2mat
 
+
 class StanceController:
     def __init__(self, config):
         self.config = config

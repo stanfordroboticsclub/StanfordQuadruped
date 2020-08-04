@@ -1,7 +1,7 @@
 import odrive
 from odrive.enums import *
-from woofer.Config import RobotConfig
-from woofer.HardwareConfig import (
+from stanford_quad.woofer import RobotConfig
+from stanford_quad.woofer.HardwareConfig import (
     ODRIVE_SERIAL_NUMBERS,
     ACTUATOR_DIRECTIONS,
     ANGLE_OFFSETS,

@@ -22,7 +22,7 @@ make
 sudo make install
 cd ..
 
-cd StanfordQuadruped
+cd StanfordQuadruped/scripts
 sudo ln -s $(realpath .)/robot.service /etc/systemd/system/
 sudo systemctl daemon-reload
 sudo systemctl enable robot

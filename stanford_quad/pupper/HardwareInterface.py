@@ -1,5 +1,5 @@
 import pigpio
-from pupper.Config import ServoParams, PWMParams
+from stanford_quad.pupper.Config import ServoParams, PWMParams
 
 
 class HardwareInterface:

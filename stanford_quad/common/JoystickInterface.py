@@ -1,9 +1,9 @@
 import UDPComms
 import numpy as np
-import time
-from common.State import BehaviorState, State
-from common.Command import Command
-from common.Utilities import deadband, clipped_first_order_filter
+
+from stanford_quad.common.Command import Command
+from stanford_quad.common.State import BehaviorState
+from stanford_quad.common.Utilities import deadband, clipped_first_order_filter
 
 
 class JoystickInterface:
