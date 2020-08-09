@@ -1,7 +1,7 @@
 import time
 
 import gym
-import stanford_quad
+import stanford_quad # need this unused import to get our custom environments
 import numpy as np
 env = gym.make("Pupper-Walk-Graphical-v0")
 

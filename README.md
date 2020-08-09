@@ -33,7 +33,7 @@ You can try out one of the walking environments, by running:
 
 In both environments, the observations are the same:
 
-Observation space:
+**Observation space**:
 - 12 leg joints in the order
   - front right hip
   - front right upper leg
@@ -46,9 +46,9 @@ Observation space:
 
 The joints are normalized to be in [-1,1] but the orientation and velocity can be arbitrarily large.
 
-The action space in both environments is also 12-dimensional (corresponding to the same 12 joints as above in that order) and also normalized in [-1,1] but the effects are different between both environments (see below).
+The **action space** in both environments is also 12-dimensional (corresponding to the same 12 joints as above in that order) and also normalized in [-1,1] but the effects are different between both environments (see below).
 
-In both environments, the goal is to walk/run as fast as possible straight forward. This means the reward is calculated as relative increase of x position with respect to the previous timestep (minus a small penalty term for high action values, same as in HalfCheetah-v2)
+In both environments, the goal is to walk/run as fast as possible straight forward. This means the **reward** is calculated as relative increase of x position with respect to the previous timestep (minus a small penalty term for high action values, same as in HalfCheetah-v2)
 
 #### Pupper-Walk-Absolute-[Headless|Graphical]-v0
 
