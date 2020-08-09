@@ -1,6 +1,8 @@
 import os
+import pickle
 import time
 import numpy as np
+import copy
 
 from stanford_quad.assets import ASSET_DIR
 from stanford_quad.common.Command import Command
@@ -61,10 +63,12 @@ SIM_FPS = 240
 timesteps = 120 * 60 * 10  # simulate for a max of 10 minutes
 
 # Sim seconds per sim step
-sim_steps_per_sim_second = 120
+sim_steps_per_sim_second = 240
 sim_dt = 1.0 / sim_steps_per_sim_second
 last_control_update = 0
 start = time.time()
+
+saved_states = []
 
 for steps in range(timesteps):
     sim_time_elapsed = sim_dt * steps
@@ -77,6 +81,8 @@ for steps in range(timesteps):
         # Step the controller forward by dt
         controller.run(state, command)
 
+        saved_states.append(copy.copy(state))
+
         # Update the pwm widths going to the servos
         hardware_interface.set_actuator_postions(state.joint_angles)
 
@@ -85,8 +91,11 @@ for steps in range(timesteps):
 
     # Performance testing
 
-    if ((steps+1) % 100) == 0:
+    if ((steps+1) % 240) == 0:
         elapsed = (time.time() - start) / 100
         # print("Sim seconds elapsed: {}, Real seconds elapsed: {}".format(round(sim_time_elapsed, 3), round(elapsed, 3)))
         print (f"Sim running at {1/elapsed} Hz")
+        pickle.dump(saved_states, open("saved-states.pkl", "wb"))
+        quit()
         start = time.time()
+

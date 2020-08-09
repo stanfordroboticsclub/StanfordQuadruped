@@ -134,3 +134,5 @@ wandb/
 .DS_Store
 *.DS_Store
 *.hdf5
+scripts/*.npz
+scripts/*.pkl

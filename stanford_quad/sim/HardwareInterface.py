@@ -22,7 +22,8 @@ class HardwareInterface:
             forces=[self.max_torque] * 12,
         )
 
-    def parallel_to_serial_joint_angles(self, joint_matrix):
+    @staticmethod
+    def parallel_to_serial_joint_angles(joint_matrix):
         """Convert from joint angles meant for the parallel linkage in 
         Pupper to the joint angles in the serial linkage approximation implemented in the simulation
         
