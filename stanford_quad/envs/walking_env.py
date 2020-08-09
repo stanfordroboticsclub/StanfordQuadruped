@@ -81,7 +81,7 @@ class WalkingEnv(gym.Env):
 
         pos_after, orn_after, vel_after = self.sim.get_pos_orn_vel()
 
-        joint_states = self.sim.get_joint_states() / np.pi # to normalize to [-1,1]
+        joint_states = np.array(self.sim.get_joint_states()) / np.pi # to normalize to [-1,1]
         obs = list(joint_states) + list(orn_after) + list(vel_after)[:2]
 
         # this reward calculation is taken verbatim from halfcheetah-v2
