@@ -11,6 +11,8 @@ for i in range(len(sim.joint_indices)):
     motor = sim.p.addUserDebugParameter("motor{}".format(i + 1), -np.pi, np.pi, rest_pos[i])
     debugParams.append(motor)
 
+print (sim.get_pos_orn_vel())
+print (sim.get_joint_states())
 
 for step in range(100000):
     motorPos = []
@@ -19,5 +21,6 @@ for step in range(100000):
         motorPos.append(pos)
     sim.action(motorPos)
     sim.step()
+    print (sim.get_pos_orn_vel()[0][0])
 
 

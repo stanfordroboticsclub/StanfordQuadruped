@@ -11,17 +11,19 @@ from stanford_quad.sim.HardwareInterface import HardwareInterface
 FREQ_SIM = 240
 
 REST_POS = HardwareInterface.parallel_to_serial_joint_angles(
-    np.array([
-        [-0.12295051, 0.12295051, -0.12295051, 0.12295051],
-        [0.77062617, 0.77062617, 0.77062617, 0.77062617],
-        [-0.845151, -0.845151, -0.845151, -0.845151],
-    ])
+    np.array(
+        [
+            [-0.12295051, 0.12295051, -0.12295051, 0.12295051],
+            [0.77062617, 0.77062617, 0.77062617, 0.77062617],
+            [-0.845151, -0.845151, -0.845151, -0.845151],
+        ]
+    )
 )
 
 
 class PupperSim2:
     def __init__(
-        self, xml_path=None, debug=False, gain_pos=0.25, gain_vel=0.5, max_torque=10, g=-9.81, start_standing=True
+        self, xml_path=None, debug=False, gain_pos=0.125, gain_vel=0.25, max_torque=1, g=-9.81, start_standing=True
     ):
         """
 
@@ -50,7 +52,7 @@ class PupperSim2:
 
         # self.p.loadURDF("plane.urdf")
 
-        self.model = self.p.loadMJCF(xml_path)[1] # [0] is the floor
+        self.model = self.p.loadMJCF(xml_path)[1]  # [0] is the floor
         if debug:
             numjoints = self.p.getNumJoints(self.model)
             for i in range(numjoints):
@@ -58,15 +60,40 @@ class PupperSim2:
         self.joint_indices = list(range(0, 24, 2))
 
         if start_standing:
-            self.action(REST_POS.T.flatten())
+            self.reset()
+            self.step()
 
     def step(self):
         self.p.stepSimulation()
 
+    def reset(self, rest=True):
+        self.p.resetBasePositionAndOrientation(self.model, [0, 0, .3], self.p.getQuaternionFromEuler([0, 0, 0]))
+        if rest:
+            action = self.get_rest_pos()
+        else:
+            action = [0] * 12
+        self.action(action)
+
+    def get_rest_pos(self):
+        return REST_POS.T.flatten()
+
+    def get_pos_orn_vel(self):
+        posorn = self.p.getBasePositionAndOrientation(self.model)
+        pos = posorn[0]
+        orn = self.p.getEulerFromQuaternion(posorn[1])
+        vel = self.p.getBaseVelocity(self.model)[0]
+
+        return pos, orn, vel
+
+    def get_joint_states(self):
+        joint_states = self.p.getJointStates(self.model, self.joint_indices)
+        joint_states = [joint[0] for joint in joint_states]
+        return joint_states
+
     def action(self, joint_angles):
         assert len(joint_angles) == 12
-        assert np.min(np.rad2deg(joint_angles)) > -180
-        assert np.max(np.rad2deg(joint_angles)) < 180
+        assert np.min(np.rad2deg(joint_angles)) >= -180
+        assert np.max(np.rad2deg(joint_angles)) <= 180
 
         self.p.setJointMotorControlArray(
             bodyUniqueId=self.model,
