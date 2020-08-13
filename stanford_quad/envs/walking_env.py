@@ -8,7 +8,7 @@ CONTROL_FREQUENCY = 60  # Hz, the simulation runs at 240Hz by default and doing 
 
 
 class WalkingEnv(gym.Env):
-    def __init__(self, debug=False, steps=120, control_freq=CONTROL_FREQUENCY, relative_action=True):
+    def __init__(self, debug=False, steps=120, control_freq=CONTROL_FREQUENCY, relative_action=True, action_scaling=1.0):
         """ Gym-compatible environment to teach the pupper how to walk
         
         :param bool debug: If True, shows PyBullet in GUI mode. Set to False when training.  
@@ -38,13 +38,14 @@ class WalkingEnv(gym.Env):
         self.action_space = spaces.Box(low=-1, high=1, shape=(12,), dtype=np.float32)
 
         # turning off start_standing because the that's done in self.reset()
-        self.sim = PupperSim2(debug=debug, start_standing=False)
+        self.sim = PupperSim2(debug=debug, start_standing=False, gain_pos=1/16, gain_vel=1/8, max_torque=1/2)
         self.episode_steps = 0
         self.episode_steps_max = steps
         self.control_freq = control_freq
         self.dt = 1 / self.control_freq
         self.sim_steps = int(round(FREQ_SIM / control_freq))
         self.relative_action = relative_action
+        self.action_scaling = action_scaling
 
     def reset(self):
         self.episode_steps = 0
@@ -61,7 +62,7 @@ class WalkingEnv(gym.Env):
 
     def sanitize_actions(self, actions):
         assert len(actions) == 12
-        scaled = actions * np.pi  # because 1/-1 corresponds to pi/-pi radians rotation
+        scaled = actions * np.pi * self.action_scaling  # because 1/-1 corresponds to pi/-pi radians rotation
 
         if self.relative_action:
             scaled += self.sim.get_rest_pos()

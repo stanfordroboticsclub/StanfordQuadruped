@@ -1,4 +1,5 @@
 import os
+import time
 
 import pybullet
 import pybullet_data
@@ -67,13 +68,20 @@ class PupperSim2:
         self.p.stepSimulation()
 
     def reset(self, rest=True):
-        self.p.resetBasePositionAndOrientation(self.model, [0, 0, .3], self.p.getQuaternionFromEuler([0, 0, 0]))
+        height = .3
+        if rest:
+            height = .182
+        self.p.resetBasePositionAndOrientation(self.model, [0, 0, height], self.p.getQuaternionFromEuler([0, 0, 0]))
         if rest:
             action = self.get_rest_pos()
         else:
             action = [0] * 12
         self.action(action)
-        self.step() # one step to move joints into place
+        self.set(action)
+        # self.step() # one step to move joints into place
+
+        for _ in range(10):
+            self.step()
 
     def get_rest_pos(self):
         return REST_POS.T.flatten()
@@ -91,10 +99,13 @@ class PupperSim2:
         joint_states = [joint[0] for joint in joint_states]
         return joint_states
 
-    def action(self, joint_angles):
+    def joint_sanity_check(self, joint_angles):
         assert len(joint_angles) == 12
         assert np.min(np.rad2deg(joint_angles)) >= -180
         assert np.max(np.rad2deg(joint_angles)) <= 180
+
+    def action(self, joint_angles):
+        self.joint_sanity_check(joint_angles)
 
         self.p.setJointMotorControlArray(
             bodyUniqueId=self.model,
@@ -105,3 +116,14 @@ class PupperSim2:
             velocityGains=[self.gain_vel] * 12,
             forces=[self.max_torque] * 12,
         )
+
+    def set(self, joint_angles):
+        self.joint_sanity_check(joint_angles)
+
+        for joint_idx in range(12):
+            self.p.resetJointState(
+                bodyUniqueId=self.model,
+                jointIndex=self.joint_indices[joint_idx],
+                targetValue=joint_angles[joint_idx],
+                targetVelocity=0,
+            )
