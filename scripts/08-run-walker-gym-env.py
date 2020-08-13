@@ -3,7 +3,7 @@ import time
 import gym
 import stanford_quad # need this unused import to get our custom environments
 import numpy as np
-env = gym.make("Pupper-Walk-Relative-Graphical-v0")
+env = gym.make("Pupper-Walk-Relative-Headless-v0")
 
 for run in range(5):
     env.reset()
@@ -15,4 +15,4 @@ for run in range(5):
                f"rew: {np.around(rew,2)}, "
                f"done: {done}")
 
-        time.sleep(.02)
+        # time.sleep(.02)

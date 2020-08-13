@@ -49,6 +49,7 @@ class WalkingEnv(gym.Env):
     def reset(self):
         self.episode_steps = 0
         self.sim.reset(rest=self.relative_action)  # also stand up the robot
+        return self.get_obs()
 
     def seed(self, seed=None):
         np.random.seed(seed)
@@ -69,6 +70,13 @@ class WalkingEnv(gym.Env):
         clipped = np.clip(scaled, -np.pi+0.001, np.pi-0.001)
         return clipped
 
+    def get_obs(self):
+        pos, orn, vel = self.sim.get_pos_orn_vel()
+
+        joint_states = np.array(self.sim.get_joint_states()) / np.pi # to normalize to [-1,1]
+        obs = list(joint_states) + list(orn) + list(vel)[:2]
+        return obs
+
     def step(self, action):
         action_clean = self.sanitize_actions(action)
 
@@ -78,11 +86,9 @@ class WalkingEnv(gym.Env):
         self.sim.action(action_clean)
         for _ in range(self.sim_steps):
             self.sim.step()
+        pos_after, _, _ = self.sim.get_pos_orn_vel()
 
-        pos_after, orn_after, vel_after = self.sim.get_pos_orn_vel()
-
-        joint_states = np.array(self.sim.get_joint_states()) / np.pi # to normalize to [-1,1]
-        obs = list(joint_states) + list(orn_after) + list(vel_after)[:2]
+        obs = self.get_obs()
 
         # this reward calculation is taken verbatim from halfcheetah-v2
         reward_ctrl = -0.1 * np.square(action).sum()

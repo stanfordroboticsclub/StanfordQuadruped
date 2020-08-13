@@ -73,6 +73,7 @@ class PupperSim2:
         else:
             action = [0] * 12
         self.action(action)
+        self.step() # one step to move joints into place
 
     def get_rest_pos(self):
         return REST_POS.T.flatten()
