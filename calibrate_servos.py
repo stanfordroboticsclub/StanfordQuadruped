@@ -144,7 +144,7 @@ def main():
     calibrate_angle_offset(hardware_interface)
     print("\n\n CALIBRATION COMPLETE!\n")
     print("Calibrated neutral angles:")
-    print(hardware_interface.servo_params.neutral_angle_degrees)
+    print(np.array2string(hardware_interface.servo_params.neutral_angle_degrees, separator=","))
     print("Copy these values into the NEUTRAL_ANGLE_DEGREES matrix defined pupper/HardwareConfig.py")
     print("Set the MICROS_PER_RAD value in pupper/HardwareConfig.py to whatever you defined in the beginning of this program as well.")
 
