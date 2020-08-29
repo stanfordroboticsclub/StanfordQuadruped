@@ -1,5 +1,4 @@
 import os
-import time
 
 import pybullet
 import pybullet_data
@@ -83,7 +82,8 @@ class PupperSim2:
         for _ in range(10):
             self.step()
 
-    def get_rest_pos(self):
+    @staticmethod
+    def get_rest_pos():
         return REST_POS.T.flatten()
 
     def get_pos_orn_vel(self):
@@ -99,7 +99,8 @@ class PupperSim2:
         joint_states = [joint[0] for joint in joint_states]
         return joint_states
 
-    def joint_sanity_check(self, joint_angles):
+    @staticmethod
+    def joint_sanity_check(joint_angles):
         assert len(joint_angles) == 12
         assert np.min(np.rad2deg(joint_angles)) >= -180
         assert np.max(np.rad2deg(joint_angles)) <= 180
@@ -138,7 +139,7 @@ class PupperSim2:
         obj_collision = self.p.createCollisionShape(shapeType=self.p.GEOM_BOX, halfExtents=size)
 
         obj = self.p.createMultiBody(
-            baseMass=1,  # doesn't matter
+            baseMass=0.1,  # doesn't matter
             baseCollisionShapeIndex=obj_collision,
             baseVisualShapeIndex=obj_visual,
             basePosition=pos,
@@ -149,7 +150,7 @@ class PupperSim2:
 
     def add_stairs(
         self, no_steps=8, step_width=1, step_height=0.1, step_depth=0.1, offset=None, color=(0.5, 0, 0.5)
-    ) -> None:
+    ) -> list:
         pos_x = 0
         pos_y = 0
         pos_z = 0
@@ -161,15 +162,61 @@ class PupperSim2:
                 pos_z += offset[2]
 
         steps = []
+        positions = []
+
         orientation = self.p.getQuaternionFromEuler([0, 0, 0])
         size = (step_depth / 2, step_width / 2, step_height / 2)
+
+        # create steps boxes
         for step_idx in range(no_steps):
             pos = (pos_x + step_depth / 2, pos_y, pos_z + size[2])
+
+            positions.append(np.array(pos))
+
             step = self.create_box(pos, orientation, size, color)
             steps.append(step)
 
             pos_x += step_depth
             size = (size[0], size[1], size[2] + step_height / 2)
+
+        # connect the steps to each other
+        for step_idx in range(no_steps - 1):
+            step_1 = steps[step_idx]
+            step_2 = steps[step_idx + 1]
+
+            pos_1 = positions[step_idx]
+            pos_2 = positions[step_idx + 1]
+
+            # in order to create a fixing constraint between parent and child step,
+            # you need to find a point where they touch.
+            center = (pos_1 + pos_2) / 2
+            parent_frame = center - pos_1
+            child_frame = center - pos_2
+
+            self.p.createConstraint(
+                parentBodyUniqueId=step_1,
+                parentLinkIndex=-1,
+                childBodyUniqueId=step_2,
+                childLinkIndex=-1,
+                jointType=self.p.JOINT_FIXED,
+                jointAxis=(1, 1, 1),
+                parentFramePosition=parent_frame,
+                childFramePosition=child_frame,
+            )
+
+        # and fix the chairs to the ground/world
+        self.p.createConstraint(
+            parentBodyUniqueId=steps[0],
+            parentLinkIndex=-1,
+            childBodyUniqueId=-1,
+            childLinkIndex=-1,
+            jointType=self.p.JOINT_FIXED,
+            jointAxis=(1, 1, 1),
+            parentFramePosition=-positions[0],
+            childFramePosition=(0, 0, 0),
+        )
+
+        return steps
 
 
 # depth = 0.2, height = 0.2
