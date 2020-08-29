@@ -7,7 +7,7 @@ OFFSET = (0.3, 0, 0)
 
 sim = PupperSim2(debug=True)
 sim.reset()
-sim.add_stairs(step_width=STEP_WIDTH, step_depth=STEP_DEPTH, step_height=STEP_HEIGHT, offset=OFFSET)
+sim.add_stairs(step_width=STEP_WIDTH, step_depth=STEP_DEPTH, step_height=STEP_HEIGHT, offset=OFFSET, random_color=True)
 
 for step in range(100000):
     # sim.action(motorPo)

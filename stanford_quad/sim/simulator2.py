@@ -7,6 +7,7 @@ import numpy as np
 
 from stanford_quad.assets import ASSET_DIR
 from stanford_quad.sim.HardwareInterface import HardwareInterface
+from stanford_quad.sim.utils import random_bright_color
 
 FREQ_SIM = 240
 
@@ -129,11 +130,14 @@ class PupperSim2:
                 targetVelocity=0,
             )
 
-    def create_box(self, pos, orn, size, color):
+    def create_box(self, pos, orn, size, color, random_color):
         # we need to round or small float errors will explode the simulation
         pos = np.around(pos, 4)
         size = np.around(size, 4)
         orn = np.around(orn, 4)
+
+        if random_color:
+            color = random_bright_color(uint=False)
 
         obj_visual = self.p.createVisualShape(shapeType=self.p.GEOM_BOX, rgbaColor=list(color) + [1], halfExtents=size)
         obj_collision = self.p.createCollisionShape(shapeType=self.p.GEOM_BOX, halfExtents=size)
@@ -149,7 +153,14 @@ class PupperSim2:
         return obj
 
     def add_stairs(
-        self, no_steps=8, step_width=1, step_height=0.1, step_depth=0.1, offset=None, color=(0.5, 0, 0.5)
+        self,
+        no_steps=8,
+        step_width=1,
+        step_height=0.1,
+        step_depth=0.1,
+        offset=None,
+        color=(0.5, 0, 0.5),
+        random_color=False,
     ) -> list:
         pos_x = 0
         pos_y = 0
@@ -173,7 +184,7 @@ class PupperSim2:
 
             positions.append(np.array(pos))
 
-            step = self.create_box(pos, orientation, size, color)
+            step = self.create_box(pos, orientation, size, color, random_color)
             steps.append(step)
 
             pos_x += step_depth
