@@ -8,7 +8,9 @@ CONTROL_FREQUENCY = 60  # Hz, the simulation runs at 240Hz by default and doing 
 
 
 class WalkingEnv(gym.Env):
-    def __init__(self, debug=False, steps=120, control_freq=CONTROL_FREQUENCY, relative_action=True, action_scaling=1.0):
+    def __init__(
+        self, debug=False, steps=120, control_freq=CONTROL_FREQUENCY, relative_action=True, action_scaling=1.0
+    ):
         """ Gym-compatible environment to teach the pupper how to walk
         
         :param bool debug: If True, shows PyBullet in GUI mode. Set to False when training.  
@@ -21,16 +23,16 @@ class WalkingEnv(gym.Env):
 
         super().__init__()
 
-        ## observation space:
-        ## - 12 lef joints in the order
-        ##   - front right hip
-        ##   - front right upper leg
-        ##   - front right lower leg
-        ##   - front left hip/upper/lower leg
-        ##   - back right hip/upper/lower leg
-        ##   - back left hip/upper/lower leg
-        ## - 3 body orientation in euler angles
-        ## - 2 linear velocity (only along the plane, we don't care about z velocity
+        # observation space:
+        # - 12 lef joints in the order
+        #   - front right hip
+        #   - front right upper leg
+        #   - front right lower leg
+        #   - front left hip/upper/lower leg
+        #   - back right hip/upper/lower leg
+        #   - back left hip/upper/lower leg
+        # - 3 body orientation in euler angles
+        # - 2 linear velocity (only along the plane, we don't care about z velocity
 
         self.observation_space = spaces.Box(low=-1, high=1, shape=(12 + 3 + 2,), dtype=np.float32)
 
@@ -38,7 +40,7 @@ class WalkingEnv(gym.Env):
         self.action_space = spaces.Box(low=-1, high=1, shape=(12,), dtype=np.float32)
 
         # turning off start_standing because the that's done in self.reset()
-        self.sim = PupperSim2(debug=debug, start_standing=False, gain_pos=1/16, gain_vel=1/8, max_torque=1/2)
+        self.sim = PupperSim2(debug=debug, start_standing=False, gain_pos=1 / 16, gain_vel=1 / 8, max_torque=1 / 2)
         self.episode_steps = 0
         self.episode_steps_max = steps
         self.control_freq = control_freq
@@ -68,13 +70,13 @@ class WalkingEnv(gym.Env):
             scaled += self.sim.get_rest_pos()
 
         # this enforces an action range of -1/1, except if it's relative action - then the action space is asymmetric
-        clipped = np.clip(scaled, -np.pi+0.001, np.pi-0.001)
+        clipped = np.clip(scaled, -np.pi + 0.001, np.pi - 0.001)
         return clipped
 
     def get_obs(self):
         pos, orn, vel = self.sim.get_pos_orn_vel()
 
-        joint_states = np.array(self.sim.get_joint_states()) / np.pi # to normalize to [-1,1]
+        joint_states = np.array(self.sim.get_joint_states()) / np.pi  # to normalize to [-1,1]
         obs = list(joint_states) + list(orn) + list(vel)[:2]
         return obs
 
@@ -104,6 +106,5 @@ class WalkingEnv(gym.Env):
         return obs, reward, done, dict(reward_run=reward_run, reward_ctrl=reward_ctrl)
 
     def render(self, mode="human"):
-        # unused - use debug flag via "Headless"/"Graphical" environment instead
-        # FIXME: in the future we could add an external camera here
-        pass
+        img = self.sim.take_photo()
+        return img
