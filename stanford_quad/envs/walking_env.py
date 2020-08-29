@@ -106,5 +106,8 @@ class WalkingEnv(gym.Env):
         return obs, reward, done, dict(reward_run=reward_run, reward_ctrl=reward_ctrl)
 
     def render(self, mode="human"):
+        # todo: if the mode=="human" then this should open and display a
+        #  window a la "cv2.imshow('xxx',img), cv2.waitkey(10)"
+
         img = self.sim.take_photo()
         return img
