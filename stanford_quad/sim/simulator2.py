@@ -68,9 +68,9 @@ class PupperSim2:
         self.p.stepSimulation()
 
     def reset(self, rest=True):
-        height = .3
+        height = 0.3
         if rest:
-            height = .182
+            height = 0.182
         self.p.resetBasePositionAndOrientation(self.model, [0, 0, height], self.p.getQuaternionFromEuler([0, 0, 0]))
         if rest:
             action = self.get_rest_pos()
@@ -127,3 +127,52 @@ class PupperSim2:
                 targetValue=joint_angles[joint_idx],
                 targetVelocity=0,
             )
+
+    def create_box(self, pos, orn, size, color):
+        # we need to round or small float errors will explode the simulation
+        pos = np.around(pos, 4)
+        size = np.around(size, 4)
+        orn = np.around(orn, 4)
+
+        obj_visual = self.p.createVisualShape(shapeType=self.p.GEOM_BOX, rgbaColor=list(color) + [1], halfExtents=size)
+        obj_collision = self.p.createCollisionShape(shapeType=self.p.GEOM_BOX, halfExtents=size)
+
+        obj = self.p.createMultiBody(
+            baseMass=1,  # doesn't matter
+            baseCollisionShapeIndex=obj_collision,
+            baseVisualShapeIndex=obj_visual,
+            basePosition=pos,
+            baseOrientation=orn,
+            useMaximalCoordinates=False,
+        )
+        return obj
+
+    def add_stairs(
+        self, no_steps=8, step_width=1, step_height=0.1, step_depth=0.1, offset=None, color=(0.5, 0, 0.5)
+    ) -> None:
+        pos_x = 0
+        pos_y = 0
+        pos_z = 0
+        if offset is not None:
+            assert len(offset) == 2 or len(offset) == 3
+            pos_x += offset[0]
+            pos_y += offset[1]
+            if len(offset) == 3:
+                pos_z += offset[2]
+
+        steps = []
+        orientation = self.p.getQuaternionFromEuler([0, 0, 0])
+        size = (step_depth / 2, step_width / 2, step_height / 2)
+        for step_idx in range(no_steps):
+            pos = (pos_x + step_depth / 2, pos_y, pos_z + size[2])
+            step = self.create_box(pos, orientation, size, color)
+            steps.append(step)
+
+            pos_x += step_depth
+            size = (size[0], size[1], size[2] + step_height / 2)
+
+
+# depth = 0.2, height = 0.2
+# pos 0.1, 0.1, size 0.1, 0.1, total height 0.2
+# pos 0.2, 0.2, size 0.1, 0.2, total height 0.4
+#
