@@ -215,7 +215,7 @@ class PupperSim2:
                 childFramePosition=child_frame,
             )
 
-        # and fix the chairs to the ground/world
+        # and fix the first step to the ground/world
         self.p.createConstraint(
             parentBodyUniqueId=steps[0],
             parentLinkIndex=-1,
