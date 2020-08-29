@@ -12,3 +12,10 @@ def random_bright_color(uint=False):
         return r, g, b
     else:
         return [x / 255 for x in (r, g, b)]
+
+
+def pybulletimage2numpy(img, height, width):
+    rgb = img[2]
+    rgb = np.reshape(rgb, (height, width, 4))
+    rgb = rgb[:, :, :3]
+    return rgb

@@ -7,7 +7,7 @@ import numpy as np
 
 from stanford_quad.assets import ASSET_DIR
 from stanford_quad.sim.HardwareInterface import HardwareInterface
-from stanford_quad.sim.utils import random_bright_color
+from stanford_quad.sim.utils import random_bright_color, pybulletimage2numpy
 
 FREQ_SIM = 240
 
@@ -24,7 +24,15 @@ REST_POS = HardwareInterface.parallel_to_serial_joint_angles(
 
 class PupperSim2:
     def __init__(
-        self, xml_path=None, debug=False, gain_pos=0.125, gain_vel=0.25, max_torque=1, g=-9.81, start_standing=True
+        self,
+        xml_path=None,
+        debug=False,
+        gain_pos=0.125,
+        gain_vel=0.25,
+        max_torque=1,
+        g=-9.81,
+        start_standing=True,
+        img_size=(84, 84),
     ):
         """
 
@@ -41,6 +49,7 @@ class PupperSim2:
         self.gain_pos = gain_pos
         self.gain_vel = gain_vel
         self.max_torque = max_torque
+        self.img_size = img_size
 
         if debug:
             startup_flag = pybullet.GUI
@@ -63,6 +72,10 @@ class PupperSim2:
         if start_standing:
             self.reset()
             self.step()
+
+        self.cam_proj = self.p.computeProjectionMatrixFOV(
+            fov=90, aspect=self.img_size[0] / self.img_size[1], nearVal=0.001, farVal=10
+        )
 
     def step(self):
         self.p.stepSimulation()
@@ -89,7 +102,7 @@ class PupperSim2:
 
     def get_pos_orn_vel(self):
         posorn = self.p.getBasePositionAndOrientation(self.model)
-        pos = posorn[0]
+        pos = np.array(posorn[0])
         orn = self.p.getEulerFromQuaternion(posorn[1])
         vel = self.p.getBaseVelocity(self.model)[0]
 
@@ -228,6 +241,25 @@ class PupperSim2:
         )
 
         return steps
+
+    def take_photo(self):
+        pos, _, _ = self.get_pos_orn_vel()
+        cam_pos = pos + [0, -0.3, 0.3]
+        cam_view = self.p.computeViewMatrix(
+            cameraEyePosition=cam_pos, cameraTargetPosition=pos, cameraUpVector=[0, 0, 1]
+        )
+        img = self.p.getCameraImage(
+            self.img_size[0],
+            self.img_size[1],
+            cam_view,
+            self.cam_proj,
+            renderer=self.p.ER_BULLET_HARDWARE_OPENGL,
+            flags=0
+            # lightDirection=[-.5, -1, .5], lightDistance=1,
+            # renderer=self.p0.ER_TINY_RENDERER
+        )
+        output_img = pybulletimage2numpy(img, self.img_size[0], self.img_size[1])
+        return output_img
 
 
 # depth = 0.2, height = 0.2
