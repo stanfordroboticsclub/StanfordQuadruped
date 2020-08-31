@@ -2,18 +2,19 @@ import numpy as np
 from djipupper.IndividualConfig import PS4_COLOR, PS4_DEACTIVATED_COLOR, SERIAL_PORT
 from enum import Enum
 
+
 class Configuration:
     def __init__(self):
         ################# CONTROLLER BASE COLOR ##############
-        self.ps4_color = PS4_COLOR    
-        self.ps4_deactivated_color = PS4_DEACTIVATED_COLOR    
+        self.ps4_color = PS4_COLOR
+        self.ps4_deactivated_color = PS4_DEACTIVATED_COLOR
 
         #################### COMMANDS ####################
         self.max_x_velocity = 0.5
         self.max_y_velocity = 0.4
         self.max_yaw_rate = 2.5
         self.max_pitch = 30.0 * np.pi / 180.0
-        
+
         #################### MOVEMENT PARAMS ####################
         self.z_time_constant = 0.02
         self.z_speed = 0.03  # maximum speed [m/s]
@@ -28,7 +29,7 @@ class Configuration:
         #################### STANCE ####################
         self.delta_x = 0.1
         self.delta_y = 0.07
-        self.x_shift = -0.03
+        self.x_shift = 0.00
         self.default_z_ref = -0.14
 
         #################### SWING ######################
@@ -166,7 +167,7 @@ class Configuration:
     def phase_length(self):
         return 2 * self.overlap_ticks + 2 * self.swing_ticks
 
-        
+
 class SimulationConfig:
     def __init__(self):
         self.XML_IN = "pupper.xml"
@@ -179,7 +180,7 @@ class SimulationConfig:
         self.JOINT_SOLIMP = "0.9 0.95 0.001"  # joint constraint parameters
         self.GEOM_SOLREF = "0.01 1"  # time constant and damping ratio for geom contacts
         self.GEOM_SOLIMP = "0.9 0.95 0.001"  # geometry contact parameters
-        
+
         # Joint params
         G = 220  # Servo gear ratio
         m_rotor = 0.016  # Servo rotor mass

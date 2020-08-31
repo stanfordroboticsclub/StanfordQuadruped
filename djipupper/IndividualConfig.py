@@ -6,4 +6,4 @@ import numpy as np
 PS4_COLOR = {"red": 0, "blue": 0, "green": 255}
 PS4_DEACTIVATED_COLOR = {"red": 0, "blue": 0, "green": 50}
 
-SERIAL_PORT = "/dev/tty.usbmodem71393001"
+SERIAL_PORT = "/dev/tty.usbmodem78075901"

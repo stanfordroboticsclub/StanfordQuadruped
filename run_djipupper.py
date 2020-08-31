@@ -29,7 +29,7 @@ def main(FLAGS):
 
     # TODO: bind the zero-ing to its own button
     if FLAGS.zero:
-        print("Zeroing motors...",end="")
+        print("Zeroing motors...", end="")
         hardware_interface.zero_motors()
         print("Done.")
     else:
@@ -67,7 +67,9 @@ def main(FLAGS):
                 controller.run(state, command)
 
                 # Send desired motor angles to the Teensy
-                hardware_interface.set_actuator_postions(state.joint_angles)
+                # hardware_interface.set_actuator_postions(state.joint_angles)
+                # TODO: figure out if I want to keep the option to do joint-space PD control
+                hardware_interface.set_cartesian_positions(state.foot_locations)
 
                 last_loop = now
 
@@ -84,6 +86,6 @@ def summarize_config(config):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--zero",help="zero the motors", action="store_true")
+    parser.add_argument("--zero", help="zero the motors", action="store_true")
     FLAGS = parser.parse_args()
     main(FLAGS)
