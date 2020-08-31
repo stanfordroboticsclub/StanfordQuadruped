@@ -1,10 +1,10 @@
 import numpy as np
 from transforms3d.euler import euler2mat
 
+
 class StanceController:
     def __init__(self, config):
         self.config = config
-
 
     def position_delta(self, leg_index, state, command):
         """Calculate the difference between the next desired body location and the current body location
@@ -30,9 +30,7 @@ class StanceController:
             [
                 -command.horizontal_velocity[0],
                 -command.horizontal_velocity[1],
-                1.0
-                / self.config.z_time_constant
-                * (state.height - z),
+                1.0 / self.config.z_time_constant * (state.height - z),
             ]
         )
         delta_p = v_xy * self.config.dt

@@ -1,13 +1,12 @@
 import numpy as np
 from transforms3d.euler import euler2mat
 
+
 class SwingController:
     def __init__(self, config):
         self.config = config
 
-    def raibert_touchdown_location(
-        self, leg_index, command
-    ):
+    def raibert_touchdown_location(self, leg_index, command):
         delta_p_2d = (
             self.config.alpha
             * self.config.stance_ticks
@@ -24,23 +23,17 @@ class SwingController:
         R = euler2mat(0, 0, theta)
         return R @ self.config.default_stance[:, leg_index] + delta_p
 
-
     def swing_height(self, swing_phase, triangular=True):
         if triangular:
             if swing_phase < 0.5:
                 swing_height_ = swing_phase / 0.5 * self.config.z_clearance
             else:
-                swing_height_ = self.config.z_clearance * (1 - (swing_phase - 0.5) / 0.5)
+                swing_height_ = self.config.z_clearance * (
+                    1 - (swing_phase - 0.5) / 0.5
+                )
         return swing_height_
 
-
-    def next_foot_location(
-        self,
-        swing_prop,
-        leg_index,
-        state,
-        command,
-    ):
+    def next_foot_location(self, swing_prop, leg_index, state, command):
         assert swing_prop >= 0 and swing_prop <= 1
         foot_location = state.foot_locations[:, leg_index]
         swing_height_ = self.swing_height(swing_prop)
