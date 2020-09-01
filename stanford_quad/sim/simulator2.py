@@ -84,7 +84,14 @@ class PupperSim2:
         height = 0.3
         if rest:
             height = 0.182
-        self.p.resetBasePositionAndOrientation(self.model, [0, 0, height], self.p.getQuaternionFromEuler([0, 0, 0]))
+        # self.p.resetBasePositionAndOrientation(self.model, [0, 0, height], self.p.getQuaternionFromEuler([0, 0, 0]))
+        rand_init_x = np.random.uniform(-30, 30, 1)[0]
+        rand_init_y = np.random.uniform(-30, 30, 1)[0]
+        rand_init_angle1 = np.deg2rad(np.random.uniform(-30, 30, 1))[0]
+        rand_init_angle2 = np.deg2rad(np.random.uniform(-30, 30, 1))[0]
+        self.p.resetBasePositionAndOrientation(self.model,
+                [rand_init_x, rand_init_y, height],
+                self.p.getQuaternionFromEuler([0, rand_init_angle1, rand_init_angle2]))
         if rest:
             action = self.get_rest_pos()
         else:

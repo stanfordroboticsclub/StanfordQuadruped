@@ -1,4 +1,6 @@
 from gym import register
+import numpy as np
+import pdb
 
 for headlessness in ["Headless", "Graphical"]:
     register(
@@ -13,9 +15,11 @@ for headlessness in ["Headless", "Graphical"]:
         kwargs={"debug": (False if headlessness == "Headless" else True), "steps": 120, "relative_action": True, "action_scaling": 1},
         max_episode_steps=120,
     )
-    register(
-        id=f"Pupper-Walk-Relative-ScaledDown-{headlessness}-v0",
-        entry_point="stanford_quad.envs:WalkingEnv",
-        kwargs={"debug": (False if headlessness == "Headless" else True), "steps": 120, "relative_action": True, "action_scaling": .3},
-        max_episode_steps=120,
-    )
+    for scale_down in list(np.arange(0.05,0.5,0.05)):
+        register(
+            id=f"Pupper-Walk-Relative-ScaledDown_{scale_down:.2}-{headlessness}-v0",
+            entry_point="stanford_quad.envs:WalkingEnv",
+            kwargs={"debug": (False if headlessness == "Headless" else True), "steps": 120, "relative_action": True, "action_scaling": scale_down},
+            max_episode_steps=120,
+        )
+        print(f"Pupper-Walk-Relative-ScaledDown_{scale_down:.2}-{headlessness}-v0")

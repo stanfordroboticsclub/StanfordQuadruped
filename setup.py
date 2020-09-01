@@ -11,6 +11,7 @@ setup(
         "gym",
         "opencv-python",
         "transforms3d",
+        "torchvision",
         "UDPComms @ git+ssh://git@github.com/stanfordroboticsclub/UDPComms@master#egg=UDPComms",
     ],
 )
