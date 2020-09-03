@@ -95,6 +95,7 @@ class PupperSim2:
             np.random.normal(0, random_rot[1], 1)[0],
             np.random.normal(0, random_rot[2], 1)[0],
         )
+        rand_rot = [np.deg2rad(x) for x in rand_rot]
 
         self.p.resetBasePositionAndOrientation(
             self.model, rand_pos, self.p.getQuaternionFromEuler(rand_rot),

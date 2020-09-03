@@ -19,6 +19,7 @@ class WalkingEnv(gym.Env):
         action_scaling=1.0,
         action_smoothing=1,
         random_rot=(0, 0, 0),
+        reward_stability=0,
     ):
         """ Gym-compatible environment to teach the pupper how to walk
         
@@ -59,6 +60,7 @@ class WalkingEnv(gym.Env):
         self.action_scaling = action_scaling
         self.action_smoothing = deque(maxlen=action_smoothing)
         self.random_rot = random_rot
+        self.reward_stability = reward_stability
 
     def reset(self):
         self.episode_steps = 0
@@ -76,10 +78,8 @@ class WalkingEnv(gym.Env):
     def sanitize_actions(self, actions):
         assert len(actions) == 12
         scaled = actions * np.pi * self.action_scaling  # because 1/-1 corresponds to pi/-pi radians rotation
-
         if self.relative_action:
             scaled += self.sim.get_rest_pos()
-
         # this enforces an action range of -1/1, except if it's relative action - then the action space is asymmetric
         clipped = np.clip(scaled, -np.pi + 0.001, np.pi - 0.001)
         return clipped
@@ -105,14 +105,17 @@ class WalkingEnv(gym.Env):
         # this steps the simulation forward
         for _ in range(self.sim_steps):
             self.sim.step()
-        pos_after, _, _ = self.sim.get_pos_orn_vel()
+        pos_after, orn_after, _ = self.sim.get_pos_orn_vel()
 
         obs = self.get_obs()
 
-        # this reward calculation is taken verbatim from halfcheetah-v2
+        # this reward calculation is taken verbatim from halfcheetah-v2, save
         reward_ctrl = -0.1 * np.square(action).sum()
         reward_run = (pos_after[0] - pos_before[0]) / self.dt
-        reward = reward_ctrl + reward_run
+        reward_stable = 0
+        if self.reward_stability > 0:
+            reward_stable += self.reward_stability * np.square(orn_after).sum()
+        reward = reward_ctrl + reward_run + reward_stable
 
         done = False
         self.episode_steps += 1
