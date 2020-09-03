@@ -126,3 +126,17 @@ for headlessness in ["Headless", "Graphical"]:
         },
         max_episode_steps=120,
     )
+    register(
+        id=f"Pupper-Walk-Relative-RewardStable0.5-ScaledNSmoothed-RandomZRot-{headlessness}-v0",
+        entry_point="stanford_quad.envs:WalkingEnv",
+        kwargs={
+            "debug": (False if headlessness == "Headless" else True),
+            "steps": 120,
+            "relative_action": True,
+            "action_scaling": 0.3,
+            "action_smoothing": 3,
+            "random_rot": (0, 0, 15),
+            "reward_stability": 0.5,
+        },
+        max_episode_steps=120,
+    )
