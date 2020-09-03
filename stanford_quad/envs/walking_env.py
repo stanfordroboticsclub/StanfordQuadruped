@@ -114,7 +114,7 @@ class WalkingEnv(gym.Env):
         reward_run = (pos_after[0] - pos_before[0]) / self.dt
         reward_stable = 0
         if self.reward_stability > 0:
-            reward_stable += self.reward_stability * np.square(orn_after).sum()
+            reward_stable -= self.reward_stability * np.square(orn_after).sum()
         reward = reward_ctrl + reward_run + reward_stable
 
         done = False
