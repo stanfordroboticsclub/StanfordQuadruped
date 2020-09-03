@@ -1,3 +1,5 @@
+from collections import deque
+
 import gym
 from gym import spaces
 import numpy as np
@@ -9,7 +11,14 @@ CONTROL_FREQUENCY = 60  # Hz, the simulation runs at 240Hz by default and doing 
 
 class WalkingEnv(gym.Env):
     def __init__(
-        self, debug=False, steps=120, control_freq=CONTROL_FREQUENCY, relative_action=True, action_scaling=1.0
+        self,
+        debug=False,
+        steps=120,
+        control_freq=CONTROL_FREQUENCY,
+        relative_action=True,
+        action_scaling=1.0,
+        action_smoothing=1,
+        random_rot=(0, 0, 0),
     ):
         """ Gym-compatible environment to teach the pupper how to walk
         
@@ -48,10 +57,12 @@ class WalkingEnv(gym.Env):
         self.sim_steps = int(round(FREQ_SIM / control_freq))
         self.relative_action = relative_action
         self.action_scaling = action_scaling
+        self.action_smoothing = deque(maxlen=action_smoothing)
+        self.random_rot = random_rot
 
     def reset(self):
         self.episode_steps = 0
-        self.sim.reset(rest=self.relative_action)  # also stand up the robot
+        self.sim.reset(rest=self.relative_action, random_rot=self.random_rot)  # also stand up the robot
         return self.get_obs()
 
     def seed(self, seed=None):
@@ -85,8 +96,13 @@ class WalkingEnv(gym.Env):
 
         pos_before, _, _ = self.sim.get_pos_orn_vel()
 
-        # The action command only sets the goals of the motors. It doesn't actually step the simulation forward in time
-        self.sim.action(action_clean)
+        # The action command only sets the goals of the motors. It doesn't actually step the simulation forward in
+        # time. Instead of feeding the simulator the action directly, we take the mean of the last N actions,
+        # where N comes from the action_smoothing hyper-parameter
+        self.action_smoothing.append(action_clean)
+        self.sim.action(np.mean(self.action_smoothing))
+
+        # this steps the simulation forward
         for _ in range(self.sim_steps):
             self.sim.step()
         pos_after, _, _ = self.sim.get_pos_orn_vel()

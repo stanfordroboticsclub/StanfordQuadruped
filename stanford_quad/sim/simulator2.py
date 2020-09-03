@@ -80,18 +80,25 @@ class PupperSim2:
     def step(self):
         self.p.stepSimulation()
 
-    def reset(self, rest=True):
+    def reset(self, rest=True, random_rot=(0, 0, 0), random_pos=(0, 0, 0)):
         height = 0.3
         if rest:
             height = 0.182
         # self.p.resetBasePositionAndOrientation(self.model, [0, 0, height], self.p.getQuaternionFromEuler([0, 0, 0]))
-        rand_init_x = np.random.uniform(-30, 30, 1)[0]
-        rand_init_y = np.random.uniform(-30, 30, 1)[0]
-        rand_init_angle1 = np.deg2rad(np.random.uniform(-30, 30, 1))[0]
-        rand_init_angle2 = np.deg2rad(np.random.uniform(-30, 30, 1))[0]
-        self.p.resetBasePositionAndOrientation(self.model,
-                [rand_init_x, rand_init_y, height],
-                self.p.getQuaternionFromEuler([0, rand_init_angle1, rand_init_angle2]))
+        rand_pos = (
+            np.random.uniform(-random_pos[0], random_pos[0], 1)[0],
+            np.random.uniform(-random_pos[1], random_pos[1], 1)[0],
+            np.random.uniform(-random_pos[2], random_pos[2], 1)[0] + height,
+        )
+        rand_rot = (
+            np.random.normal(0, random_rot[0], 1)[0],
+            np.random.normal(0, random_rot[1], 1)[0],
+            np.random.normal(0, random_rot[2], 1)[0],
+        )
+
+        self.p.resetBasePositionAndOrientation(
+            self.model, rand_pos, self.p.getQuaternionFromEuler(rand_rot),
+        )
         if rest:
             action = self.get_rest_pos()
         else:
