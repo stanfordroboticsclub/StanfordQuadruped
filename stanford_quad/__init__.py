@@ -97,7 +97,7 @@ for headlessness in ["Headless", "Graphical"]:
             "steps": 120,
             "relative_action": True,
             "action_scaling": 1,
-            "reward_stable": 0.5,
+            "reward_stability": 0.5,
         },
         max_episode_steps=120,
     )
@@ -109,7 +109,7 @@ for headlessness in ["Headless", "Graphical"]:
             "steps": 120,
             "relative_action": True,
             "action_scaling": 0.3,
-            "reward_stable": 0.5,
+            "reward_stability": 0.5,
         },
         max_episode_steps=120,
     )
@@ -122,7 +122,7 @@ for headlessness in ["Headless", "Graphical"]:
             "relative_action": True,
             "action_scaling": 0.3,
             "random_rot": (0, 0, 15),
-            "reward_stable": 0.5,
+            "reward_stability": 0.5,
         },
         max_episode_steps=120,
     )
