@@ -100,7 +100,7 @@ class WalkingEnv(gym.Env):
         # time. Instead of feeding the simulator the action directly, we take the mean of the last N actions,
         # where N comes from the action_smoothing hyper-parameter
         self.action_smoothing.append(action_clean)
-        self.sim.action(np.mean(self.action_smoothing))
+        self.sim.action(np.mean(self.action_smoothing, axis=0))
 
         # this steps the simulation forward
         for _ in range(self.sim_steps):
