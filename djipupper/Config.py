@@ -10,9 +10,9 @@ class Configuration:
         self.ps4_deactivated_color = PS4_DEACTIVATED_COLOR
 
         #################### COMMANDS ####################
-        self.max_x_velocity = 0.5
-        self.max_y_velocity = 0.4
-        self.max_yaw_rate = 2.5
+        self.max_x_velocity = 0.8
+        self.max_y_velocity = 0.6
+        self.max_yaw_rate = 4
         self.max_pitch = 30.0 * np.pi / 180.0
 
         #################### MOVEMENT PARAMS ####################
@@ -29,12 +29,12 @@ class Configuration:
         #################### STANCE ####################
         self.delta_x = 0.1
         self.delta_y = 0.07
-        self.x_shift = 0.00
+        self.x_shift = -0.01
         self.default_z_ref = -0.14
 
         #################### SWING ######################
         self.z_coeffs = None
-        self.z_clearance = 0.04
+        self.z_clearance = 0.05
         self.alpha = (
             0.5  # Ratio between touchdown distance and total horizontal stance movement
         )
