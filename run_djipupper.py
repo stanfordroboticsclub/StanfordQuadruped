@@ -29,6 +29,7 @@ def main(FLAGS):
 
     # TODO: bind the zero-ing to its own button
     if FLAGS.zero:
+        input("Do you REALLY want to calibrate? Press enter to continue or ctrl-c to quit.")
         print("Zeroing motors...", end="")
         hardware_interface.zero_motors()
         print("Done.")
