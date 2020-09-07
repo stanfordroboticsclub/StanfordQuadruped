@@ -61,11 +61,13 @@ class JoystickInterface:
             )
             command.pitch = state.pitch + message_dt * pitch_rate
 
+            # TODO: make command.height an incremental value
             height_movement = msg["dpady"]
             command.height = (
                 state.height - message_dt * self.config.z_speed * height_movement
             )
 
+            # TODO: make command.roll also an incremental value
             roll_movement = -msg["dpadx"]
             command.roll = (
                 state.roll + message_dt * self.config.roll_speed * roll_movement

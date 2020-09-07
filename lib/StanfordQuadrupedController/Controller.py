@@ -1,20 +1,21 @@
-from src.Gaits import GaitController
-from src.StanceController import StanceController
-from src.SwingLegController import SwingController
-from src.Utilities import clipped_first_order_filter
-from src.State import BehaviorState, State
+from Gaits import GaitController
+from StanceController import StanceController
+from SwingLegController import SwingController
+from Utilities import clipped_first_order_filter
+from State import BehaviorState, State
 
 import numpy as np
 from transforms3d.euler import euler2mat, quat2euler
 from transforms3d.quaternions import qconjugate, quat2axangle
 from transforms3d.axangles import axangle2mat
+from typing import Any, Tuple
 
 
 class Controller:
     """Controller and planner object
     """
 
-    def __init__(self, config, inverse_kinematics):
+    def __init__(self, config, inverse_kinematics) -> None:
         self.config = config
 
         self.smoothed_yaw = 0.0  # for REST mode only
@@ -42,7 +43,7 @@ class Controller:
             BehaviorState.REST: BehaviorState.DEACTIVATED,
         }
 
-    def step_gait(self, state, command):
+    def step_gait(self, state, command) -> Tuple[Any, Any]:
         """Calculate the desired foot locations for the next timestep
 
         Returns
@@ -70,7 +71,7 @@ class Controller:
             new_foot_locations[:, leg_index] = new_location
         return new_foot_locations, contact_modes
 
-    def run(self, state, command):
+    def run(self, state: State, command: Command) -> None:
         """Steps the controller forward one timestep
 
         Parameters
@@ -153,12 +154,3 @@ class Controller:
         state.pitch = command.pitch
         state.roll = command.roll
         state.height = command.height
-
-    def set_pose_to_default(self):
-        state.foot_locations = (
-            self.config.default_stance
-            + np.array([0, 0, self.config.default_z_ref])[:, np.newaxis]
-        )
-        state.joint_angles = controller.inverse_kinematics(
-            state.foot_locations, self.config
-        )

@@ -11,14 +11,12 @@ class StanceController:
         
         Parameters
         ----------
-        z_measured : float
+        leg_index : float
             Z coordinate of the feet relative to the body.
-        stance_params : StanceParams
-            Stance parameters object.
-        movement_reference : MovementReference
-            Movement reference object.
-        gait_params : GaitParams
-            Gait parameters object.
+        state: State
+            State object.
+        command: Command
+            Command object
 
         Returns
         -------
@@ -39,6 +37,22 @@ class StanceController:
 
     # TODO: put current foot location into state
     def next_foot_location(self, leg_index, state, command):
+        """[summary]
+
+        Parameters
+        ----------
+        leg_index : [type]
+            [description]
+        state : [type]
+            [description]
+        command : [type]
+            [description]
+
+        Returns
+        -------
+        [type]
+            [description]
+        """
         foot_location = state.foot_locations[:, leg_index]
         (delta_p, delta_R) = self.position_delta(leg_index, state, command)
         incremented_location = delta_R @ foot_location + delta_p
