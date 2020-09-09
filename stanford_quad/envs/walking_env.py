@@ -122,7 +122,7 @@ class WalkingEnv(gym.Env):
         if self.episode_steps == self.episode_steps_max:
             done = True
 
-        return obs, reward, done, dict(reward_run=reward_run, reward_ctrl=reward_ctrl)
+        return obs, reward, done, dict(reward_run=reward_run, reward_ctrl=reward_ctrl, reward_stable=reward_stable)
 
     def render(self, mode="human"):
         # todo: if the mode=="human" then this should open and display a
