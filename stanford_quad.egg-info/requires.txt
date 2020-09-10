@@ -1,8 +1,0 @@
-tqdm
-numpy
-matplotlib
-pybullet
-gym
-opencv-python
-transforms3d
-UDPComms@ git+ssh://git@github.com/stanfordroboticsclub/UDPComms@master#egg=UDPComms

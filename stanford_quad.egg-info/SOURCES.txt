@@ -1,7 +1,0 @@
-README.md
-setup.py
-stanford_quad.egg-info/PKG-INFO
-stanford_quad.egg-info/SOURCES.txt
-stanford_quad.egg-info/dependency_links.txt
-stanford_quad.egg-info/requires.txt
-stanford_quad.egg-info/top_level.txt
