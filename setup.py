@@ -12,6 +12,6 @@ setup(
         "opencv-python",
         "transforms3d",
         "torchvision",
-        "UDPComms @ git+ssh://git@github.com/stanfordroboticsclub/UDPComms@master#egg=UDPComms",
+        "UDPComms @ git+https://github.com/stanfordroboticsclub/UDPComms@master#egg=UDPComms",
     ],
 )
