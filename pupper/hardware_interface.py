@@ -1,19 +1,24 @@
 import pigpio
-from pupper.Config import ServoParams, PWMParams
+from stanford_quadruped_controller import hardware_interface
+from pupper import kinematics
+from pupper import hardware_config
+import numpy as np
 
-
-class HardwareInterface:
-    def __init__(self):
+class HardwareInterface(hardware_interface.HardwareInterface):
+    def __init__(self, pupper_config: hardware_config.PupperConfig):
         self.pi = pigpio.pi()
-        self.pwm_params = PWMParams()
-        self.servo_params = ServoParams()
+        self.pupper_config = pupper_config
         initialize_pwm(self.pi, self.pwm_params)
 
-    def set_actuator_postions(self, joint_angles):
-        send_servo_commands(self.pi, self.pwm_params, self.servo_params, joint_angles)
+    def command_foot_positions(self, foot_positions: np.ndarray) -> None:
+        joint_angles = kinematics.inverse_kinematics(foot_positions, self.pupper_config)
+        self.set_actuator_postions(joint_angles)
+
+    def set_actuator_postions(self, joint_angles: np.ndarray) -> None:
+        send_servo_commands(self.pi, self.pupper_config, joint_angles)
     
-    def set_actuator_position(self, joint_angle, axis, leg):
-        send_servo_command(self.pi, self.pwm_params, self.servo_params, joint_angle, axis, leg)
+    def set_actuator_position(self, joint_angle:float , axis: int, leg: int) -> None:
+        send_servo_command(self.pi, self.pupper_config, joint_angle, axis, leg)
 
 
 def pwm_to_duty_cycle(pulsewidth_micros, pwm_params):
@@ -34,7 +39,7 @@ def pwm_to_duty_cycle(pulsewidth_micros, pwm_params):
     return int(pulsewidth_micros / 1e6 * pwm_params.freq * pwm_params.range)
 
 
-def angle_to_pwm(angle, servo_params, axis_index, leg_index):
+def angle_to_pwm(angle, pupper_config, axis_index, leg_index):
     """Converts a desired servo angle into the corresponding PWM command
 
     Parameters
@@ -54,18 +59,18 @@ def angle_to_pwm(angle, servo_params, axis_index, leg_index):
         PWM width in microseconds
     """
     angle_deviation = (
-        angle - servo_params.neutral_angles[axis_index, leg_index]
-    ) * servo_params.servo_multipliers[axis_index, leg_index]
+        angle - pupper_config.neutral_angles[axis_index, leg_index]
+    ) * pupper_config.direction_multipliers[axis_index, leg_index]
     pulse_width_micros = (
-        servo_params.neutral_position_pwm
-        + servo_params.micros_per_rad * angle_deviation
+        pupper_config.neutral_position_pwm
+        + pupper_config.micros_per_radian * angle_deviation
     )
     return pulse_width_micros
 
 
-def angle_to_duty_cycle(angle, pwm_params, servo_params, axis_index, leg_index):
+def angle_to_duty_cycle(angle, pupper_config, axis_index, leg_index):
     return pwm_to_duty_cycle(
-        angle_to_pwm(angle, servo_params, axis_index, leg_index), pwm_params
+        angle_to_pwm(angle, pupper_config, axis_index, leg_index), pupper_config
     )
 
 
@@ -78,22 +83,21 @@ def initialize_pwm(pi, pwm_params):
             pi.set_PWM_range(pwm_params.pins[axis_index, leg_index], pwm_params.range)
 
 
-def send_servo_commands(pi, pwm_params, servo_params, joint_angles):
+def send_servo_commands(pi, pupper_config, joint_angles):
     for leg_index in range(4):
         for axis_index in range(3):
             duty_cycle = angle_to_duty_cycle(
                 joint_angles[axis_index, leg_index],
-                pwm_params,
-                servo_params,
+                pupper_config,
                 axis_index,
                 leg_index,
             )
-            pi.set_PWM_dutycycle(pwm_params.pins[axis_index, leg_index], duty_cycle)
+            pi.set_PWM_dutycycle(pupper_config.pins[axis_index, leg_index], duty_cycle)
 
 
-def send_servo_command(pi, pwm_params, servo_params, joint_angle, axis, leg):
-    duty_cycle = angle_to_duty_cycle(joint_angle, pwm_params, servo_params, axis, leg)
-    pi.set_PWM_dutycycle(pwm_params.pins[axis, leg], duty_cycle)
+def send_servo_command(pi, pupper_config, joint_angle, axis, leg):
+    duty_cycle = angle_to_duty_cycle(joint_angle, pupper_config, axis, leg)
+    pi.set_PWM_dutycycle(pupper_config.pins[axis, leg], duty_cycle)
 
 
 def deactivate_servos(pi, pwm_params):

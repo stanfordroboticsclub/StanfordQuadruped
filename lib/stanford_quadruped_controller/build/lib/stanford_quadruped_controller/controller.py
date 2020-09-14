@@ -1,8 +1,10 @@
-from Gaits import GaitController
-from StanceController import StanceController
-from SwingLegController import SwingController
-from Utilities import clipped_first_order_filter
-from State import BehaviorState, State
+from gait_controller import GaitController
+from stance_controller import StanceController
+from swing_leg_controller import SwingController
+from utilities import clipped_first_order_filter
+from state import BehaviorState, State
+from command import Command
+from config import Configuration
 
 import numpy as np
 from transforms3d.euler import euler2mat, quat2euler
@@ -15,7 +17,7 @@ class Controller:
     """Controller and planner object
     """
 
-    def __init__(self, config, inverse_kinematics) -> None:
+    def __init__(self, config: Configuration, inverse_kinematics) -> None:
         self.config = config
 
         self.smoothed_yaw = 0.0  # for REST mode only
@@ -43,7 +45,7 @@ class Controller:
             BehaviorState.REST: BehaviorState.DEACTIVATED,
         }
 
-    def step_gait(self, state, command) -> Tuple[Any, Any]:
+    def step_gait(self, state: State, command: Command) -> Tuple[Any, Any]:
         """Calculate the desired foot locations for the next timestep
 
         Returns

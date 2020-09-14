@@ -1,0 +1,26 @@
+# platform_config.yaml file
+
+# Mapping from raspbery pi pin to actuator
+# For example, the 1st column corresponds to the front-right motor,
+# and says that the abduction motor is connected to pin 2, the
+# the hip motor is connected to pin 3, and the knee motor is
+# connected to pin 4.
+pwm_pins: [[2, 14, 18, 23],
+           [3, 15, 27, 24],
+           [4, 17, 22, 25]]
+pwm_range: 4000 # Resolution of the pwm waveform (see pigpio library for details)
+pwm_freq: 250 # Frequency at which to update the pwm waveforms (see pigpio library for details) [Hz]
+
+servo_neutral_position_pwm: 1500 # width of pwm signal corresponding to the servo's neutral angle [uS]
+servo_neutral_angle_degrees: 0 # TODO(nathankau) move to a different yaml
+
+# A change of this many microseconds in the pwm width corresponds to 1 radian of motor movement
+servo_micros_per_radian: 649.3
+servo_direction_multipliers: [[1, 1, 1, 1], [-1, 1, -1, 1], [1, -1, 1, -1]]
+
+hip_x_offset: 0.10 # 1/2 the distance between the front and back abduction motors [m]
+hip_y_offset: 0.04 # 1/2 the distance between the left and right abduction motors [m]
+lower_link_length: 0.11 # length of lower leg [m]
+upper_link_length: 0.08 # length of upper leg [m]
+abduction_offset: 0.02 # distance between the leg plane and abduction motor axis [m]
+foot_radius: 0.01 # radius of foot [m]
