@@ -19,7 +19,6 @@ class WalkingEnv(gym.Env):
         action_scaling=1.0,
         action_smoothing=1,
         random_rot=(0, 0, 0),
-        reward_stability=0,
     ):
         """ Gym-compatible environment to teach the pupper how to walk
         
@@ -60,7 +59,6 @@ class WalkingEnv(gym.Env):
         self.action_scaling = action_scaling
         self.action_smoothing = deque(maxlen=action_smoothing)
         self.random_rot = random_rot
-        self.reward_stability = reward_stability
 
     def reset(self):
         self.episode_steps = 0
@@ -110,11 +108,9 @@ class WalkingEnv(gym.Env):
         obs = self.get_obs()
 
         # this reward calculation is taken verbatim from halfcheetah-v2, save
-        reward_ctrl = -0.1 * np.square(action).sum()
+        reward_ctrl = -np.square(action).sum()
         reward_run = (pos_after[0] - pos_before[0]) / self.dt
-        reward_stable = 0
-        if self.reward_stability > 0:
-            reward_stable -= self.reward_stability * np.square(orn_after).sum()
+        reward_stable = -np.square(orn_after).sum()
         reward = reward_ctrl + reward_run + reward_stable
 
         done = False
