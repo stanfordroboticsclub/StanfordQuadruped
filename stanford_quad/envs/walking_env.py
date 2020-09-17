@@ -19,6 +19,7 @@ class WalkingEnv(gym.Env):
         action_scaling=1.0,
         action_smoothing=1,
         random_rot=(0, 0, 0),
+        reward_coefficients=(0, 1, 0),
     ):
         """ Gym-compatible environment to teach the pupper how to walk
         
@@ -59,6 +60,9 @@ class WalkingEnv(gym.Env):
         self.action_scaling = action_scaling
         self.action_smoothing = deque(maxlen=action_smoothing)
         self.random_rot = random_rot
+
+        # new reward coefficients
+        self.rcoeff_ctrl, self.rcoeff_run, self.rcoeff_stable = reward_coefficients
 
     def reset(self):
         self.episode_steps = 0
@@ -111,7 +115,7 @@ class WalkingEnv(gym.Env):
         reward_ctrl = -np.square(action).sum()
         reward_run = (pos_after[0] - pos_before[0]) / self.dt
         reward_stable = -np.square(orn_after).sum()
-        reward = reward_ctrl + reward_run + reward_stable
+        reward = self.rcoeff_ctrl * reward_ctrl + self.rcoeff_run * reward_run + self.rcoeff_stable * reward_stable
 
         done = False
         self.episode_steps += 1

@@ -4,7 +4,8 @@ import gym
 import stanford_quad  # need this unused import to get our custom environments
 import numpy as np
 
-env = gym.make("Pupper-Walk-Relative-ScaledDown-RandomZRot-Graphical-v0")
+# env = gym.make("Pupper-Walk-Relative-ScaledDown-RandomZRot-Graphical-v0")
+env = gym.make("Pupper-Walk-Relative-RewardStable0.5-Graphical-v0")
 
 for run in range(5):
     env.reset()
