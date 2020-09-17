@@ -114,7 +114,8 @@ class WalkingEnv(gym.Env):
         # this reward calculation is taken verbatim from halfcheetah-v2, save
         reward_ctrl = -np.square(action).sum()
         reward_run = (pos_after[0] - pos_before[0]) / self.dt
-        reward_stable = -np.square(orn_after).sum()
+        # technically we should divide the next line by (3*pi^2) but that's really hard to reach
+        reward_stable = -np.square(orn_after).sum() / np.square(np.pi)
         reward = self.rcoeff_ctrl * reward_ctrl + self.rcoeff_run * reward_run + self.rcoeff_stable * reward_stable
 
         done = False
