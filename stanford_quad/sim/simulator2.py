@@ -1,4 +1,5 @@
 import os
+import time
 
 import pybullet
 import pybullet_data
@@ -60,6 +61,11 @@ class PupperSim2:
         self.p.setAdditionalSearchPath(pybullet_data.getDataPath())
         self.p.setGravity(0, 0, g)
 
+        if debug:
+            self.p.resetDebugVisualizerCamera(
+                cameraDistance=0.75, cameraYaw=0, cameraPitch=-45, cameraTargetPosition=[0, 0.0, 0]
+            )
+
         # self.p.loadURDF("plane.urdf")
 
         self.model = self.p.loadMJCF(xml_path)[1]  # [0] is the floor
@@ -69,21 +75,38 @@ class PupperSim2:
                 print(self.p.getJointInfo(self.model, i))
         self.joint_indices = list(range(0, 24, 2))
 
-        if start_standing:
-            self.reset()
-            self.step()
-
         self.cam_proj = self.p.computeProjectionMatrixFOV(
             fov=90, aspect=self.img_size[0] / self.img_size[1], nearVal=0.001, farVal=10
         )
+
+        self.collision_floor = self.create_box((0, 0, 0.001), (0, 0, 0), (1, 1, 0.0005), visible=False)
+        self.p.createConstraint(
+            parentBodyUniqueId=self.collision_floor,
+            parentLinkIndex=-1,
+            childBodyUniqueId=-1,
+            childLinkIndex=-1,
+            jointType=self.p.JOINT_FIXED,
+            jointAxis=(1, 1, 1),
+            parentFramePosition=(0, 0, 0.0),
+            childFramePosition=(0, 0, 0.0005),
+        )
+
+        if start_standing:
+            self.reset()
+            linka = self.p.getLinkState(self.model, 0)[0]
+            print(linka)
+            for _ in range(10):
+                self.step()
+
+        # time.sleep(1)
 
     def step(self):
         self.p.stepSimulation()
 
     def reset(self, rest=True, random_rot=(0, 0, 0), random_pos=(0, 0, 0)):
-        height = 0.3
+        height = 0.301
         if rest:
-            height = 0.182
+            height = 0.183
         # self.p.resetBasePositionAndOrientation(self.model, [0, 0, height], self.p.getQuaternionFromEuler([0, 0, 0]))
         rand_pos = (
             np.random.uniform(-random_pos[0], random_pos[0], 1)[0],
@@ -158,16 +181,21 @@ class PupperSim2:
                 targetVelocity=0,
             )
 
-    def create_box(self, pos, orn, size, color, random_color):
+    def create_box(self, pos, orn, size, color=(1, 0, 0), random_color=False, visible=True):
         # we need to round or small float errors will explode the simulation
         pos = np.around(pos, 4)
         size = np.around(size, 4)
-        orn = np.around(orn, 4)
+        orn = np.around(self.p.getQuaternionFromEuler(orn), 4)
 
         if random_color:
             color = random_bright_color(uint=False)
 
-        obj_visual = self.p.createVisualShape(shapeType=self.p.GEOM_BOX, rgbaColor=list(color) + [1], halfExtents=size)
+        obj_visual = -1
+        if visible:
+            obj_visual = self.p.createVisualShape(
+                shapeType=self.p.GEOM_BOX, rgbaColor=list(color) + [1], halfExtents=size
+            )
+
         obj_collision = self.p.createCollisionShape(shapeType=self.p.GEOM_BOX, halfExtents=size)
 
         obj = self.p.createMultiBody(
@@ -203,7 +231,7 @@ class PupperSim2:
         steps = []
         positions = []
 
-        orientation = self.p.getQuaternionFromEuler([0, 0, 0])
+        orientation = [0, 0, 0]
         size = (step_depth / 2, step_width / 2, step_height / 2)
 
         # create steps boxes
@@ -275,6 +303,20 @@ class PupperSim2:
         )
         output_img = pybulletimage2numpy(img, self.img_size[0], self.img_size[1])
         return output_img
+
+    def check_collision(self):
+        contacts = self.p.getClosestPoints(
+            bodyA=self.model, bodyB=self.collision_floor, distance=0.1, linkIndexA=-1, linkIndexB=-1
+        )
+        # if len(contacts) > 0:
+        #     contacts = contacts[0]
+        #     self.p.removeAllUserDebugItems()
+        #     self.p.addUserDebugLine(lineFromXYZ=contacts[5], lineToXYZ=contacts[6], lineColorRGB=(1, 0, 1), lineWidth=2)
+        #     self.p.addUserDebugText(text=str(contacts[8]), textPosition=(0, 0, 0), textColorRGB=(1, 1, 0), textSize=5)
+        if len(contacts) > 0 and contacts[0][8] < 0.02:
+            return True
+
+        return False
 
 
 # depth = 0.2, height = 0.2

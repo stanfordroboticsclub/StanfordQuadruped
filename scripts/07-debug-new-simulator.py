@@ -22,4 +22,8 @@ for step in range(100000):
     sim.action(motorPos)
     sim.step()
     pos, orn, vel = sim.get_pos_orn_vel()
-    print(pos, orn, vel)
+    # print(pos, orn, vel)
+    # for i in range(40):
+    #     print(sim.p.getLinkState(bodyUniqueId=sim.model, linkIndex=i))
+    # quit()
+    sim.check_collision()

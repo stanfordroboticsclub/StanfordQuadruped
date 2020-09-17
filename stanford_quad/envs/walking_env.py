@@ -19,7 +19,8 @@ class WalkingEnv(gym.Env):
         action_scaling=1.0,
         action_smoothing=1,
         random_rot=(0, 0, 0),
-        reward_coefficients=(0, 1, 0),
+        reward_coefficients=(0.1, 1, 0),
+        stop_on_flip=False,
     ):
         """ Gym-compatible environment to teach the pupper how to walk
         
@@ -60,6 +61,7 @@ class WalkingEnv(gym.Env):
         self.action_scaling = action_scaling
         self.action_smoothing = deque(maxlen=action_smoothing)
         self.random_rot = random_rot
+        self.stop_on_flip = stop_on_flip
 
         # new reward coefficients
         self.rcoeff_ctrl, self.rcoeff_run, self.rcoeff_stable = reward_coefficients
@@ -107,6 +109,7 @@ class WalkingEnv(gym.Env):
         # this steps the simulation forward
         for _ in range(self.sim_steps):
             self.sim.step()
+
         pos_after, orn_after, _ = self.sim.get_pos_orn_vel()
 
         obs = self.get_obs()
@@ -122,6 +125,12 @@ class WalkingEnv(gym.Env):
         self.episode_steps += 1
         if self.episode_steps == self.episode_steps_max:
             done = True
+
+        if self.stop_on_flip:
+            flipped = self.sim.check_collision()
+            if flipped:
+                done = True
+                reward -= 1000
 
         return obs, reward, done, dict(reward_run=reward_run, reward_ctrl=reward_ctrl, reward_stable=reward_stable)
 
