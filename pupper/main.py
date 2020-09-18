@@ -21,13 +21,13 @@ def main(FLAGS):
         platform_yaml_file="pupper_config.yaml",
         robot_yaml_file="robot_calibration.yaml",
     )
-    pupper_interface = hardware_interface.HardwareInterface()
+    pupper_interface = hardware_interface.HardwareInterface(pupper_config)
 
     # Create controller and user input handles
     pupper_controller = controller.Controller(controller_config)
     pupper_state = state.State(height=controller_config.default_z_ref)
     print("Creating joystick listener...", end="")
-    joystick_interface = joystick_interface.JoystickInterface(config)
+    pupper_joystick_interface = joystick_interface.JoystickInterface(config)
     print("Done.")
 
     # Print some important tuning parameters to the console
@@ -36,13 +36,13 @@ def main(FLAGS):
     last_loop = time.time()
     while True:
         if pupper_state.activation == 0:
-            joystick_interface.set_color(config.ps4_deactivated_color)
+            pupper_joystick_interface.set_color(config.ps4_deactivated_color)
             command = joystick_interface.get_command(pupper_state)
 
             # Check if we should transition to "activated"
             if command.activate_event == 1:
                 print("Robot activated.")
-                joystick_interface.set_color(config.ps4_color)
+                pupper_joystick_interface.set_color(config.ps4_color)
                 pupper_interface.activate()
                 state.activation = 1
                 continue
@@ -53,7 +53,7 @@ def main(FLAGS):
             now = time.time()
             if now - last_loop >= config.dt:
                 # Parse the udp joystick commands and then update the robot controller's parameters
-                command = joystick_interface.get_command(pupper_state)
+                command = pupper_joystick_interface.get_command(pupper_state)
 
                 # Check if we should transition to "deactivated"
                 if command.activate_event == 1:

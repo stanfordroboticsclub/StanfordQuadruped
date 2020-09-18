@@ -14,7 +14,7 @@ from typing import Any, Tuple
 
 
 REST = state.BehaviorState.REST
-TROT = state.BehaviorState.HOP
+HOP = state.BehaviorState.HOP
 FINISHHOP = state.BehaviorState.FINISHHOP
 TROT = state.BehaviorState.TROT
 DEACTIVATED = state.BehaviorState.DEACTIVATED
@@ -31,8 +31,8 @@ class Controller:
         self.inverse_kinematics = inverse_kinematics
 
         self.contact_modes = np.zeros(4)
-        self.gait_controller = GaitController(self.config)
-        self.swing_controller = swing_controller.SwingController(self.config)
+        self.gait_controller = gait_controller.GaitController(self.config)
+        self.swing_controller = swing_leg_controller.SwingController(self.config)
         self.stance_controller = stance_controller.StanceController(self.config)
 
         self.hop_transition_mapping = {

@@ -17,14 +17,13 @@ class Command:
         self.activate_event = False
 
     def __str__(self):
-        return "vx: {} vy: {} wz: {} height: {} pitch: {} roll: {} act: {} hop_event: {} trot_event: {} ".format(
+        return "vx: {} vy: {} wz: {} height: {} pitch: {} roll: {} hop_event: {} trot_event: {} act_event: {}".format(
             self.horizontal_velocity[0],
             self.horizontal_velocity[1],
             self.yaw_rate,
             self.height,
             self.pitch,
             self.roll,
-            self.activation,
             self.hop_event,
             self.trot_event,
             self.activate_event,
