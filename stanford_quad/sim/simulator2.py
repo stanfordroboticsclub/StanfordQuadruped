@@ -34,6 +34,7 @@ class PupperSim2:
         g=-9.81,
         start_standing=True,
         img_size=(84, 84),
+        enable_new_floor=False,
     ):
         """
 
@@ -63,7 +64,7 @@ class PupperSim2:
 
         if debug:
             self.p.resetDebugVisualizerCamera(
-                cameraDistance=0.75, cameraYaw=0, cameraPitch=-45, cameraTargetPosition=[0, 0.0, 0]
+                cameraDistance=1.5, cameraYaw=180, cameraPitch=-45, cameraTargetPosition=[0, 0.0, 0]
             )
 
         # self.p.loadURDF("plane.urdf")
@@ -79,22 +80,22 @@ class PupperSim2:
             fov=90, aspect=self.img_size[0] / self.img_size[1], nearVal=0.001, farVal=10
         )
 
-        self.collision_floor = self.create_box((0, 0, 0.001), (0, 0, 0), (1, 1, 0.0005), visible=False)
-        self.p.createConstraint(
-            parentBodyUniqueId=self.collision_floor,
-            parentLinkIndex=-1,
-            childBodyUniqueId=-1,
-            childLinkIndex=-1,
-            jointType=self.p.JOINT_FIXED,
-            jointAxis=(1, 1, 1),
-            parentFramePosition=(0, 0, 0.0),
-            childFramePosition=(0, 0, 0.0005),
-        )
+        self.collision_floor = None
+        if enable_new_floor:
+            self.collision_floor = self.create_box((0, 0, 0.001), (0, 0, 0), (1, 1, 0.0005), visible=False)
+            self.p.createConstraint(
+                parentBodyUniqueId=self.collision_floor,
+                parentLinkIndex=-1,
+                childBodyUniqueId=-1,
+                childLinkIndex=-1,
+                jointType=self.p.JOINT_FIXED,
+                jointAxis=(1, 1, 1),
+                parentFramePosition=(0, 0, 0.0),
+                childFramePosition=(0, 0, 0.0005),
+            )
 
         if start_standing:
-            self.reset()
-            linka = self.p.getLinkState(self.model, 0)[0]
-            print(linka)
+            self.reset(True)
             for _ in range(10):
                 self.step()
 
@@ -305,6 +306,11 @@ class PupperSim2:
         return output_img
 
     def check_collision(self):
+        if self.collision_floor is None:
+            raise Exception(
+                "You need to call the PupperSim2 class with the parameter enable_new_floor=True for floor collisions to work."
+            )
+
         contacts = self.p.getClosestPoints(
             bodyA=self.model, bodyB=self.collision_floor, distance=0.1, linkIndexA=-1, linkIndexB=-1
         )
