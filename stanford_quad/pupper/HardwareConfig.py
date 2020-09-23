@@ -5,9 +5,7 @@ import numpy as np
 
 
 MICROS_PER_RAD = 11.333 * 180.0 / np.pi  # Must be calibrated
-NEUTRAL_ANGLE_DEGREES = np.array(
-    [[ -0,   7,   2,   3], [ 17,  57, 46,  52], [-39, -35, -33, -64]]
-)
+NEUTRAL_ANGLE_DEGREES = np.array([[-1.0, -4.0, -14.0, -10.0], [45.0, 47.0, 43.0, 40.0], [-41.0, -43.0, -28.0, -22.0]])
 
-PS4_COLOR = {"red": 0, "blue": 0, "green": 255}
-PS4_DEACTIVATED_COLOR = {"red": 0, "blue": 0, "green": 50}
+PS4_COLOR = {"red": 0, "blue": 255, "green": 0}
+PS4_DEACTIVATED_COLOR = {"red": 0, "blue": 50, "green": 0}

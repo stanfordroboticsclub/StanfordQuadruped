@@ -60,7 +60,7 @@ while True:
             break
 
         # Read imu data. Orientation will be None if no data was available
-        quat_orientation = IMU.read_orientation() if USE_IMU else np.array([1, 0, 0, 0])
+        quat_orientation = np.array([1, 0, 0, 0]) if not USE_IMU else imu.read_orientation()
         state.quat_orientation = quat_orientation
 
         # Step the controller forward by dt

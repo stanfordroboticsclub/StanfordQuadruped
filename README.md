@@ -12,7 +12,13 @@ We assume you got an environment where `pip` and `python` point to the Python 3 
 ```bash
 git clone https://github.com/fgolemo/StanfordQuadruped.git
 cd StanfordQuadruped
-pip install -e . 
+pip install -e .[sim] 
+```
+
+#### Robot installation
+
+```bash
+sudo pip install -e .[robot]
 ```
 
 ## Getting Started
