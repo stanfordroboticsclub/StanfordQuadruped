@@ -150,14 +150,18 @@ class PupperSim2:
         self.p.changeDynamics(
             self.model, -1, activationState=sleepy_state,
         )
-        self.p.changeVisualShape(self.model, -1, rgbaColor=color)
-
         for j in range(24):  # not 12 because there's some fixed joints in there
             self.p.setCollisionFilterGroupMask(self.model, j, collisionFilterGroup=0, collisionFilterMask=0)
 
             self.p.changeDynamics(
                 self.model, j, activationState=sleepy_state,
             )
+
+        self.change_color(color)
+
+    def change_color(self, color=(1, 0, 1, 1)):
+        self.p.changeVisualShape(self.model, -1, rgbaColor=color)
+        for j in range(24):  # not 12 because there's some fixed joints in there
             self.p.changeVisualShape(self.model, j, rgbaColor=color)
 
     def move_kinectic_body(self, pos, rot):
