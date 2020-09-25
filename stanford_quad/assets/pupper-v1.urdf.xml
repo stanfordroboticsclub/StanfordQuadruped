@@ -1,0 +1,239 @@
+<?xml version="1.0" ?>
+<robot name="pupper-v1" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <!--    COLORS-->
+
+
+    <material name="black">
+        <color rgba="0 0 0 1"/>
+    </material>
+    <material name="red">
+        <color rgba="1 0 0 1"/>
+    </material>
+    <material name="white">
+        <color rgba="1 1 1 1"/>
+    </material>
+
+    <link name="torso">
+<!--        <inertial pos="0 0 0" mass="0.56" diaginertia="  "/>-->
+<!--        <geom pos="0 0 0" name="torso" size="" type="box"/>-->
+
+        <visual>
+            <origin rpy="0 0 0" xyz="0 0 0.3"/>
+            <geometry>
+                <box size=".138 .05 .025"/>
+<!--                <cylinder length="0.005" radius="0.075"/>-->
+            </geometry>
+            <material name="black"/>
+        </visual>
+        <collision>
+            <origin rpy="0 0 0" xyz="0 0 0.3"/>
+            <geometry>
+                <box size=".138 .05 .025"/>
+            </geometry>
+        </collision>
+        <inertial>
+            <mass value="0.56"/>
+            <inertia ixx="0.0005532" iyy="0.0037619999999999997" izz="0.004011000000000001"/>
+        </inertial>
+    </link>
+
+              <joint name="torso_to_frmodule" type="revolute">
+            <parent link="torso"/>
+            <child link="fr_module"/>
+            <origin xyz=".1 -.04 0"/>
+            <limit effort="100.0" lower="-1.570796326795" upper="1.570796326795" velocity="1"/>
+            <axis xyz="1 0 0"/>
+          </joint>
+
+    <link name="frmodule">
+        <visual>
+            <origin rpy="0 0 0" xyz="0 -0.0132 0"/>
+            <geometry>
+                <box size=".0197 .0372 .0107"/>
+            </geometry>
+            <material name="black"/>
+        </visual>
+        <collision>
+            <origin rpy="0 0 0" xyz="0 -0.0132 0"/>
+            <geometry>
+                <box size=".0197 .0372 .0107"/>
+            </geometry>
+        </collision>
+        <inertial>
+            <mass value=".08"/>
+            <inertia ixx="3.698e-05" iyy="7.127e-06" izz="4.075e-05"/>
+        </inertial>
+    </link>
+
+<joint axis="1 0 0" name="fr_x" pos="0 0 0" limited="true" range="-1.57 1.57" type="hinge" damping="1.049"/>
+
+
+</robot>
+
+<!-- <link name="fr_module">-->
+<!--        <visual>-->
+<!--            <origin rpy="0 0 0" xyz="0 0 0"/>-->
+<!--            <geometry>-->
+<!--                <box size=".138 .05 .025"/>-->
+<!--            </geometry>-->
+<!--            <material name="black"/>-->
+<!--        </visual>-->
+<!--        <collision>-->
+<!--            <origin rpy="0 0 0" xyz="0 0 0"/>-->
+<!--            <geometry>-->
+<!--                <box size=".138 .05 .025"/>-->
+<!--            </geometry>-->
+<!--        </collision>-->
+<!--        <inertial>-->
+<!--            <mass value=""/>-->
+<!--            <inertia ixx="" iyy="" izz=""/>-->
+<!--        </inertial>-->
+<!--    </link>-->
+
+
+          <link name="1_anchor">
+            <inertial>
+              <mass value="1"/>
+              <inertia ixx="1" iyy="1" izz="1"/>
+              <!--<inertia ixx="0.4" ixy="0.0" ixz="0.0" iyy="0.4" iyz="0.0" izz="0.2"/>-->
+            </inertial>
+          </link>
+          <joint name="1_anchor_to_base" type="fixed">
+            <parent link="1_anchor"/>
+            <child link="1_base"/>
+            <origin rpy="0 0 0" xyz="0 0 0"/>
+          </joint>
+          <link name="1_base">
+            <visual>
+              <origin rpy="0 0 0" xyz="0 0 0.0025"/>
+              <geometry>
+                <cylinder length="0.005" radius="0.075"/>
+              </geometry>
+              <material name="white"/>
+            </visual>
+            <collision>
+              <origin rpy="0 0 0" xyz="0 0 0.0025"/>
+              <geometry>
+                <cylinder length="0.005" radius="0.075"/>
+              </geometry>
+            </collision>
+            <inertial>
+              <mass value=".038"/>
+              <inertia ixx="1e-3" iyy="1e-3" izz="1e-3"/>
+              <!--<inertia ixx="0.4" ixy="0.0" ixz="0.0" iyy="0.4" iyz="0.0" izz="0.2"/>-->
+            </inertial>
+          </link>
+          <joint name="1_base_to_static" type="fixed">
+            <parent link="1_base"/>
+            <child link="1_static_first_link"/>
+            <origin xyz="0 .038 0.005"/>
+          </joint>
+          <!--<joint name="base_to_measure" type="fixed">-->
+          <!--<parent link="base"/>-->
+          <!--<child link="ruler"/>-->
+          <!--</joint>-->
+          <!--<link name="ruler">-->
+          <!--<xacro:box2 nocoll="1" sizex=".02" sizey=".02" sizez=".17" color="red" posz=".085"/>-->
+          <!--</link>-->
+          <link name="1_static_first_link">
+            <visual>
+              <origin rpy="0 0 0" xyz="0 0 0.0015"/>
+              <geometry>
+                <cylinder length="0.003" radius="0.0275"/>
+              </geometry>
+              <material name="white"/>
+            </visual>
+            <collision>
+              <origin rpy="0 0 0" xyz="0 0 0.0015"/>
+              <geometry>
+                <cylinder length="0.003" radius="0.0275"/>
+              </geometry>
+            </collision>
+            <inertial>
+              <mass value="0.011"/>
+              <inertia ixx="1e-5" iyy="1e-5" izz="1e-5"/>
+              <!--<inertia ixx="0.4" ixy="0.0" ixz="0.0" iyy="0.4" iyz="0.0" izz="0.2"/>-->
+            </inertial>
+          </link>
+          <joint name="1_motor1_to_static" type="fixed">
+            <parent link="1_static_first_link"/>
+            <child link="1_motor1link"/>
+            <origin xyz="0 -.010 .003"/>
+          </joint>
+          <link name="1_motor1link">
+            <visual>
+              <origin rpy="0 0 0" xyz="0 0 0.0135"/>
+              <geometry>
+                <box size=".024 .035 .027"/>
+              </geometry>
+              <material name="black"/>
+            </visual>
+            <collision>
+              <origin rpy="0 0 0" xyz="0 0 0.0135"/>
+              <geometry>
+                <box size=".024 .035 .027"/>
+              </geometry>
+            </collision>
+            <inertial>
+              <!--ACTUAL MASS-->
+              <!--<mass value=".017"/>-->
+              <!--NORMAL WORKING MASS-->
+              <mass value=".1"/>
+              <!--<inertia ixx="0.4" ixy="0.0" ixz="0.0" iyy="0.4" iyz="0.0" izz="0.2"/>-->
+              <inertia ixx="1e-3" iyy="1e-3" izz="1e-3"/>
+            </inertial>
+          </link>
+          <joint name="1_motor1joint" type="revolute">
+            <parent link="1_motor1link"/>
+            <child link="1_link1_bottom"/>
+            <origin rpy="0 0 0" xyz="0 .0095 .027"/>
+            <limit effort="100.0" lower="-1.570796326795" upper="1.570796326795" velocity="0.5"/>
+            <axis xyz="0 0 1"/>
+          </joint>
+          <link name="1_link1_bottom">
+            <visual>
+              <origin rpy="0 0 0" xyz="0 0 0.001"/>
+              <geometry>
+                <box size="0.034 0.02 0.002"/>
+              </geometry>
+              <material name="white"/>
+            </visual>
+            <collision>
+              <origin rpy="0 0 0" xyz="0 0 0.001"/>
+              <geometry>
+                <box size="0.034 0.02 0.002"/>
+              </geometry>
+            </collision>
+            <visual>
+              <origin rpy="0 0 0" xyz="-0.016 0 0.01725"/>
+              <geometry>
+                <box size="0.002 0.02 0.0345"/>
+              </geometry>
+              <material name="white"/>
+            </visual>
+            <collision>
+              <origin rpy="0 0 0" xyz="-0.016 0 0.01725"/>
+              <geometry>
+                <box size="0.002 0.02 0.0345"/>
+              </geometry>
+            </collision>
+            <visual>
+              <origin rpy="0 0 0" xyz="0.0145 0 0.01725"/>
+              <geometry>
+                <box size="0.005 0.02 0.0345"/>
+              </geometry>
+              <material name="white"/>
+            </visual>
+            <collision>
+              <origin rpy="0 0 0" xyz="0.0145 0 0.01725"/>
+              <geometry>
+                <box size="0.005 0.02 0.0345"/>
+              </geometry>
+            </collision>
+            <inertial>
+              <mass value=".005"/>
+              <inertia ixx="1e-5" iyy="1e-5" izz="1e-5"/>
+              <!--<inertia ixx="0.4" ixy="0.0" ixz="0.0" iyy="0.4" iyz="0.0" izz="0.2"/>-->
+            </inertial>
+          </link>

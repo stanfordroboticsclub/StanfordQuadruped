@@ -8,7 +8,7 @@ import numpy as np
 
 from stanford_quad.assets import ASSET_DIR
 from stanford_quad.sim.HardwareInterface import HardwareInterface
-from stanford_quad.sim.utils import random_bright_color, pybulletimage2numpy
+from stanford_quad.sim.utils import random_bright_color, pybulletimage2numpy, pybulletsegmap2numpy
 
 FREQ_SIM = 240
 
@@ -35,6 +35,7 @@ class PupperSim2:
         start_standing=True,
         img_size=(84, 84),
         enable_new_floor=False,
+        frequency=FREQ_SIM,
     ):
         """
 
@@ -58,7 +59,7 @@ class PupperSim2:
         else:
             startup_flag = pybullet.DIRECT
         self.p = bc.BulletClient(connection_mode=startup_flag)
-        self.p.setTimeStep(1 / FREQ_SIM)
+        self.p.setTimeStep(1 / frequency)
         self.p.setAdditionalSearchPath(pybullet_data.getDataPath())
         self.p.setGravity(0, 0, g)
 
@@ -69,7 +70,8 @@ class PupperSim2:
 
         # self.p.loadURDF("plane.urdf")
 
-        self.model = self.p.loadMJCF(xml_path)[1]  # [0] is the floor
+        self.floor, self.model = self.p.loadMJCF(xml_path)
+
         if debug:
             numjoints = self.p.getNumJoints(self.model)
             for i in range(numjoints):
@@ -134,6 +136,32 @@ class PupperSim2:
 
         for _ in range(10):
             self.step()
+
+    def make_kinematic(self, color=(1, 0, 1, 1)):
+        sleepy_state = (
+            self.p.ACTIVATION_STATE_SLEEP
+            + self.p.ACTIVATION_STATE_ENABLE_SLEEPING
+            + self.p.ACTIVATION_STATE_DISABLE_WAKEUP
+        )
+
+        self.p.changeDynamics(self.model, -1, linearDamping=0, angularDamping=0)
+        self.p.setCollisionFilterGroupMask(self.model, -1, collisionFilterGroup=0, collisionFilterMask=0)
+
+        self.p.changeDynamics(
+            self.model, -1, activationState=sleepy_state,
+        )
+        self.p.changeVisualShape(self.model, -1, rgbaColor=color)
+
+        for j in range(24):  # not 12 because there's some fixed joints in there
+            self.p.setCollisionFilterGroupMask(self.model, j, collisionFilterGroup=0, collisionFilterMask=0)
+
+            self.p.changeDynamics(
+                self.model, j, activationState=sleepy_state,
+            )
+            self.p.changeVisualShape(self.model, j, rgbaColor=color)
+
+    def move_kinectic_body(self, pos, rot):
+        self.p.resetBasePositionAndOrientation(self.model, pos, rot)
 
     @staticmethod
     def get_rest_pos():
@@ -286,9 +314,9 @@ class PupperSim2:
 
         return steps
 
-    def take_photo(self):
+    def take_photo(self, camera_offset=(0, -0.3, 0.3), with_segmap=False):
         pos, _, _ = self.get_pos_orn_vel()
-        cam_pos = pos + [0, -0.3, 0.3]
+        cam_pos = pos + camera_offset
         cam_view = self.p.computeViewMatrix(
             cameraEyePosition=cam_pos, cameraTargetPosition=pos, cameraUpVector=[0, 0, 1]
         )
@@ -297,13 +325,18 @@ class PupperSim2:
             self.img_size[1],
             cam_view,
             self.cam_proj,
-            renderer=self.p.ER_BULLET_HARDWARE_OPENGL,
-            flags=0
+            renderer=pybullet.ER_BULLET_HARDWARE_OPENGL,
+            # flags=pybullet.ER_SEGMENTATION_MASK_OBJECT_AND_LINKINDEX
             # lightDirection=[-.5, -1, .5], lightDistance=1,
             # renderer=self.p0.ER_TINY_RENDERER
         )
-        output_img = pybulletimage2numpy(img, self.img_size[0], self.img_size[1])
-        return output_img
+        output_img = pybulletimage2numpy(img)
+
+        if with_segmap:
+            output_segmap = pybulletsegmap2numpy(img)
+            return output_img, output_segmap
+        else:
+            return output_img
 
     def check_collision(self):
         if self.collision_floor is None:
