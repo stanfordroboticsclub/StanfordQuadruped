@@ -17,7 +17,7 @@ SIM_REF_COLOR = (1, 0, 1, 1)
 JOINT_ERROR_SCALE = 5.0  # copied over from https://github.com/google-research/motion_imitation/blob/master/motion_imitation/envs/env_wrappers/imitation_task.py#L59
 CAMERA_OFFSET = (-0.03, -0.275, -0.05)
 LOOKAT_OFFSET = (-0.03, 0, -0.05)
-MASKED = False # do you want to cut out the robot from the background
+MASKED = True  # do you want to cut out the robot from the background
 
 
 def get_recording_joints(joints, frame_idx):
@@ -169,35 +169,38 @@ class ImitationEnv(gym.Env):
 
         return obs, reward, done, misc
 
-    def _render_agent(self, with_segmap=False):
-        img, segmap = self.sim_agent.take_photo(
+    def _render(self, target_sim):
+        with_segmap = False
+        if MASKED:
+            with_segmap = True
+
+        img, segmap = getattr(self, target_sim).take_photo(
             with_segmap=with_segmap, camera_offset=CAMERA_OFFSET, lookat_offset=LOOKAT_OFFSET
         )
-        return img, segmap
 
-    def _render_ref(self, with_segmap=False):
-        img, segmap = self.sim_ref.take_photo(
-            with_segmap=with_segmap, camera_offset=CAMERA_OFFSET, lookat_offset=LOOKAT_OFFSET
-        )
-        return img, segmap
+        if MASKED:
+            img[segmap != 1] = 0
+        return img
 
-    def render(self, mode="human", with_segmap=False):
+    def _render_agent(self):
+        return self._render("sim_agent")
+
+    def _render_ref(self):
+        return self._render("sim_ref")
+
+    def render(self, mode="human"):
         mode_i = rendermode_from_string(mode)
 
         if mode_i is RenderMode.HUMAN:
-            img_agent, _ = self._render_agent()
-            img_ref, _ = self._render_ref()
+            img_agent = self._render_agent()
+            img_ref = self._render_ref()
             cv2.imshow("Left: Ref, Right: Agent", merge_images(img_ref, img_agent))
             cv2.waitKey(1)
 
         elif mode_i is RenderMode.RGB_ARRAY:
-            img, segmap = self._render_agent(with_segmap)
-
-            # TODO deal with segmap here
-            return img
+            return self._render_agent()
         elif mode_i is RenderMode.RGB_ARRAY_REF:
-            img, segmap = self._render_ref(with_segmap)
-            return img
+            return self._render_ref()
         else:
             raise NotImplementedError(f"I don't have a render function for mode {mode_i}.")
 

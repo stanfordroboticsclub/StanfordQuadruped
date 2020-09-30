@@ -42,6 +42,6 @@ def segmap2color(segmap):
 def segmap2color_fixed(segmap):
     output = np.zeros((segmap.shape[0], segmap.shape[1], 3), np.uint8)
     output[segmap == 0, :] = (255, 0, 0)
-    output[segmap == 1, :] = (0, 0, 255)
+    output[segmap == 1, :] = (0, 255, 0)
 
     return output
