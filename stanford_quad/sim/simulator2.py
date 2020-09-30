@@ -318,11 +318,12 @@ class PupperSim2:
 
         return steps
 
-    def take_photo(self, camera_offset=(0, -0.3, 0.3), with_segmap=False):
+    def take_photo(self, camera_offset=(0, -0.3, 0.3), lookat_offset=(0, 0, 0), with_segmap=False):
         pos, _, _ = self.get_pos_orn_vel()
         cam_pos = pos + camera_offset
+        cam_lookat = pos + lookat_offset
         cam_view = self.p.computeViewMatrix(
-            cameraEyePosition=cam_pos, cameraTargetPosition=pos, cameraUpVector=[0, 0, 1]
+            cameraEyePosition=cam_pos, cameraTargetPosition=cam_lookat, cameraUpVector=[0, 0, 1]
         )
         flags = 0
         if not with_segmap:

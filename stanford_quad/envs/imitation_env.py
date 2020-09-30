@@ -11,10 +11,13 @@ from stanford_quad.envs.imitation_recordings import IMITATION_LIB
 
 CONTROL_FREQUENCY = 60
 RECORDINGS_PATH = "/Users/florian/dev/pyvicon/scripts/pupper-{}.hdf5"
-RESOLUTION = 256
+RESOLUTION = 48
 SIM_AGENT_COLOR = (0, 1, 1, 1)
 SIM_REF_COLOR = (1, 0, 1, 1)
 JOINT_ERROR_SCALE = 5.0  # copied over from https://github.com/google-research/motion_imitation/blob/master/motion_imitation/envs/env_wrappers/imitation_task.py#L59
+CAMERA_OFFSET = (-0.03, -0.275, -0.05)
+LOOKAT_OFFSET = (-0.03, 0, -0.05)
+MASKED = False # do you want to cut out the robot from the background
 
 
 def get_recording_joints(joints, frame_idx):
@@ -101,7 +104,7 @@ class ImitationEnv(gym.Env):
         self.episode_steps = 0
         self.frame_idx = self.idx_start
 
-    def get_obs(self):
+    def _get_obs(self):
         pos, orn, vel = self.sim_agent.get_pos_orn_vel()
 
         # to normalize to [-1,1]
@@ -118,9 +121,9 @@ class ImitationEnv(gym.Env):
         for _ in range(10):
             self.sim_agent.step()
 
-        return self.get_obs()
+        return self._get_obs()
 
-    def sanitize_actions(self, actions):
+    def _sanitize_actions(self, actions):
         assert len(actions) == 12
         scaled = actions * np.pi * self.action_scaling  # because 1/-1 corresponds to pi/-pi radians rotation
         scaled += self.sim_agent.get_rest_pos()
@@ -128,14 +131,14 @@ class ImitationEnv(gym.Env):
         clipped = np.clip(scaled, -np.pi + 0.001, np.pi - 0.001)
         return clipped
 
-    def calc_imitation_error(self, joints_agent, joints_ref):
+    def _calc_imitation_error(self, joints_agent, joints_ref):
         diff = np.array(joints_ref - joints_agent)
         pose_err = diff.dot(diff)
         pose_reward = np.exp(-JOINT_ERROR_SCALE * pose_err)
         return pose_reward
 
     def step(self, action):
-        action_clean = self.sanitize_actions(action)
+        action_clean = self._sanitize_actions(action)
 
         ##  reference sim
         self.frame_idx += 1  # retrieving the next recording frame
@@ -156,8 +159,8 @@ class ImitationEnv(gym.Env):
 
         joints_agent = self.sim_agent.get_joint_states()
 
-        obs = self.get_obs()
-        reward = self.calc_imitation_error(joints_agent, joints_reference)
+        obs = self._get_obs()
+        reward = self._calc_imitation_error(joints_agent, joints_reference)
         done = False
         misc = {}
 
@@ -167,11 +170,15 @@ class ImitationEnv(gym.Env):
         return obs, reward, done, misc
 
     def _render_agent(self, with_segmap=False):
-        img, segmap = self.sim_agent.take_photo(with_segmap=with_segmap)
+        img, segmap = self.sim_agent.take_photo(
+            with_segmap=with_segmap, camera_offset=CAMERA_OFFSET, lookat_offset=LOOKAT_OFFSET
+        )
         return img, segmap
 
     def _render_ref(self, with_segmap=False):
-        img, segmap = self.sim_ref.take_photo(with_segmap=with_segmap)
+        img, segmap = self.sim_ref.take_photo(
+            with_segmap=with_segmap, camera_offset=CAMERA_OFFSET, lookat_offset=LOOKAT_OFFSET
+        )
         return img, segmap
 
     def render(self, mode="human", with_segmap=False):
@@ -191,9 +198,14 @@ class ImitationEnv(gym.Env):
         elif mode_i is RenderMode.RGB_ARRAY_REF:
             img, segmap = self._render_ref(with_segmap)
             return img
+        else:
+            raise NotImplementedError(f"I don't have a render function for mode {mode_i}.")
 
 
 if __name__ == "__main__":
+
+    # necessary for gym env to register (not here but when you copy this snippet over)
+    import stanford_quad
 
     env = gym.make("Pupper-Recording-WalkForward-v0")
 
@@ -202,6 +214,7 @@ if __name__ == "__main__":
         print(obs)
         while True:
             obs, rew, done, misc = env.step(np.random.uniform(-0.1, 0.1, 12))
+            print(rew, obs)
             env.render("human")
             if done:
                 break
