@@ -324,12 +324,16 @@ class PupperSim2:
         cam_view = self.p.computeViewMatrix(
             cameraEyePosition=cam_pos, cameraTargetPosition=pos, cameraUpVector=[0, 0, 1]
         )
+        flags = 0
+        if not with_segmap:
+            flags |= pybullet.ER_NO_SEGMENTATION_MASK
         img = self.p.getCameraImage(
             self.img_size[0],
             self.img_size[1],
             cam_view,
             self.cam_proj,
             renderer=pybullet.ER_BULLET_HARDWARE_OPENGL,
+            flags=flags
             # flags=pybullet.ER_SEGMENTATION_MASK_OBJECT_AND_LINKINDEX
             # lightDirection=[-.5, -1, .5], lightDistance=1,
             # renderer=self.p0.ER_TINY_RENDERER
@@ -340,7 +344,7 @@ class PupperSim2:
             output_segmap = pybulletsegmap2numpy(img)
             return output_img, output_segmap
         else:
-            return output_img
+            return output_img, None
 
     def check_collision(self):
         if self.collision_floor is None:

@@ -2,6 +2,8 @@ import time
 import numpy as np
 import h5py
 from scipy.spatial.transform import Rotation
+
+from stanford_quad.envs.imitation_env import get_recording_joints, get_recording_pose
 from stanford_quad.sim.HardwareInterface import HardwareInterface
 from stanford_quad.sim.simulator2 import PupperSim2, REST_POS
 import cv2
@@ -45,25 +47,6 @@ base_pos = vicon_positions[FRAME_START]
 base_rot = vicon_rotations[FRAME_START]
 
 
-def get_recording_pose(frame_idx):
-    diff_pos = vicon_positions[frame_idx] - base_pos
-    diff_pos /= 500  # for some weird reason it's not /100
-    z = diff_pos[2] + 0.21  # (compensating for the model)
-    x = diff_pos[1]
-    y = diff_pos[0]
-
-    # fixed manual rotation for now
-    rot = Rotation.from_quat([0, 0, 0, 1])
-    return (x, y, z), rot
-
-
-def get_recording_joints(frame_idx):
-    joint_angles = np.reshape(joints[frame_idx], (3, 4))
-    joint_angles_robot = HardwareInterface.parallel_to_serial_joint_angles(joint_angles)
-
-    return joint_angles_robot.T.flatten()
-
-
 def policy(_):
     # make sure to initialize the policy with zeroed output
     return np.array([0] * 12)
@@ -83,10 +66,10 @@ for frame_idx in range(FRAME_START, FRAME_END):
 
     # reference sim
 
-    joints_reference = get_recording_joints(frame_idx)
+    joints_reference = get_recording_joints(joints, frame_idx)
     sim_ref.set(joints_reference)
 
-    pos, rot = get_recording_pose(frame_idx)
+    pos, rot = get_recording_pose(vicon_positions, base_pos, frame_idx)
     sim_ref.move_kinectic_body(pos, rot.as_quat())
 
     sim_ref.step()

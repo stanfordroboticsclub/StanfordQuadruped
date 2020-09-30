@@ -1,7 +1,25 @@
 from gym import register
 import numpy as np
 
+from stanford_quad.envs.imitation_recordings import IMITATION_LIB
+
 HEADLESSNESS = ["Headless", "Graphical"]
+
+
+def make_imitation_env(trick):
+    steps = IMITATION_LIB[trick]["end"] - IMITATION_LIB[trick]["start"]
+    register(
+        id=f"Pupper-Recording-{IMITATION_LIB[trick]['env_name']}-v0",
+        entry_point="stanford_quad.envs:ImitationEnv",
+        kwargs={
+            # "debug": (False if headlessness == "Headless" else True),
+            "trick": "walk-forward",
+        },
+        max_episode_steps=steps,
+    )
+
+
+make_imitation_env("walk-forward")
 
 for headlessness in HEADLESSNESS:
     register(
