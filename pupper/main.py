@@ -21,7 +21,7 @@ def main(FLAGS):
         platform_yaml_file="pupper_config.yaml",
         robot_yaml_file="robot_calibration.yaml",
     )
-    pupper_interface = hardware_interface.HardwareInterface(pupper_config)
+    pupper_interface = hardware_interface.PupperHardwareInterface(pupper_config)
 
     # Create controller and user input handles
     pupper_controller = controller.Controller(controller_config)

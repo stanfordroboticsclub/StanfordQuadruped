@@ -87,7 +87,7 @@ class JoystickInterface:
         except UDPComms.timeout:
             if do_print:
                 print("UDP Timed out")
-            return Command(height=self.config.default_z_ref)
+            return command.Command(height=self.config.default_z_ref)
 
     def set_color(self, color):
         joystick_msg = {"ps4_color": color}

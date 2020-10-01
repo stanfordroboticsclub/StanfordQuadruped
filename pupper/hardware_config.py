@@ -4,37 +4,43 @@ Configuration classes specific to the pupper robot platform.
 import numpy as np
 import yaml
 
-class PupperConfig:
+
+class PupperHardwareConfig:
     @classmethod
-    def from_yaml(cls, platform_yaml_file, robot_yaml_file, robot_calibration):
+    def from_yaml(cls, pupper_hardware_config, calibration_config):
         pupper_config = PupperConfig()
-        with open(platform_yaml_file, 'r') as platform_file:
-            with open(robot_yaml_file, 'r') as robot_file:
-                with open(robot_calibration, 'r') as calibration_file:
-                  config = yaml.safe_load(platform_file)
+        with open(pupper_hardware_config, "r") as hardware_config:
+            with open(calibration_config, "r") as calibration_file:
+                config = yaml.safe_load(hardware_config)
 
-                  # PWM-related configs
-                  pupper_config.pins = np.array(config['pwm_pins'])
-                  pupper_config.range = config['pwm_range']
-                  pupper_config.freq = config['pwm_freq']
+                # PWM-related configs
+                pupper_config.pins = np.array(config["pwm_pins"])
+                pupper_config.range = config["pwm_range"]
+                pupper_config.freq = config["pwm_freq"]
 
-                  # Servo-specific configs
-                  pupper_config.neutral_position_pwm = config['servo_neutral_position_pwm']
-                  pupper_config.micros_per_radian = config['servo_micros_per_radian']
-                  pupper_config.direction_multipliers = np.array(config['servo_direction_multipliers'])
-              
-                  robot_config = yaml.safe_load(robot_file)
-                  pupper_config.neutral_angle_degrees = np.array(robot_calibration['neutral_angle_degrees'])
+                # Servo-specific configs
+                pupper_config.neutral_position_pwm = config[
+                    "servo_neutral_position_pwm"
+                ]
+                pupper_config.micros_per_radian = config["servo_micros_per_radian"]
+                pupper_config.direction_multipliers = np.array(
+                    config["servo_direction_multipliers"]
+                )
 
-                  # Geometry configs
-                  pupper_config.hip_x_offset = config['hip_x_offset']
-                  pupper_config.hip_y_offset = config['hip_y_offset']
-                  pupper_config.lower_link_length = config['lower_link_length']
-                  pupper_config.upper_link_length = config['upper_link_length']
-                  pupper_config.abduction_offset = config['abduction_offset']
-                  pupper_config.foot_radius = config['foot_radius']
+                calibration = yaml.safe_load(calibration_config)
+                pupper_config.neutral_angle_degrees = np.array(
+                    calibration["neutral_angle_degrees"]
+                )
 
-                  return pupper_config
+                # Geometry configs
+                pupper_config.hip_x_offset = config["hip_x_offset"]
+                pupper_config.hip_y_offset = config["hip_y_offset"]
+                pupper_config.lower_link_length = config["lower_link_length"]
+                pupper_config.upper_link_length = config["upper_link_length"]
+                pupper_config.abduction_offset = config["abduction_offset"]
+                pupper_config.foot_radius = config["foot_radius"]
+
+                return pupper_config
 
     def __init__(self):
         # Mapping from raspbery pi pin to actuator
@@ -43,20 +49,24 @@ class PupperConfig:
         # the hip motor is connected to pin 3, and the knee motor is
         # connected to pin 4.
         self.pins = np.zeros((3, 4))
-        self.range = 0 # Resolution of the pwm waveform (see pigpio library for details)
-        self.freq = 0 # Frequency at which to update the pwm waveforms (see pigpio library for details) [Hz]
-        
-        self.neutral_position_pwm = 0  # Width of pwm signal corresponding to the servo's neutral angle [uS]
-        
+        self.range = (
+            0  # Resolution of the pwm waveform (see pigpio library for details)
+        )
+        self.freq = 0  # Frequency at which to update the pwm waveforms (see pigpio library for details) [Hz]
+
+        self.neutral_position_pwm = (
+            0  # Width of pwm signal corresponding to the servo's neutral angle [uS]
+        )
+
         # A change of this many microseconds in the pwm width corresponds to 1 radian of motor movement
         self.micros_per_radian = 0.0
 
         # The neutral angle of the joint relative to the modeled zero-angle in degrees, for each joint
         self.neutral_angle_degrees = np.zeros((3, 4))
-        
+
         # The direction corrector for each foot. A 1 indicates that the actuator is aligned the xyz coordinate
         # frame's right-hand rule convention while a -1 indicates it is the opposite.
-        self.direction_multipliers = np.zeros((3,4))
+        self.direction_multipliers = np.zeros((3, 4))
 
         ######################## GEOMETRY ######################
         self.hip_x_offset = 0.0  # front-back distance from center line to leg axis
@@ -70,8 +80,18 @@ class PupperConfig:
     def leg_origins(self):
         return np.array(
             [
-                [self.hip_x_offset, self.hip_x_offset, -self.hip_x_offset, -self.hip_x_offset],
-                [-self.hip_y_offset, self.hip_y_offset, -self.hip_y_offset, self.hip_y_offset],
+                [
+                    self.hip_x_offset,
+                    self.hip_x_offset,
+                    -self.hip_x_offset,
+                    -self.hip_x_offset,
+                ],
+                [
+                    -self.hip_y_offset,
+                    self.hip_y_offset,
+                    -self.hip_y_offset,
+                    self.hip_y_offset,
+                ],
                 [0, 0, 0, 0],
             ]
         )

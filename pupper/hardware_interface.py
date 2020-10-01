@@ -4,8 +4,8 @@ from pupper import kinematics
 from pupper import hardware_config
 import numpy as np
 
-class HardwareInterface(hardware_interface.HardwareInterface):
-    def __init__(self, pupper_config: hardware_config.PupperConfig):
+class PupperHardwareInterface(hardware_interface.HardwareInterface):
+    def __init__(self, pupper_config: hardware_config.PupperHardwareConfig):
         self.pi = pigpio.pi()
         self.pupper_config = pupper_config
         initialize_pwm(self.pi, self.pwm_params)

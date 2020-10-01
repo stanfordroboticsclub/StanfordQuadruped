@@ -1,0 +1,49 @@
+# config.yaml file
+
+########### IMPORTANT PARAMETERS ###########################
+# PS4 parameters
+ps4_color: { "red": 0, "blue": 0, "green": 255 }
+ps4_deactivated_color: { "red": 0, "blue": 0, "green": 255 }
+
+# Movement parameters
+max_x_velocity: 0.4 # maximum forward/back velocity [m/s]
+max_y_velocity: 0.3 # maximum sideways velocity [m/s]
+max_yaw_rate: 2.0 # maximum yaw rate [rad/s]
+default_z_ref: -0.14 # default standing height of the robot (negative b/c legs go underneath the robot) [m]
+z_clearance: 0.04 # height to raise each foot every step [m]
+
+# Gait timing parameters
+overlap_time: 0.05 # amount of time all four legs are on the ground between steps [s]
+swing_time: 0.05 # amount of time each leg is in the air between steps [s]
+
+# Gait type parameters
+
+# Each column dictates which feet should be on the ground (1) and which should be
+# in the air (0) for that phase of the gait. For example, the 2nd column is [1, 0, 0, 1] which
+# indicates that the front-right (0th) and back-left (3rd) feet should be on the ground, 
+# and the the front-left (1st) and back-right (2nd) feet should be in the air.
+contact_phases:  [[1, 1, 1, 0],
+                  [1, 0, 1, 1],
+                  [1, 0, 1, 1],
+                  [1, 1, 1, 0]]
+
+############## SOMEWHAT INTERESTING PARAMETERS ##############
+z_time_constant: 0.02 # smoothing constant on raising/lowering the robot [s]
+z_speed: 0.03 # maximum vertical movement [m/s]
+pitch_deadband: 0.02 # [joystick deadband]
+pitch_time_constant: 0.25 # smoothing constant on pitching [s]
+max_pitch_rate: 0.15 # max pitch rate [rad/s]
+roll_speed: 0.16 # maximum rolling rate [rad/s]
+yaw_time_constant: 0.3 # smoothing constant on yaw movement [s]
+max_stance_yaw: 1.2 # maximum yawing angle [rad]
+max_stance_yaw_rate: 2.0 # maximum yawing rate [rad/s]
+x_shift: -0.02 # shift the feet forward and backward relative to center [m]
+
+############## PROBABLY LEAVE ALONE #######################
+delta_x: 0.1 # 1/2 the distance between the front and back sets of feet [m]
+delta_y: 0.09 # 1/2 the distance between the left and right sets of feet [m]
+alpha: 0.5 # raibert heuristic parameter [proportion]
+beta: 0.5 # raibert heuristic parameter [proportion]
+
+############### LEAVE ALONE UNLESS YOU'RE VERY BRAVE ##############
+dt: 0.01 # time delta between sending new position commands [s]

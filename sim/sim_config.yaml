@@ -1,0 +1,5 @@
+hip_x_offset: 0.10 # 1/2 the distance between the front and back abduction motors [m]
+hip_y_offset: 0.04 # 1/2 the distance between the left and right abduction motors [m]
+lower_link_length: 0.125 # length of lower leg [m]
+upper_link_length: 0.1235 # length of upper leg [m]
+abduction_offset: 0.02 # distance between the leg plane and abduction motor axis [m]
