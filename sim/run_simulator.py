@@ -32,10 +32,10 @@ def main(use_imu=False, default_velocity=np.zeros(2), default_yaw_rate=0.0):
     timesteps = 240 * 60 * 10  # simulate for a max of 10 minutes
 
     # Sim seconds per sim step
-    sim_steps_per_sim_second = 240
-    sim_dt = 1.0 / sim_steps_per_sim_second
     last_loop = 0
     start = time.time()
+
+    print("Waiting for activation... (L1 on PS4 joystick or q on keyboard")
 
     while True:
         if robot_state.activation == 0:
@@ -73,11 +73,7 @@ def main(use_imu=False, default_velocity=np.zeros(2), default_yaw_rate=0.0):
                 sim_interface.command_foot_positions(
                     robot_state.final_foot_locations
                 )
-                sim_interface.sim.step()
-
-                print(robot_state.final_foot_locations)
-                
-
+                sim_interface.sim.step()                
                 last_loop = now
 
 
