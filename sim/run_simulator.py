@@ -11,6 +11,7 @@ from stanford_quadruped_controller import controller
 from stanford_quadruped_controller import state
 from stanford_quadruped_controller import joystick_interface
 
+import command_interface
 import hardware_interface
 import hardware_config
 # from sim import hardware_interface
@@ -26,10 +27,7 @@ def main(use_imu=False, default_velocity=np.zeros(2), default_yaw_rate=0.0):
     robot_controller = controller.Controller(controller_config)
     robot_state = state.State(height=controller_config.default_z_ref)
 
-    robot_joystick_interface = joystick_interface.JoystickInterface(controller_config)
-
-    # Run the simulation
-    timesteps = 240 * 60 * 10  # simulate for a max of 10 minutes
+    robot_command_interface = command_interface.CommandInterface(controller_config)
 
     # Sim seconds per sim step
     last_loop = 0
@@ -39,13 +37,11 @@ def main(use_imu=False, default_velocity=np.zeros(2), default_yaw_rate=0.0):
 
     while True:
         if robot_state.activation == 0:
-            robot_joystick_interface.set_color(controller_config.ps4_deactivated_color)
-            command = robot_joystick_interface.get_command(robot_state)
+            command = robot_command_interface.get_command(robot_state)
 
             # Check if we should transition to "activated"
             if command.activate_event == 1:
                 print("Robot activated.")
-                robot_joystick_interface.set_color(controller_config.ps4_color)
                 sim_interface.activate()
                 robot_state.activation = 1
                 continue
@@ -55,8 +51,7 @@ def main(use_imu=False, default_velocity=np.zeros(2), default_yaw_rate=0.0):
         elif robot_state.activation == 1:
             now = time.time()
             if now - last_loop >= controller_config.dt:
-                # Parse the udp joystick commands and then update the robot controller's parameters
-                command = robot_joystick_interface.get_command(robot_state)
+                command = robot_command_interface.get_command(robot_state)
 
                 # Check if we should transition to "deactivated"
                 if command.activate_event == 1:
