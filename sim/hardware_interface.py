@@ -29,7 +29,7 @@ class SimInterface(hardware_interface.HardwareInterface):
         )
 
     def activate(self):
-        pybullet.resetBasePositionAndOrientation(self.sim.body_id, [0,0,0.4],[0,0,0,1.0])
+        pybullet.resetBasePositionAndOrientation(self.sim.body_id, [0,0,0.3],[0,0,0,1.0])
 
     def deactivate(self):
-        pybullet.resetBasePositionAndOrientation(self.sim.body_id, [0,0,0.4],[0,0,0,1.0])
+        pybullet.resetBasePositionAndOrientation(self.sim.body_id, [0,0,0.3],[0,0,0,1.0])
