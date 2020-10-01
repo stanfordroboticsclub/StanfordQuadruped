@@ -6,34 +6,35 @@ import yaml
 
 class PupperConfig:
     @classmethod
-    def from_yaml(cls, platform_yaml_file, robot_yaml_file):
+    def from_yaml(cls, platform_yaml_file, robot_yaml_file, robot_calibration):
         pupper_config = PupperConfig()
         with open(platform_yaml_file, 'r') as platform_file:
             with open(robot_yaml_file, 'r') as robot_file:
-                config = yaml.safe_load(platform_file)
+                with open(robot_calibration, 'r') as calibration_file:
+                  config = yaml.safe_load(platform_file)
 
-                # PWM-related configs
-                pupper_config.pins = np.array(config['pwm_pins'])
-                pupper_config.range = config['pwm_range']
-                pupper_config.freq = config['pwm_freq']
+                  # PWM-related configs
+                  pupper_config.pins = np.array(config['pwm_pins'])
+                  pupper_config.range = config['pwm_range']
+                  pupper_config.freq = config['pwm_freq']
 
-                # Servo-specific configs
-                pupper_config.neutral_position_pwm = config['servo_neutral_position_pwm']
-                pupper_config.micros_per_radian = config['servo_micros_per_radian']
-                pupper_config.direction_multipliers = np.array(config['servo_direction_multipliers'])
-            
-                robot_config = yaml.safe_load(robot_file)
-                pupper_config.neutral_angle_degrees = np.array(robot_config['neutral_angle_degrees'])
+                  # Servo-specific configs
+                  pupper_config.neutral_position_pwm = config['servo_neutral_position_pwm']
+                  pupper_config.micros_per_radian = config['servo_micros_per_radian']
+                  pupper_config.direction_multipliers = np.array(config['servo_direction_multipliers'])
+              
+                  robot_config = yaml.safe_load(robot_file)
+                  pupper_config.neutral_angle_degrees = np.array(robot_calibration['neutral_angle_degrees'])
 
-                # Geometry configs
-                pupper_config.hip_x_offset = config['hip_x_offset']
-                pupper_config.hip_y_offset = config['hip_y_offset']
-                pupper_config.lower_link_length = config['lower_link_length']
-                pupper_config.upper_link_length = config['upper_link_length']
-                pupper_config.abduction_offset = config['abduction_offset']
-                pupper_config.foot_radius = config['foot_radius']
+                  # Geometry configs
+                  pupper_config.hip_x_offset = config['hip_x_offset']
+                  pupper_config.hip_y_offset = config['hip_y_offset']
+                  pupper_config.lower_link_length = config['lower_link_length']
+                  pupper_config.upper_link_length = config['upper_link_length']
+                  pupper_config.abduction_offset = config['abduction_offset']
+                  pupper_config.foot_radius = config['foot_radius']
 
-                return pupper_config
+                  return pupper_config
 
     def __init__(self):
         # Mapping from raspbery pi pin to actuator

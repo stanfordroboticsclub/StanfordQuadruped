@@ -21,14 +21,12 @@ DEACTIVATED = state.BehaviorState.DEACTIVATED
 
 
 class Controller:
-    """Controller and planner object
-    """
+    """Controller and planner object"""
 
-    def __init__(self, config: config.Configuration, inverse_kinematics) -> None:
+    def __init__(self, config: config.Configuration) -> None:
         self.config = config
 
         self.smoothed_yaw = 0.0  # for REST mode only
-        self.inverse_kinematics = inverse_kinematics
 
         self.contact_modes = np.zeros(4)
         self.gait_controller = gait_controller.GaitController(self.config)
@@ -103,40 +101,19 @@ class Controller:
 
         if state.behavior_state == TROT:
             state.foot_locations, contact_modes = self.step_gait(state, command)
-            # TODO: add a state.final_foot_locations so we can track the rotated foot locations without compounding
             # Apply the desired body rotation
-            rotated_foot_locations = (
+            state.final_foot_locations = (
                 euler2mat(command.roll, command.pitch, 0.0) @ state.foot_locations
-            )
-
-            # Construct foot rotation matrix to compensate for body tilt
-            (roll, pitch, yaw) = quat2euler(state.quat_orientation)
-            correction_factor = 0.8
-            max_tilt = 0.4
-            roll_compensation = correction_factor * np.clip(roll, -max_tilt, max_tilt)
-            pitch_compensation = correction_factor * np.clip(pitch, -max_tilt, max_tilt)
-            rmat = euler2mat(roll_compensation, pitch_compensation, 0)
-
-            rotated_foot_locations = rmat.T @ rotated_foot_locations
-
-            state.joint_angles = self.inverse_kinematics(
-                rotated_foot_locations, self.config
             )
 
         elif state.behavior_state == HOP:
             state.foot_locations = (
                 self.config.default_stance + np.array([0, 0, -0.09])[:, np.newaxis]
             )
-            state.joint_angles = self.inverse_kinematics(
-                state.foot_locations, self.config
-            )
 
         elif state.behavior_state == FINISHHOP:
             state.foot_locations = (
                 self.config.default_stance + np.array([0, 0, -0.22])[:, np.newaxis]
-            )
-            state.joint_angles = self.inverse_kinematics(
-                state.foot_locations, self.config
             )
 
         elif state.behavior_state == REST:
@@ -153,12 +130,9 @@ class Controller:
                 + np.array([0, 0, command.height])[:, np.newaxis]
             )
             # Apply the desired body rotation
-            rotated_foot_locations = (
+            state.final_foot_locations = (
                 euler2mat(command.roll, command.pitch, self.smoothed_yaw)
                 @ state.foot_locations
-            )
-            state.joint_angles = self.inverse_kinematics(
-                rotated_foot_locations, self.config
             )
 
         state.ticks += 1
