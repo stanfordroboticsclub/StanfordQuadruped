@@ -8,43 +8,51 @@ from stanford_quadruped_controller import command
 from stanford_quadruped_controller import state
 from stanford_quadruped_controller import config
 
-from robot_keyboard_controller import keyboard_controller
-
 SCALE = 0.75
 MESSAGE_RATE = 100
+
 
 def key_down(key_events, key):
     int_key = ord(key)
     return keycode_down(key_events, int_key)
 
+
 def keycode_down(key_events, keycode):
     return keycode in key_events and key_events[keycode] & pybullet.KEY_IS_DOWN
+
 
 def pair(opt1, opt2):
     return opt1 - opt2
 
+
 def key_down_pair(key_events, key1, key2):
-  return pair(key_down(key_events, key1), key_down(key_events, key2))
+    return pair(key_down(key_events, key1), key_down(key_events, key2))
+
 
 def keycode_down_pair(key_events, key1, key2):
-  return pair(keycode_down(key_events, key1), keycode_down(key_events, key2))
+    return pair(keycode_down(key_events, key1), keycode_down(key_events, key2))
+
 
 def get_msg():
     key_events = pybullet.getKeyboardEvents()
 
     msg = {}
-    msg["lx"] = SCALE * key_down_pair(key_events, 'd','a')
-    msg["ly"] = SCALE * key_down_pair(key_events, 'w','s')
-    msg["rx"] = SCALE * keycode_down_pair(key_events, pybullet.B3G_RIGHT_ARROW, pybullet.B3G_LEFT_ARROW)
-    msg["ry"] = SCALE * keycode_down_pair(key_events, pybullet.B3G_DOWN_ARROW, pybullet.B3G_UP_ARROW)
-    msg["x"] = key_down(key_events, 'x')
-    msg["square"] = key_down(key_events, 'u')
-    msg["circle"] = key_down(key_events, 'c')
-    msg["triangle"] = key_down(key_events, 't')
-    msg["dpady"] = 1.0 * key_down_pair(key_events, 'i','k')
-    msg["dpadx"] = 1.0 * key_down_pair(key_events, 'l','j')
-    msg["L1"] = key_down(key_events, 'q')
-    msg["R1"] = key_down(key_events, 'e')
+    msg["lx"] = SCALE * key_down_pair(key_events, "d", "a")
+    msg["ly"] = SCALE * key_down_pair(key_events, "w", "s")
+    msg["rx"] = SCALE * keycode_down_pair(
+        key_events, pybullet.B3G_RIGHT_ARROW, pybullet.B3G_LEFT_ARROW
+    )
+    msg["ry"] = SCALE * keycode_down_pair(
+        key_events, pybullet.B3G_DOWN_ARROW, pybullet.B3G_UP_ARROW
+    )
+    msg["x"] = key_down(key_events, "x")
+    msg["square"] = key_down(key_events, "u")
+    msg["circle"] = key_down(key_events, "c")
+    msg["triangle"] = key_down(key_events, "t")
+    msg["dpady"] = 1.0 * key_down_pair(key_events, "i", "k")
+    msg["dpadx"] = 1.0 * key_down_pair(key_events, "l", "j")
+    msg["L1"] = key_down(key_events, "q")
+    msg["R1"] = key_down(key_events, "e")
     msg["L2"] = 0
     msg["R2"] = 0
     msg["message_rate"] = MESSAGE_RATE
@@ -64,8 +72,6 @@ class CommandInterface:
         self.previous_activate_toggle = 0
 
         self.message_rate = 50
-
-        # self.keyboard_listener = keyboard_controller.KeyboardController()
 
     def get_command(self, state: state.State):
         """Converts dictionary of button presses into action-able robot commands."""
