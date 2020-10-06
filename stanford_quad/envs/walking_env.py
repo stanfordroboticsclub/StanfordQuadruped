@@ -7,6 +7,7 @@ import numpy as np
 from stanford_quad.sim.simulator2 import PupperSim2, FREQ_SIM
 
 CONTROL_FREQUENCY = 60  # Hz, the simulation runs at 240Hz by default and doing a multiple of that is easier
+MAX_ANGLE_PER_SEC = 90
 
 
 class WalkingEnv(gym.Env):
@@ -16,6 +17,7 @@ class WalkingEnv(gym.Env):
         steps=120,
         control_freq=CONTROL_FREQUENCY,
         relative_action=True,
+        incremental_action=False,
         action_scaling=1.0,
         action_smoothing=1,
         random_rot=(0, 0, 0),
@@ -56,19 +58,29 @@ class WalkingEnv(gym.Env):
         self.episode_steps_max = steps
         self.control_freq = control_freq
         self.dt = 1 / self.control_freq
+        self.incremental_angle = np.deg2rad(MAX_ANGLE_PER_SEC) / self.control_freq
         self.sim_steps = int(round(FREQ_SIM / control_freq))
         self.relative_action = relative_action
+        self.incremental_action = incremental_action
         self.action_scaling = action_scaling
         self.action_smoothing = deque(maxlen=action_smoothing)
         self.random_rot = random_rot
         self.stop_on_flip = stop_on_flip
-
+        self.current_action = np.array([0] * 12)
         # new reward coefficients
         self.rcoeff_ctrl, self.rcoeff_run, self.rcoeff_stable = reward_coefficients
 
     def reset(self):
         self.episode_steps = 0
-        self.sim.reset(rest=self.relative_action, random_rot=self.random_rot)  # also stand up the robot
+
+        # both when the action formulation is incremental and when it's relative, we need to start standing
+        self.sim.reset(
+            rest=self.relative_action or self.incremental_action, random_rot=self.random_rot
+        )  # also stand up the robot
+
+        # this is used when self.incremental_action == True
+        self.current_action = self.sim.get_rest_pos()
+
         return self.get_obs()
 
     def seed(self, seed=None):
@@ -81,11 +93,17 @@ class WalkingEnv(gym.Env):
 
     def sanitize_actions(self, actions):
         assert len(actions) == 12
-        scaled = actions * np.pi * self.action_scaling  # because 1/-1 corresponds to pi/-pi radians rotation
-        if self.relative_action:
-            scaled += self.sim.get_rest_pos()
-        # this enforces an action range of -1/1, except if it's relative action - then the action space is asymmetric
+
+        if not self.incremental_action:
+            scaled = actions * np.pi * self.action_scaling  # because 1/-1 corresponds to pi/-pi radians rotation
+            if self.relative_action:
+                scaled += self.sim.get_rest_pos()
+            # this enforces an action range of -1/1, except if it's relative action - then the action space is asymmetric
+        else:
+            scaled = actions * self.incremental_angle + self.current_action
+
         clipped = np.clip(scaled, -np.pi + 0.001, np.pi - 0.001)
+        self.current_action = np.copy(clipped)
         return clipped
 
     def get_obs(self):
