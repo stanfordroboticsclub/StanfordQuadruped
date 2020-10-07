@@ -3,7 +3,7 @@ from collections import deque
 import gym
 from gym import spaces
 import numpy as np
-
+import matplotlib.pyplot as plt
 from stanford_quad.sim.simulator2 import PupperSim2, FREQ_SIM
 
 CONTROL_FREQUENCY = 60  # Hz, the simulation runs at 240Hz by default and doing a multiple of that is easier
@@ -53,7 +53,11 @@ class WalkingEnv(gym.Env):
         self.action_space = spaces.Box(low=-1, high=1, shape=(12,), dtype=np.float32)
 
         # turning off start_standing because the that's done in self.reset()
-        self.sim = PupperSim2(debug=debug, start_standing=False, gain_pos=1 / 16, gain_vel=1 / 8, max_torque=1 / 2)
+        kwargs = {}
+        # if relative_action: # if this is turned on, the robot is underpowered for the hardcoded gait
+        #     kwargs = {"gain_pos": 1 / 16, "gain_vel": 1 / 8, "max_torque": 1 / 2}
+
+        self.sim = PupperSim2(debug=debug, start_standing=False, **kwargs)
         self.episode_steps = 0
         self.episode_steps_max = steps
         self.control_freq = control_freq
@@ -67,6 +71,7 @@ class WalkingEnv(gym.Env):
         self.random_rot = random_rot
         self.stop_on_flip = stop_on_flip
         self.current_action = np.array([0] * 12)
+
         # new reward coefficients
         self.rcoeff_ctrl, self.rcoeff_run, self.rcoeff_stable = reward_coefficients
 
@@ -74,9 +79,9 @@ class WalkingEnv(gym.Env):
         self.episode_steps = 0
 
         # both when the action formulation is incremental and when it's relative, we need to start standing
-        self.sim.reset(
-            rest=self.relative_action or self.incremental_action, random_rot=self.random_rot
-        )  # also stand up the robot
+        self.sim.reset(rest=True)  # also stand up the robot
+        # for _ in range(10):
+        #     self.sim.step()
 
         # this is used when self.incremental_action == True
         self.current_action = self.sim.get_rest_pos()
@@ -124,7 +129,6 @@ class WalkingEnv(gym.Env):
         self.action_smoothing.append(action_clean)
         self.sim.action(np.mean(self.action_smoothing, axis=0))
 
-        # this steps the simulation forward
         for _ in range(self.sim_steps):
             self.sim.step()
 
