@@ -38,7 +38,7 @@ for headlessness in HEADLESSNESS:
                         f"aSmooth_{action_smoothing}-"
                         f"RandomZRot_{random_rot}-{headlessness}-v0"
                     )
-                    # print(name)
+                    print(name)
                     register(
                         id=name,
                         entry_point="stanford_quad.envs:WalkingEnv",
