@@ -9,6 +9,7 @@ class Sim:
         kv=0.5,
         max_torque=10,
         g=-9.81,
+        dt=0.01
     ):
         # Set up PyBullet Simulator
         self.client_id = pybullet.connect(
@@ -22,9 +23,12 @@ class Sim:
         self.joint_indices = list(range(0, 24, 2))
 
         # pybullet.setRealTimeSimulation(1)
-        pybullet.setTimeStep(0.01)
-        pybullet.configureDebugVisualizer(pybullet.COV_ENABLE_TINY_RENDERER, 1)
+        pybullet.setTimeStep(dt)
+        # pybullet.configureDebugVisualizer(pybullet.COV_ENABLE_RENDERING, 0)
+        pybullet.configureDebugVisualizer(pybullet.COV_ENABLE_TINY_RENDERER, 0)
         pybullet.configureDebugVisualizer(pybullet.COV_ENABLE_SHADOWS, 0)
+        pybullet.configureDebugVisualizer(pybullet.COV_ENABLE_GUI, 0)
+        pybullet.configureDebugVisualizer(pybullet.COV_ENABLE_KEYBOARD_SHORTCUTS, 0)
 
     def step(self):
         pybullet.stepSimulation()
