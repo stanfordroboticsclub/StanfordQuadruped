@@ -9,7 +9,6 @@ import time
 from stanford_quadruped_controller import config
 from stanford_quadruped_controller import controller
 from stanford_quadruped_controller import state
-from stanford_quadruped_controller import joystick_interface
 
 import command_interface
 import hardware_interface
