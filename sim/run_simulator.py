@@ -33,7 +33,7 @@ def main(use_imu=False, default_velocity=np.zeros(2), default_yaw_rate=0.0):
     last_loop = 0
     start = time.time()
 
-    print("Waiting for activation... (L1 on PS4 joystick or q on keyboard")
+    print("Waiting for activation... (Press L1 or q)")
 
     while True:
         if robot_state.activation == 0:
