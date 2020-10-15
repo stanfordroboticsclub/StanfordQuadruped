@@ -55,7 +55,7 @@ for headlessness in HEADLESSNESS:
                                 "action_smoothing": action_smoothing,
                                 "random_rot": (0, 0, random_rot),
                             },
-                            max_episode_steps=120,
+                            max_episode_steps=steps,
                     )
 
 
