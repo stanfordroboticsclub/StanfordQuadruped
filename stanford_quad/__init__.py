@@ -26,32 +26,36 @@ ACTION_TYPE = ["Relative", "Absolute", "Incremental"]
 ACTION_SMOOTHING = [1, 2, 3, 4]
 RANDOM_ROT = [0, 1, 10, 100]
 ACTION_SCALING = [1.0, 2.0, 4.0] + list(np.arange(0.05, 0.5, 0.05))
+STEPS = [120, 240, 360]
+
 
 for headlessness in HEADLESSNESS:
     for action_type in ACTION_TYPE:
         for action_smoothing in ACTION_SMOOTHING:
             for action_scaling in ACTION_SCALING:
                 for random_rot in RANDOM_ROT:
-                    name = (
-                        f"Pupper-Walk-{action_type}-"
-                        f"aScale_{action_scaling:.2}-"
-                        f"aSmooth_{action_smoothing}-"
-                        f"RandomZRot_{random_rot}-{headlessness}-v0"
-                    )
-                    print(name)
-                    register(
-                        id=name,
-                        entry_point="stanford_quad.envs:WalkingEnv",
-                        kwargs={
-                            "debug": (False if headlessness == "Headless" else True),
-                            "steps": 120,
-                            "relative_action": True if action_type == "Relative" else False,
-                            "incremental_action": True if action_type == "Incremental" else False,
-                            "action_scaling": action_scaling,
-                            "action_smoothing": action_smoothing,
-                            "random_rot": (0, 0, random_rot),
-                        },
-                        max_episode_steps=120,
+                    for steps in STEPS:
+                        name = (
+                            f"Pupper-Walk-{action_type}-"
+                            f"steps_{steps}-"
+                            f"aScale_{action_scaling:.2}-"
+                            f"aSmooth_{action_smoothing}-"
+                            f"RandomZRot_{random_rot}-{headlessness}-v0"
+                        )
+                        print(name)
+                        register(
+                            id=name,
+                            entry_point="stanford_quad.envs:WalkingEnv",
+                            kwargs={
+                                "debug": (False if headlessness == "Headless" else True),
+                                "steps": steps,
+                                "relative_action": True if action_type == "Relative" else False,
+                                "incremental_action": True if action_type == "Incremental" else False,
+                                "action_scaling": action_scaling,
+                                "action_smoothing": action_smoothing,
+                                "random_rot": (0, 0, random_rot),
+                            },
+                            max_episode_steps=120,
                     )
 
 
