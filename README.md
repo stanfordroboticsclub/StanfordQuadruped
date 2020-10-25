@@ -76,6 +76,6 @@ You can find the bill of materials, pre-made kit purchasing options, assembly in
 * You can mess with the cartesian PD control gains by changing values in `djipupper/HardwareConfig.py`
   * `MAX_CURRENT`: it's interesting to put it a little lower, like 4A, to test squishiness.
   * `CART_POSITION_KPS`: Stiffness in the x, y, z directions. I've found 400 - 4000 to be interesting values. 400 is quite loose while 4000-6000 is very stiff. Much higher (>6000) and you risk uncontrolled oscillations even with higher damping.
-  * `CART_POSITION_KDS`: Damping in the x, y, z directions. 0.1 to 3.0 seems to be a good range. Use higher values when you're using higher stiffnesses to avoid oscillations, which totally does happen when you use, for example, kp=4000 and kd=0.5. 
+  * `CART_POSITION_KDS`: Damping in the x, y, z directions. 100 to 500 seems to be a good range. Use higher values when you're using higher stiffnesses to avoid oscillations, which totally does happen when you use, for example, kp=4000 and kd=1500. 
   * `POSITION_KP` and `POSITION_KD` unused for cartesian pd control.
 * You can also mess with the usual values like x and y velocity, z_clearance (stepping height), etc in `djipupper/Config.py`
