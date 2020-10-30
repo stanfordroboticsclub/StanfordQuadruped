@@ -11,18 +11,18 @@ import argparse
 
 import datetime
 import os
+import msgpack
 
-LOG_TO_FILE = False
+LOG_TO_FILE = True
 DIRECTORY = "logs/"
 FILE_DESCRIPTOR = "walking"
-
 
 def header_string():
     header = "Timestamp,"
     for i in range(12):
         header += f"Position_{i},Velocity_{i},Current_{i},PositionReference_{i},LastCommand_{i}"
         if i != 11:
-          header += ","
+            header += ","
     header += "\n"
     return header
 
@@ -42,6 +42,9 @@ def main(FLAGS):
     print("Done.")
 
     summarize_config(config)
+
+    first_timestamp = None
+    first_computer_time = None
 
     if FLAGS.zero:
         input(
@@ -84,15 +87,23 @@ def main(FLAGS):
                 now = time.time()
 
                 if LOG_TO_FILE:
-                    while True:
-                        raw_data = hardware_interface.serial_handle.readline()
-                        if raw_data:
-                            decoded_data = raw_data.decode()[:-3] + "\n"
-                            num_values = len(decoded_data.split(sep=','))
-                            print(num_values)
-                            if num_values > 1:
-                              log_file.write(decoded_data)
-                        else:
+                    while(True):
+                        data = hardware_interface.chew()
+                        if data:
+                            try:
+                              decoded_data = msgpack.unpackb(data)
+                              if not first_timestamp:
+                                first_timestamp = decoded_data["ts"]
+                                first_computer_time = time.time()
+                              teensy_time = decoded_data["ts"] - first_timestamp
+                              computer_time = round(1000*(time.time() - first_computer_time))
+                              print(computer_time, computer_time - teensy_time)
+                              for value in decoded_data.values():
+                                  log_file.write(str(value).strip('[]'))
+                              log_file.write('\n')
+                            except ValueError as e:
+                              print(e)
+                        else: 
                             break
 
                 if now - last_loop >= config.dt:
@@ -119,8 +130,8 @@ def main(FLAGS):
                     last_loop = now
     except KeyboardInterrupt:
         if LOG_TO_FILE:
-          print("Closing log file")
-          log_file.close()
+            print("Closing log file")
+            log_file.close()
 
 
 def summarize_config(config):
