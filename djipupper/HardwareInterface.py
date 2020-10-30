@@ -34,30 +34,30 @@ class NonBlockingSerialReader:
         while True:
             raw_data = self.serial_handle.read(1024)
             if not raw_data:
-              break
+                break
             for in_byte in raw_data:
-              if self.mode == SerialReaderState.WAITING_BYTE1:
-                  if in_byte == self.start_byte:
-                      self.mode = SerialReaderState.WAITING_BYTE2
-              elif self.mode == SerialReaderState.WAITING_BYTE2:
-                  if in_byte == self.start_byte2:
-                      self.mode = SerialReaderState.READING_LENGTH_BYTE1
-                  else:
-                      self.mode = SerialReaderState.WAITING_BYTE1
-              elif self.mode == SerialReaderState.READING_LENGTH_BYTE1:
-                  self.message_length = int(in_byte) * 256
-                  self.mode = SerialReaderState.READING_LENGTH_BYTE2
-              elif self.mode == SerialReaderState.READING_LENGTH_BYTE2:
-                  self.message_length += int(in_byte)
-                  self.mode = SerialReaderState.READING
-              elif self.mode == SerialReaderState.READING:
-                  self.byte_buffer += bytes([in_byte])
-                  if len(self.byte_buffer) == self.message_length:
-                      self.message_length = -1
-                      self.mode = SerialReaderState.WAITING_BYTE1
-                      temp = self.byte_buffer
-                      self.byte_buffer = b""
-                      return temp
+                if self.mode == SerialReaderState.WAITING_BYTE1:
+                    if in_byte == self.start_byte:
+                        self.mode = SerialReaderState.WAITING_BYTE2
+                elif self.mode == SerialReaderState.WAITING_BYTE2:
+                    if in_byte == self.start_byte2:
+                        self.mode = SerialReaderState.READING_LENGTH_BYTE1
+                    else:
+                        self.mode = SerialReaderState.WAITING_BYTE1
+                elif self.mode == SerialReaderState.READING_LENGTH_BYTE1:
+                    self.message_length = int(in_byte) * 256
+                    self.mode = SerialReaderState.READING_LENGTH_BYTE2
+                elif self.mode == SerialReaderState.READING_LENGTH_BYTE2:
+                    self.message_length += int(in_byte)
+                    self.mode = SerialReaderState.READING
+                elif self.mode == SerialReaderState.READING:
+                    self.byte_buffer += bytes([in_byte])
+                    if len(self.byte_buffer) == self.message_length:
+                        self.message_length = -1
+                        self.mode = SerialReaderState.WAITING_BYTE1
+                        temp = self.byte_buffer
+                        self.byte_buffer = b""
+                        return temp
         return None
 
 
@@ -72,14 +72,46 @@ class HardwareInterface:
             bytesize=serial.EIGHTBITS,
             timeout=0,
         )
-        # TODO: allow you to switch between joint space and cartesian space control
-        # self.set_parameters(POSITION_KP, POSITION_KD, MAX_CURRENT)
+        self.set_joint_space_parameters(POSITION_KP, POSITION_KD, MAX_CURRENT)
         self.set_cartesian_parameters(CART_POSITION_KPS, CART_POSITION_KDS, MAX_CURRENT)
 
         self.reader = NonBlockingSerialReader(self.serial_handle)
 
-    def chew(self):
-        return self.reader.chew()
+    def set_max_current_from_file(self):
+        self.send_dict({"max_current": MAX_CURRENT})
+
+    def log_incoming_data(self, log_file):
+        decoded_data = None
+        while True:
+            data = self.reader.chew()
+            if not data:
+                return decoded_data
+            try:
+                decoded_data = msgpack.unpackb(data)
+                data_str = ""
+                for value in decoded_data.values():
+                    if type(value) == list:
+                        for v in value:
+                            data_str += "%0.3f" % v + ","
+                    else:
+                      data_str += str(value) + ","
+                log_file.write(data_str[:-1] + "\n")
+            except ValueError as e:
+                print(e)
+
+    def write_logfile_header(self, logfile):
+        header = "Timestamp,"
+        for attribute in [
+            "Position",
+            "Velocity",
+            "Current",
+            "PositionRef",
+            "LastCommand",
+        ]:
+            for i in range(12):
+                header += f"{attribute}_{i},"
+        header += "\n"
+        logfile.write(header)
 
     def set_joint_space_parameters(self, kp, kd, max_current):
         self.send_dict({"kp": kp, "kd": kd, "max_current": max_current})
