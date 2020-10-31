@@ -16,6 +16,13 @@ import msgpack
 DIRECTORY = "logs/"
 FILE_DESCRIPTOR = "walking"
 
+DO_GRAV_CORRECTION = True
+
+ROBOT_WEIGHT = 25.0  # 20.0
+GRAV_CORRECTION = np.array(
+    [[0, 0, 0, 0], [0, 0, 0, 0], [-1, -1, -1, -1]]
+)  # units are newtons/4 ish, robot weighs 20 newtons
+
 
 def main(FLAGS):
     """Main program"""
@@ -43,7 +50,7 @@ def main(FLAGS):
 
     if FLAGS.zero:
         hardware_interface.set_joint_space_parameters(0, 4.0, 4.0)
-        hardware_interface.set_actuator_postions(np.zeros((3,4)))
+        hardware_interface.set_actuator_postions(np.zeros((3, 4)))
         input(
             "Do you REALLY want to calibrate? Press enter to continue or ctrl-c to quit."
         )
@@ -54,6 +61,7 @@ def main(FLAGS):
     else:
         print("Not zeroing motors!")
     print("Waiting for L1 to activate robot.")
+    hardware_interface.set_ff_force(np.zeros((3, 4)))
 
     last_loop = time.time()
     try:
@@ -74,7 +82,7 @@ def main(FLAGS):
                 if FLAGS.log:
                     any_data = hardware_interface.log_incoming_data(log_file)
                     if any_data:
-                      print(any_data['ts'])
+                        print(any_data["ts"])
                 if now - last_loop >= config.dt:
                     command = joystick_interface.get_command(state)
                     if command.activate_event == 1:
@@ -87,6 +95,23 @@ def main(FLAGS):
                     hardware_interface.set_cartesian_positions(
                         state.final_foot_locations
                     )
+
+                    if DO_GRAV_CORRECTION:
+                        masked_gravity_correction = (
+                            controller.contact_modes * GRAV_CORRECTION
+                        )
+                        num_feet_in_contact = np.sum(controller.contact_modes)
+                        load_factor = (
+                            1.0 / num_feet_in_contact
+                            if num_feet_in_contact > 0
+                            else 0.0
+                        )
+                        ff_force = (
+                            masked_gravity_correction * ROBOT_WEIGHT * load_factor
+                        )
+                        ff_force_current = ff_force * 4.0
+                        hardware_interface.set_ff_force(ff_force_current)
+
                     last_loop = now
     except KeyboardInterrupt:
         if FLAGS.log:

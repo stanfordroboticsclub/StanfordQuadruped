@@ -50,10 +50,10 @@ class Controller:
         Numpy array (3, 4)
             Matrix of new foot locations.
         """
-        contact_modes = self.gait_controller.contacts(state.ticks)
+        self.contact_modes = self.gait_controller.contacts(state.ticks)
         new_foot_locations = np.zeros((3, 4))
         for leg_index in range(4):
-            contact_mode = contact_modes[leg_index]
+            contact_mode = self.contact_modes[leg_index]
             foot_location = state.foot_locations[:, leg_index]
             if contact_mode == 1:
                 new_location = self.stance_controller.next_foot_location(
@@ -68,7 +68,7 @@ class Controller:
                     swing_proportion, leg_index, state, command
                 )
             new_foot_locations[:, leg_index] = new_location
-        return new_foot_locations, contact_modes
+        return new_foot_locations
 
     def run(self, state, command):
         """Steps the controller forward one timestep
@@ -90,7 +90,7 @@ class Controller:
             state.behavior_state = self.hop_transition_mapping[state.behavior_state]
 
         if state.behavior_state == BehaviorState.TROT:
-            state.foot_locations, contact_modes = self.step_gait(state, command)
+            state.foot_locations = self.step_gait(state, command)
             
             # Apply the desired body rotation
             state.final_foot_locations = (
@@ -119,6 +119,8 @@ class Controller:
             )
 
         elif state.behavior_state == BehaviorState.REST:
+            self.contact_modes = np.ones(4)
+            
             yaw_proportion = command.yaw_rate / self.config.max_yaw_rate
             self.smoothed_yaw += self.config.dt * clipped_first_order_filter(
                 self.smoothed_yaw,

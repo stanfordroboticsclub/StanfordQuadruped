@@ -11,7 +11,7 @@ class Configuration:
 
         #################### COMMANDS ####################
         self.max_x_velocity = 0.9
-        self.max_y_velocity = 0.6
+        self.max_y_velocity = 0.4
         self.max_yaw_rate = 2.5
         self.max_pitch = 30.0 * np.pi / 180.0
 
@@ -29,7 +29,7 @@ class Configuration:
         #################### STANCE ####################
         self.delta_x = 0.1
         self.delta_y = 0.08
-        self.x_shift = -0.01
+        self.x_shift = 0#-0.01
         self.default_z_ref = -0.14
 
         #################### SWING ######################

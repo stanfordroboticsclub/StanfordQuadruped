@@ -168,3 +168,14 @@ class HardwareInterface:
         """
         cart_positions_list = cartesian_positions.flatten("F").tolist()
         self.send_dict({"cart_pos": cart_positions_list})
+
+    def set_ff_force(self, ff_force):
+        """Sets the feed forward force.
+
+        Parameters
+        ----------
+        ff_force: numpy array (3, 4)
+        """
+        ff_force_list = ff_force.flatten("F").tolist()
+        self.send_dict({"ff_force": ff_force_list})
+    
