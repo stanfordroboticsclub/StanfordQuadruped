@@ -1,6 +1,6 @@
 import numpy as np
 
-MAX_CURRENT = 6.0
+MAX_CURRENT = 7.0
 POSITION_KP = 14.0
 POSITION_KD = 2.0
 CART_POSITION_KPS = [5000.0, 5000.0, 3000.0]  # [A/m]
