@@ -28,7 +28,7 @@ class Configuration:
 
         #################### STANCE ####################
         self.delta_x = 0.1
-        self.delta_y = 0.08
+        self.delta_y = 0.1
         self.x_shift = 0#-0.01
         self.default_z_ref = -0.14
 
