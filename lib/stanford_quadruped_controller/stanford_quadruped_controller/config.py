@@ -6,19 +6,34 @@ import yaml
 class Configuration:
     @classmethod
     def from_yaml(cls, yaml_file):
+        """Creates a new Configuration object from a YAML file.
+
+        Args:
+            yaml_file (string): Filepath
+
+        Raises:
+            AttributeError: If yaml file contains attribuets not supported by this class.
+            TODO: Raise error if yaml file does not set all attributes.
+
+        Returns:
+            Configuration: Configuration object made from the yaml file.
+        """
         config = Configuration()
 
         # TODO update path
         with open(yaml_file) as f:
             yaml_config = yaml.safe_load(f)
             for k, v in yaml_config.items():
-                if k == 'contact_phases':
+                if k == "contact_phases":
                     config.contact_phases = np.array(v)
                 else:
+                    if not hasattr(config, k):
+                        raise AttributeError
                     setattr(config, k, v)
         return config
 
     def __init__(self):
+        """Constructor for Configuration object."""
         ################# CONTROLLER BASE COLOR ##############
         self.ps4_color = None
         self.ps4_deactivated_color = None
@@ -58,15 +73,13 @@ class Configuration:
         #################### GAIT #######################
         self.dt = 0.0
         self.num_phases = 4
-        self.contact_phases = np.ones((4,4))
+        self.contact_phases = np.ones((4, 4))
         self.overlap_time = (
             0.0  # duration of the phase where all four feet are on the ground
         )
         self.swing_time = (
             0.0  # duration of the phase when only two feet are on the ground
         )
-
-     
 
     @property
     def default_stance(self):
@@ -86,11 +99,11 @@ class Configuration:
     ########################### GAIT ####################
     @property
     def overlap_ticks(self):
-        return int(self.overlap_time / self.dt)
+        return self.overlap_time // self.dt
 
     @property
     def swing_ticks(self):
-        return int(self.swing_time / self.dt)
+        return self.swing_time // self.dt
 
     @property
     def stance_ticks(self):

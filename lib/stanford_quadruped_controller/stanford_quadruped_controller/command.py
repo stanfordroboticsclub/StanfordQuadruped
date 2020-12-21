@@ -2,8 +2,7 @@ import numpy as np
 
 
 class Command:
-    """Stores movement command
-    """
+    """Movement command."""
 
     def __init__(self, height):
         self.horizontal_velocity = np.array([0, 0])

@@ -1,20 +1,23 @@
 from typing import Any
+
+
 class GaitController:
     def __init__(self, config) -> None:
+        """Constructor for gait controller.
+
+        Args:
+            config (config.Config):
+        """
         self.config = config
 
     def phase_index(self, ticks) -> int:
-        """Calculates which part of the gait cycle the robot should be in given the time in ticks.
-        
-        Parameters
-        ----------
-        ticks : int
-            Number of timesteps since the program started
-        
-        Returns
-        -------
-        Int
-            The index of the gait phase that the robot should be in.
+        """Calculates the robot's current discrete gait phase (liftoff, touchdown, etc).
+
+        Args:
+            ticks (int): Time
+
+        Returns:
+            int: The robot's discrete gait phase.
         """
         phase_time = ticks % self.config.phase_length
         phase_sum = 0
@@ -27,15 +30,11 @@ class GaitController:
     def subphase_ticks(self, ticks) -> Any:
         """Calculates the number of ticks (timesteps) since the start of the current phase.
 
-        Parameters
-        ----------
-        ticks : Int
-            Number of timesteps since the program started
-       
-        Returns
-        -------
-        Int
-            Number of ticks since the start of the current phase.
+        Args:
+            ticks : (int) Number of timesteps since the program started
+
+        Returns:
+            (int) Number of ticks since the start of the current phase.
         """
         phase_time = ticks % self.config.phase_length
         phase_sum = 0
@@ -49,15 +48,11 @@ class GaitController:
 
     def contacts(self, ticks) -> Any:
         """Calculates which feet should be in contact at the given number of ticks
-        
-        Parameters
-        ----------
-        ticks : Int
-            Number of timesteps since the program started.
-        
-        Returns
-        -------
-        numpy array (4,)
-            Numpy vector with 0 indicating flight and 1 indicating stance.
+
+        Args:
+            ticks (int): Number of timesteps since the program started.
+
+        Returns:
+            (numpy array of shape (4,)) 0 indicates flight and 1 indicates stance.
         """
         return self.config.contact_phases[:, self.phase_index(ticks)]

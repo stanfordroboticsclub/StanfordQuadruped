@@ -21,7 +21,7 @@ DEACTIVATED = state.BehaviorState.DEACTIVATED
 
 
 class Controller:
-    """Controller and planner object"""
+    """Quadruped controller."""
 
     def __init__(self, config: config.Configuration) -> None:
         self.config = config
@@ -52,13 +52,15 @@ class Controller:
 
     def step_gait(
         self, state: state.State, command: command.Command
-    ) -> Tuple[Any, Any]:
-        """Calculate the desired foot locations for the next timestep
+    ) -> Tuple[np.ndarray, np.ndarray]:
+        """Calculate the desired foot locations for the next timestep for clock-driven gaits.
 
-        Returns
-        -------
-        Numpy array (3, 4)
-            Matrix of new foot locations.
+        Args:
+            state:
+            command:
+
+        Returns:
+            Numpy array (3, 4) of new foot locations.
         """
         contact_modes = self.gait_controller.contacts(state.ticks)
         new_foot_locations = np.zeros((3, 4))
@@ -81,12 +83,13 @@ class Controller:
         return new_foot_locations, contact_modes
 
     def run(self, state: state.State, command: command.Command) -> None:
-        """Steps the controller forward one timestep
+        """Calculates the desired foot locations one step forward in time.
 
-        Parameters
-        ----------
-        controller : Controller
-            Robot controller object.
+        Uses a state machine to cycle between different gaits and modes.
+
+        Args:
+            state :
+            controller :
         """
 
         ########## Update operating state based on command ######
