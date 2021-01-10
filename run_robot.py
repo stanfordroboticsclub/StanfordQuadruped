@@ -16,10 +16,9 @@ def main(use_imu=False):
     config = Configuration()
     hardware_interface = HardwareInterface()
 
-    # Create imu handle
-    if use_imu:
-        imu = IMU(port="/dev/ttyACM0")
-        imu.flush_buffer()
+    imu_initialized = False
+    imu_activated = use_imu
+    imu = None
 
     # Create controller and user input handles
     controller = Controller(
@@ -63,10 +62,34 @@ def main(use_imu=False):
                 print("Deactivating Robot")
                 break
 
+            if command.imu_toggle_event == 1:
+                if imu_activated:
+                    print("Deactivating IMU")
+                    imu_activated = False
+                else:
+                    print("Activating IMU")
+                    imu_activated = True
+
+            if imu_activated and not imu_initialized:
+                try:
+                    # Create imu handle
+                    imu = IMU(port="/dev/ttyACM0")
+                    imu.flush_buffer()
+                    imu_initialized = True
+                except Exception:
+                    print('IMU not connected')
+                    imu_activated = False
+                    imu_initialized = False
+
             # Read imu data. Orientation will be None if no data was available
-            quat_orientation = (
-                imu.read_orientation() if use_imu else np.array([1, 0, 0, 0])
-            )
+            try:
+                quat_orientation = (
+                    imu.read_orientation() if imu_activated else np.array([1, 0, 0, 0])
+                )
+            except Exception:
+                print('IMU not connected')
+                imu_activated = False
+                imu_initialized = False
             state.quat_orientation = quat_orientation
 
             # Step the controller forward by dt
