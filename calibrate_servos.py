@@ -1,7 +1,7 @@
-import pigpio
 from pupper.HardwareInterface import HardwareInterface
 from pupper.Config import PWMParams, ServoParams
 import numpy as np
+import re
 
 
 def get_motor_name(i, j):
@@ -29,7 +29,23 @@ def degrees_to_radians(input_array):
     Numpy array or float
         Radians
     """
-    return np.pi / 180.0 * input_array
+    return input_array * np.pi / 180.0
+
+
+def radians_to_degrees(input_array):
+    """Converts degrees to radians.
+
+    Parameters
+    ----------
+    input_array :  Numpy array or float
+        Radians
+
+    Returns
+    -------
+    Numpy array or float
+        Degrees
+    """
+    return input_array * 180.0 / np.pi
 
 
 def step_until(hardware_interface, axis, leg, set_point):
@@ -82,10 +98,13 @@ def calibrate_angle_offset(hardware_interface):
     """
 
     # Found K value of (11.4)
-    k = float(
-        input("Enter the scaling constant for your servo. This constant is how much you have to increase the pwm pulse width (in microseconds) to rotate the servo output 1 degree. (It is 11.333 for the newer CLS6336 and CLS6327 servos). Input: ")
-    )
-    hardware_interface.servo_params.micros_per_rad = k * 180 / np.pi
+    print("The scaling constant for your servo represents how much you have to increase\nthe pwm pulse width (in microseconds) to rotate the servo output 1 degree.")
+    print("This value is currently set to: {:.3f}".format(degrees_to_radians(hardware_interface.servo_params.micros_per_rad)))
+    print("For newer CLS6336 and CLS6327 servos the value should be 11.333.")
+    ks = input("Press <Enter> to keep the current value, or enter a new value: ")
+    if ks != '':
+        k = float(ks)
+        hardware_interface.servo_params.micros_per_rad = k * 180 / np.pi
 
     hardware_interface.servo_params.neutral_angle_degrees = np.zeros((3, 4))
 
@@ -129,11 +148,32 @@ def calibrate_angle_offset(hardware_interface):
                 )
                 okay = ""
                 prompt = "The leg should be at exactly **" + ["horizontal", "45 degrees", "45 degrees"][axis] + "**. Are you satisfied? Enter 'yes' or 'no': "
-                while okay not in ["yes", "no"]:
+                while okay not in ["y", "n", "yes", "no"]:
                     okay = str(
                         input(prompt)
                     )
-                completed = okay == "yes"
+                completed = okay == "y" or okay == "yes"
+
+
+def overwrite_ServoCalibration_file(servo_params):
+    preamble = """# WARNING: This file is machine generated. Edit at your own risk.
+
+import numpy as np
+
+"""
+    # Format array object string for np.array
+    p1 = re.compile("([0-9]\.) ( *)") # pattern to replace the space that follows each number with a comma
+    partially_formatted_matrix = p1.sub(r"\1,\2", str(servo_params.neutral_angle_degrees))
+    p2 = re.compile("(\]\n)") # pattern to add a comma at the end of the first two lines
+    formatted_matrix_with_required_commas = p2.sub("],\n", partially_formatted_matrix)
+
+    # Overwrite pupper/ServoCalibration.py file with modified values
+    with open("pupper/ServoCalibration.py", "w") as f:
+        print(preamble, file = f)
+        print("MICROS_PER_RAD = {:.3f} * 180.0 / np.pi".format(degrees_to_radians(servo_params.micros_per_rad)), file = f)
+        print("NEUTRAL_ANGLE_DEGREES = np.array(", file = f)
+        print(formatted_matrix_with_required_commas, file = f)
+        print(")", file = f)
 
 
 def main():
@@ -142,11 +182,12 @@ def main():
     hardware_interface = HardwareInterface()
 
     calibrate_angle_offset(hardware_interface)
+
+    overwrite_ServoCalibration_file(hardware_interface.servo_params)
+
     print("\n\n CALIBRATION COMPLETE!\n")
     print("Calibrated neutral angles:")
     print(hardware_interface.servo_params.neutral_angle_degrees)
-    print("Copy these values into the NEUTRAL_ANGLE_DEGREES matrix defined pupper/HardwareConfig.py")
-    print("Set the MICROS_PER_RAD value in pupper/HardwareConfig.py to whatever you defined in the beginning of this program as well.")
 
 
 main()
