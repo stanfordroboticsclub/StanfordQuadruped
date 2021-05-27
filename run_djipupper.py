@@ -53,6 +53,13 @@ def main(FLAGS):
         print("Done.")
     else:
         print("Not zeroing motors!")
+
+    if FLAGS.home:
+        print("Homing motors...", end="", flush=True)
+        hardware_interface.home_motors()        
+        time.sleep(20)
+        print("Done.")
+        
     print("Waiting for L1 to activate robot.")
 
     last_loop = time.time()
@@ -108,5 +115,6 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--zero", help="zero the motors", action="store_true")
     parser.add_argument("--log", help="log pupper data to file", action="store_true")
+    parser.add_argument("--home", help="home the motors (moves the legs)", action="store_true")
     FLAGS = parser.parse_args()
     main(FLAGS)
