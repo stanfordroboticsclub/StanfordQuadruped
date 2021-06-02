@@ -146,6 +146,9 @@ class HardwareInterface:
     def zero_motors(self):
         self.send_dict({"zero": True})
 
+    def home_motors(self):
+        self.send_dict({"home": True})
+
     def set_actuator_postions(self, joint_angles):
         """[summary]
 
