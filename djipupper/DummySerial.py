@@ -68,7 +68,7 @@ class DummySerial:
         print("self.pupper_link_indices=",self.pupper_link_indices)
         self.time_stamp = 0
                 
-        self.p.configureDebugVisualizer(rgbBackground=[0,1,0])
+        #self.p.configureDebugVisualizer(rgbBackground=[0,1,0])
         print("SetIdle")
         self.drive.SetIdle()
         print("SetMaxCurrent 2.")
