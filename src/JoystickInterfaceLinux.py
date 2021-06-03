@@ -1,5 +1,6 @@
 import numpy as np
 import time
+import select
 
 from src.State import BehaviorState, State
 from src.Command import Command
@@ -115,42 +116,43 @@ class JoystickInterface:
 
         self.axis_map = []
         self.button_map = []
+        self.poll = select.poll()
 
         # Open the joystick device.
         fn = '/dev/input/js0'
         print('Opening %s...' % fn)
         self.jsdev = open(fn, 'rb')
-
+        self.poll.register(self.jsdev, select.POLLIN)
         # Get the device name.
         #buf = bytearray(63)
         self.buf = array.array('B', [0] * 64)
-        ioctl(jsdev, 0x80006a13 + (0x10000 * len(self.buf)), self.buf) # JSIOCGNAME(len)
+        ioctl(self.jsdev, 0x80006a13 + (0x10000 * len(self.buf)), self.buf) # JSIOCGNAME(len)
         self.js_name = self.buf.tostring()
         print('Device name: %s' % self.js_name)
 
         # Get number of axes and buttons.
         self.buf = array.array('b', [0])
-        ioctl(jsdev, 0x80016a11, self.self.buf) # JSIOCGAXES
+        ioctl(self.jsdev, 0x80016a11, self.buf) # JSIOCGAXES
         self.num_axes = self.buf[0]
 
         self.buf = array.array('B', [0])
-        ioctl(jsdev, 0x80016a12, self.buf) # JSIOCGBUTTONS
+        ioctl(self.jsdev, 0x80016a12, self.buf) # JSIOCGBUTTONS
         self.num_buttons = self.buf[0]
 
         # Get the axis map.
         self.buf = array.array('b', [0] * 0x40)
-        ioctl(jsdev, 0x80406a32, self.buf) # JSIOCGAXMAP
+        ioctl(self.jsdev, 0x80406a32, self.buf) # JSIOCGAXMAP
 
-        for axis in self.buf[:num_axes]:
+        for axis in self.buf[:self.num_axes]:
             axis_name = axis_names.get(axis, 'unknown(0x%02x)' % axis)
             self.axis_map.append(axis_name)
             self.axis_states[axis_name] = 0.0
 
         # Get the button map.
         self.buf = array.array('H', [0] * 200)
-        ioctl(jsdev, 0x80406a34, self.buf) # JSIOCGBTNMAP
+        ioctl(self.jsdev, 0x80406a34, self.buf) # JSIOCGBTNMAP
 
-        for btn in buf[:num_buttons]:
+        for btn in self.buf[:self.num_buttons]:
             btn_name = button_names.get(btn, 'unknown(0x%03x)' % btn)
             self.button_map.append(btn_name)
             self.button_states[btn_name] = 0
@@ -163,9 +165,10 @@ class JoystickInterface:
 
 
     def get_command(self, state, do_print=False):
-            
-            evbuf = jsdev.read(8)
-            if evbuf:
+            events = self.poll.poll(0) 
+            if events:
+              evbuf = self.jsdev.read(8)
+              if evbuf:
                 time, value, type, number = struct.unpack('IhBB', evbuf)
 
                 if type & 0x80:
