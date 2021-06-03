@@ -1,7 +1,7 @@
 import numpy as np
 import time
 from src.Controller import Controller
-from src.JoystickInterface import JoystickInterface
+from src.JoystickInterfaceLinux import JoystickInterface
 from src.State import State
 from djipupper import HardwareInterface
 from djipupper.IndividualConfig import SERIAL_PORT  # make the configs more consistent
