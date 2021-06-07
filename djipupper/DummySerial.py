@@ -3,7 +3,9 @@ from time import sleep
 import sys
 from pybullet_utils import bullet_client
 import pybullet
-import pupper_drive
+use_drive = False
+if use_drive:
+  import pupper_drive
 import json
 import msgpack
 from serial import EIGHTBITS, PARITY_NONE, STOPBITS_ONE
@@ -48,7 +50,8 @@ class DummySerial:
         self._rate = 0.01
         debug(f'Setup DummySerial write pusher')
         print("creating pupper drive system")
-        self.drive = pupper_drive.DriveSystem()
+        if use_drive:
+          self.drive = pupper_drive.DriveSystem()
         self.p = bullet_client.BulletClient()
         self.pupper_body_uid = -1
         self.pupper_link_indices=[]
@@ -75,15 +78,16 @@ class DummySerial:
         if not found_pupper_sim:
           sys.exit("Error: Cannot find pupper, is pupper_server running?")
         #self.p.configureDebugVisualizer(rgbBackground=[0,1,0])
-        print("SetIdle")
-        self.drive.SetIdle()
-        print("SetMaxCurrent 2.")
-        self.drive.SetMaxCurrent(2.0)
-        self.drive.SetPositionKp(8.0)
-        self.drive.SetPositionKd(2.0)
-        self.drive.SetActivations([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
-        #self.drive.SetActivations([1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0])
-        self.drive.SetMaxCurrent(0.0)
+        if use_drive:
+          print("SetIdle")
+          self.drive.SetIdle()
+          print("SetMaxCurrent 2.")
+          self.drive.SetMaxCurrent(2.0)
+          self.drive.SetPositionKp(8.0)
+          self.drive.SetPositionKd(2.0)
+          self.drive.SetActivations([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
+          #self.drive.SetActivations([1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+          self.drive.SetMaxCurrent(0.0)
         
         #self._mq_feedback = bind_socket(listen_feedback_push, zmq.PUSH)
 
@@ -145,32 +149,33 @@ class DummySerial:
         data =  msgpack.unpackb(b, raw=False)
         
         #print("data=",data)
-        if "kp" in data:
-          #print("setting position kp=",data["kp"])
-          self.drive.SetPositionKp(data["kp"])
-        if "kd" in data:
-          #print("setting position kd=",data["kd"])
-          self.drive.SetPositionKd(data["kd"])
-        if "cart_kp" in data:
-          #print("setting Cartesian kp", data["cart_kp"])
-          self.drive.SetCartesianKp(data["cart_kp"])
-        if "max_current" in data:
-          #print("setting max_current:", data["max_current"])
-          self.drive.SetMaxCurrent(data["max_current"])
-        if "cart_kd" in data:
-          #print("setting Cartesian kd", data["cart_kd"])
-          self.drive.SetCartesianKd(data["cart_kd"])
-        if "activations" in data:
-          
-          #print("Setting activations:", data["activations"])
-          self.drive.SetActivations(data["activations"])
+        if use_drive:
+          if "kp" in data:
+            #print("setting position kp=",data["kp"])
+            self.drive.SetPositionKp(data["kp"])
+          if "kd" in data:
+            #print("setting position kd=",data["kd"])
+            self.drive.SetPositionKd(data["kd"])
+          if "cart_kp" in data:
+            #print("setting Cartesian kp", data["cart_kp"])
+            self.drive.SetCartesianKp(data["cart_kp"])
+          if "max_current" in data:
+            #print("setting max_current:", data["max_current"])
+            self.drive.SetMaxCurrent(data["max_current"])
+          if "cart_kd" in data:
+            #print("setting Cartesian kd", data["cart_kd"])
+            self.drive.SetCartesianKd(data["cart_kd"])
+          if "activations" in data:
+            
+            #print("Setting activations:", data["activations"])
+            self.drive.SetActivations(data["activations"])
         
         if "pos" in data:
           #print("Setting joint positions:", data["pos"])
           action_repeat = 10
           max_torque = 4
           useArray = True
-          kp = 40
+          kp = 15
           kd = 0.6
           if useArray:
             self.p.setJointMotorControlArray(
@@ -197,46 +202,51 @@ class DummySerial:
           sleep(0.001*action_repeat)
           
         if "cart_pos" in data:
-          #print("Setting Cartesian positions:", data["cart_pos"])
-          self.drive.SetCartesianPositions(data["cart_pos"])
-          
-          measured_positions = []
-          measured_velocities = []
-          
-          for a in range(len(self.pupper_link_indices)):
-            link_index = self.pupper_link_indices[a]
-            js = self.p.getJointState(self.pupper_body_uid,link_index)
-            measured_positions.append(js[0])
-            measured_velocities.append(js[1])
+          if use_drive:
+            #print("Setting Cartesian positions:", data["cart_pos"])
+            self.drive.SetCartesianPositions(data["cart_pos"])
             
-          #joint_states = self.p.getJointStates(self.pupper_body_uid,self.pupper_link_indices)
-          #print("joint_states=",joint_states)
-          
-          #for js in joint_states:
-          #  measured_positions.append(js[0])
-          #  measured_velocities.append(js[1])
-          
-          #print("measured_positions=",measured_positions)
-          #print("measured_velocities=",measured_velocities)
-          self.drive.SetMeasuredPositions(measured_positions)
-          self.drive.SetMeasuredVelocities(measured_velocities)
-          
-          self.drive.Update()
-          currents = self.drive.GetLastCommandedCurrents()
-          #print("currents=",currents)
-          
-          action_repeat = 10
-          for i in range (action_repeat):
+            measured_positions = []
+            measured_velocities = []
+            
             for a in range(len(self.pupper_link_indices)):
-                link_index = self.pupper_link_indices[a]
-                current = currents[a]
-                CURRENT_TO_TORQUE = .4
-                torque = current * CURRENT_TO_TORQUE
-                self.p.setJointMotorControl2(self.pupper_body_uid,link_index, pybullet.TORQUE_CONTROL, force=torque)
+              link_index = self.pupper_link_indices[a]
+              js = self.p.getJointState(self.pupper_body_uid,link_index)
+              measured_positions.append(js[0])
+              measured_velocities.append(js[1])
+              
+            #joint_states = self.p.getJointStates(self.pupper_body_uid,self.pupper_link_indices)
+            #print("joint_states=",joint_states)
+            
+            #for js in joint_states:
+            #  measured_positions.append(js[0])
+            #  measured_velocities.append(js[1])
+            
+            #print("measured_positions=",measured_positions)
+            #print("measured_velocities=",measured_velocities)
+            self.drive.SetMeasuredPositions(measured_positions)
+            self.drive.SetMeasuredVelocities(measured_velocities)
+            
+            self.drive.Update()
+            currents = self.drive.GetLastCommandedCurrents()
+            #print("currents=",currents)
+            
+            action_repeat = 10
+            for i in range (action_repeat):
+              for a in range(len(self.pupper_link_indices)):
+                  link_index = self.pupper_link_indices[a]
+                  current = currents[a]
+                  CURRENT_TO_TORQUE = .4
+                  torque = current * CURRENT_TO_TORQUE
+                  self.p.setJointMotorControl2(self.pupper_body_uid,link_index, pybullet.TORQUE_CONTROL, force=torque)
 
-            self.p.setGravity(0, 0, -10)            
-            self.p.stepSimulation()
-            #sleep(0.001)
+              self.p.setGravity(0, 0, -10)            
+              self.p.stepSimulation()
+              #sleep(0.001)
+          else:
+            print("Error: you need to enable use_drive for this mode")
+            print("Get the python module from https://github.com/erwincoumans/DJIPupperTests")
+            print("And in the root of that clone run: python3 setup.py install --user")
           
         #self._mq_feedback.send(msg)
 
