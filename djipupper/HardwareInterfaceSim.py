@@ -152,7 +152,7 @@ class HardwareInterface:
     def home_motors(self):
         self.send_dict({"home": True})
 
-    def set_actuator_postions(self, joint_angles):
+    def set_actuator_positions(self, joint_angles):
         """[summary]
 
         Parameters

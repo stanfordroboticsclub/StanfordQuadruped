@@ -1,8 +1,8 @@
 import numpy as np
 import time
 from src.Controller import Controller
-from src.JoystickInterfacePyGame import JoystickInterface
-#from src.JoystickInterface import JoystickInterface
+#from src.JoystickInterfacePyGame import JoystickInterface
+from src.JoystickInterface import JoystickInterface
 #from src.KeyboardInterfacePyBullet import JoystickInterface
 
 from src.State import State
@@ -87,9 +87,18 @@ def main(FLAGS):
                         state.activation = 0
                         continue
                     controller.run(state, command)
-                    hardware_interface.set_cartesian_positions(
-                        state.final_foot_locations
-                    )
+                    
+                    #Cartesian control requires a much better dynamics model
+                    useCartesianControl = False
+                    if useCartesianControl:
+                      hardware_interface.set_cartesian_positions(
+                          state.final_foot_locations
+                      )
+                    else:
+                      hardware_interface.set_actuator_positions(
+                          state.joint_angles
+                      )
+                    
                     last_loop = now
     except KeyboardInterrupt:
         if FLAGS.log:

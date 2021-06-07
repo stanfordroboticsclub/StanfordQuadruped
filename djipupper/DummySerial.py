@@ -1,5 +1,6 @@
 from logging import debug
 from time import sleep
+
 from pybullet_utils import bullet_client
 import pybullet
 import pupper_drive
@@ -52,6 +53,8 @@ class DummySerial:
         self.pupper_body_uid = -1
         self.pupper_link_indices=[]
         self.p.setTimeStep(0.001)
+        #self.p.setPhysicsEngineParameter(numSubSteps=1)
+        
         
         for i in range (self.p.getNumBodies()):
           b = self.p.getBodyUniqueId(i)
@@ -158,6 +161,38 @@ class DummySerial:
           
           #print("Setting activations:", data["activations"])
           self.drive.SetActivations(data["activations"])
+        
+        if "pos" in data:
+          #print("Setting joint positions:", data["pos"])
+          action_repeat = 10
+          max_torque = 4
+          useArray = True
+          kp = 40
+          kd = 0.6
+          if useArray:
+            self.p.setJointMotorControlArray(
+                      self.pupper_body_uid,
+                      self.pupper_link_indices,
+                      pybullet.PD_CONTROL,
+                      targetPositions=data["pos"],
+                      positionGains = [kp]*12,
+                      velocityGains = [kd]*12,
+                      forces=[max_torque]*12)
+          else:
+            for a in range(len(self.pupper_link_indices)):
+                link_index = self.pupper_link_indices[a]
+                self.p.setJointMotorControl2(
+                      self.pupper_body_uid,link_index, 
+                      pybullet.PD_CONTROL,
+                      targetPosition=data["pos"][a],
+                      positionGain = kp,
+                      velocityGain = kd,
+                      force=max_torque)
+          for i in range (action_repeat):
+            self.p.setGravity(0, 0, -10)            
+            self.p.stepSimulation()
+          sleep(0.001*action_repeat)
+          
         if "cart_pos" in data:
           #print("Setting Cartesian positions:", data["cart_pos"])
           self.drive.SetCartesianPositions(data["cart_pos"])
@@ -187,20 +222,22 @@ class DummySerial:
           currents = self.drive.GetLastCommandedCurrents()
           #print("currents=",currents)
           
-          
-          for a in range(len(self.pupper_link_indices)):
-            link_index = self.pupper_link_indices[a]
-            current = currents[a]
-            CURRENT_TO_TORQUE = .4
-            torque = current * CURRENT_TO_TORQUE
-            self.p.setJointMotorControl2(self.pupper_body_uid,link_index, pybullet.TORQUE_CONTROL, force=torque)
+          action_repeat = 10
+          for i in range (action_repeat):
+            for a in range(len(self.pupper_link_indices)):
+                link_index = self.pupper_link_indices[a]
+                current = currents[a]
+                CURRENT_TO_TORQUE = .4
+                torque = current * CURRENT_TO_TORQUE
+                self.p.setJointMotorControl2(self.pupper_body_uid,link_index, pybullet.TORQUE_CONTROL, force=torque)
 
-          self.p.setGravity(0, 0, -10)            
-          self.p.stepSimulation()
+            self.p.setGravity(0, 0, -10)            
+            self.p.stepSimulation()
+            #sleep(0.001)
           
         #self._mq_feedback.send(msg)
 
     def readline(self):
         #debug(f'Sleep for {self._rate} seconds')
-        sleep(self._rate)
+        #sleep(self._rate)
         return f'{self.readline_msg}{self.termination}'.encode()
