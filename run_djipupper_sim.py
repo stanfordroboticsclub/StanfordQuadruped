@@ -2,8 +2,8 @@ import numpy as np
 import time
 from src.Controller import Controller
 #from src.JoystickInterfacePyGame import JoystickInterface
-from src.JoystickInterface import JoystickInterface
-#from src.KeyboardInterfacePyBullet import JoystickInterface
+#from src.JoystickInterface import JoystickInterface
+from src.JoystickInterfacePyBullet import JoystickInterface
 
 from src.State import State
 from djipupper import HardwareInterfaceSim as HardwareInterface
@@ -31,7 +31,8 @@ def main(FLAGS):
     controller = Controller(config, four_legs_inverse_kinematics)
     state = State(height=config.default_z_ref)
     print("Creating joystick listener...", end="")
-    joystick_interface = JoystickInterface(config)
+    
+    joystick_interface = JoystickInterface(config,hardware_interface.serial_handle.p)
     print("Done.")
 
     summarize_config(config)

@@ -1,6 +1,6 @@
 from logging import debug
 from time import sleep
-
+import sys
 from pybullet_utils import bullet_client
 import pybullet
 import pupper_drive
@@ -55,12 +55,14 @@ class DummySerial:
         self.p.setTimeStep(0.001)
         #self.p.setPhysicsEngineParameter(numSubSteps=1)
         
+        found_pupper_sim = False
         
         for i in range (self.p.getNumBodies()):
           b = self.p.getBodyUniqueId(i)
           print("body ", b, self.p.getBodyInfo(b))
           if self.p.getBodyInfo(b)[1]==b'pupper_v2_dji':
             print("found Pupper in sim")
+            found_pupper_sim = True
             self.pupper_body_uid = b
             for linkName in linkNames:
               for link in range(self.p.getNumJoints(b)):
@@ -70,7 +72,8 @@ class DummySerial:
                   self.pupper_link_indices.append(link)
         print("self.pupper_link_indices=",self.pupper_link_indices)
         self.time_stamp = 0
-                
+        if not found_pupper_sim:
+          sys.exit("Error: Cannot find pupper, is pupper_server running?")
         #self.p.configureDebugVisualizer(rgbBackground=[0,1,0])
         print("SetIdle")
         self.drive.SetIdle()
