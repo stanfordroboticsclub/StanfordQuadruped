@@ -3,7 +3,8 @@ import time
 from src.Controller import Controller
 #from src.JoystickInterfacePyGame import JoystickInterface
 #from src.JoystickInterface import JoystickInterface
-from src.JoystickInterfacePyBullet import JoystickInterface
+from src.KeyboardInterfacePyBullet import JoystickInterface
+#from src.KeyboardInterfacePyGame import JoystickInterface
 
 from src.State import State
 from djipupper import HardwareInterfaceSim as HardwareInterface
