@@ -12,9 +12,11 @@ class Command:
         self.pitch = 0.0
         self.roll = 0.0
 
-        self.hop_event = False
+        self.walk_event = False
         self.trot_event = False
+        self.stand_event = False
         self.activate_event = False
+        self.deactivate_event = False
 
     def __str__(self):
         return "vx: {} vy: {} wz: {} height: {} pitch: {} roll: {} hop_event: {} trot_event: {} ".format(

@@ -88,7 +88,7 @@ def main(FLAGS):
                       print(any_data['ts'])
                 if now - last_loop >= config.dt:
                     command = joystick_interface.get_command(state)
-                    if command.activate_event == 1:
+                    if command.deactivate_event == 1:
                         print("Deactivating Robot")
                         print("Waiting for L1 to activate robot.")
                         time.sleep(0.1)
