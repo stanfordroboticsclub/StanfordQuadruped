@@ -21,7 +21,7 @@ class JoystickInterface:
 
         self.gamepad = hid.device()
         for device in hid.enumerate():
-            if device['product_string'] == 'FrSky Simulator':
+            if (device['product_string'] == 'FrSky Simulator') or (device['product_string'] == 'BetaFPV Taranis Joystick'):
                 self.gamepad.open(device['vendor_id'], device['product_id'])
                 break
         self.gamepad.set_nonblocking(True)
