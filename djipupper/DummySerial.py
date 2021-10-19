@@ -10,7 +10,8 @@ import json
 import msgpack
 from serial import EIGHTBITS, PARITY_NONE, STOPBITS_ONE
 
-
+PYBULLET_KP_GAIN = 4
+PYBULLET_KD_GAIN = 0.2
 
 linkNames = [   b"rightFrontLeg",
                 b"rightFrontUpperLeg",
@@ -175,8 +176,8 @@ class DummySerial:
           action_repeat = 10
           max_torque = 4
           useArray = True
-          kp = 15
-          kd = 0.6
+          kp = PYBULLET_KP_GAIN
+          kd = PYBULLET_KD_GAIN
           if useArray:
             self.p.setJointMotorControlArray(
                       self.pupper_body_uid,
