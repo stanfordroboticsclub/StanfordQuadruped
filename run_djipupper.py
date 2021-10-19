@@ -23,6 +23,7 @@ def main(FLAGS):
     # Create config
     config = Configuration()
     hardware_interface = HardwareInterface.HardwareInterface(port=SERIAL_PORT)
+    time.sleep(0.1)
 
     # Create controller and user input handles
     controller = Controller(config, four_legs_inverse_kinematics)
@@ -57,7 +58,7 @@ def main(FLAGS):
     if FLAGS.home:
         print("Homing motors...", end="", flush=True)
         hardware_interface.home_motors()        
-        time.sleep(20)
+        time.sleep(5)
         print("Done.")
         
     print("Waiting for L1 to activate robot.")
@@ -72,8 +73,11 @@ def main(FLAGS):
                 if command.activate_event == 1:
                     print("Robot activated.")
                     joystick_interface.set_color(config.ps4_color)
+                    time.sleep(0.1)
                     hardware_interface.serial_handle.reset_input_buffer()
+                    time.sleep(0.1)
                     hardware_interface.activate()
+                    time.sleep(0.1)
                     state.activation = 1
                     continue
             elif state.activation == 1:
@@ -84,10 +88,12 @@ def main(FLAGS):
                       print(any_data['ts'])
                 if now - last_loop >= config.dt:
                     command = joystick_interface.get_command(state)
-                    if command.activate_event == 1:
+                    if command.deactivate_event == 1:
                         print("Deactivating Robot")
                         print("Waiting for L1 to activate robot.")
+                        time.sleep(0.1)
                         hardware_interface.deactivate()
+                        time.sleep(0.1)
                         state.activation = 0
                         continue
                     controller.run(state, command)

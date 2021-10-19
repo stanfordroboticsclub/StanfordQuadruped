@@ -29,12 +29,12 @@ class Configuration:
         #################### STANCE ####################
         self.delta_x = 0.1
         self.delta_y = 0.1
-        self.x_shift = 0.0
+        self.x_shift = 0.005
         self.default_z_ref = -0.14
 
         #################### SWING ######################
         self.z_coeffs = None
-        self.z_clearance = 0.09
+        self.z_clearance = 0.08
         self.alpha = (
             0.5  # Ratio between touchdown distance and total horizontal stance movement
         )

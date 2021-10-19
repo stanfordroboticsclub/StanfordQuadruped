@@ -9,6 +9,8 @@ from transforms3d.euler import euler2mat, quat2euler
 from transforms3d.quaternions import qconjugate, quat2axangle
 from transforms3d.axangles import axangle2mat
 
+from src.StaticGait import VirtualVehicle
+
 
 class Controller:
     """Controller and planner object
@@ -24,22 +26,30 @@ class Controller:
         self.gait_controller = GaitController(self.config)
         self.swing_controller = SwingController(self.config)
         self.stance_controller = StanceController(self.config)
+        self.virtual_vehicle = VirtualVehicle()
 
-        self.hop_transition_mapping = {
-            BehaviorState.REST: BehaviorState.HOP,
-            BehaviorState.HOP: BehaviorState.FINISHHOP,
-            BehaviorState.FINISHHOP: BehaviorState.REST,
-            BehaviorState.TROT: BehaviorState.HOP,
+        self.activate_transition_mapping = {
+            BehaviorState.REST: BehaviorState.REST,
+            BehaviorState.DEACTIVATED: BehaviorState.REST
+        }
+        self.deactivate_transition_mapping = {
+            BehaviorState.DEACTIVATED: BehaviorState.DEACTIVATED,
+            BehaviorState.REST: BehaviorState.DEACTIVATED
         }
         self.trot_transition_mapping = {
+            BehaviorState.TROT: BehaviorState.TROT,
+            BehaviorState.WALK: BehaviorState.TROT,
             BehaviorState.REST: BehaviorState.TROT,
-            BehaviorState.TROT: BehaviorState.REST,
-            BehaviorState.HOP: BehaviorState.TROT,
-            BehaviorState.FINISHHOP: BehaviorState.TROT,
         }
-        self.activate_transition_mapping = {
-            BehaviorState.DEACTIVATED: BehaviorState.REST,
-            BehaviorState.REST: BehaviorState.DEACTIVATED,
+        self.walk_transition_mapping = {
+            BehaviorState.WALK: BehaviorState.WALK,
+            BehaviorState.TROT: BehaviorState.WALK,
+            BehaviorState.REST: BehaviorState.WALK,
+        }
+        self.stand_transition_mapping = {
+            BehaviorState.REST: BehaviorState.REST,
+            BehaviorState.TROT: BehaviorState.REST,
+            BehaviorState.WALK: BehaviorState.REST,
         }
 
     def step_gait(self, state, command):
@@ -84,13 +94,31 @@ class Controller:
             state.behavior_state = self.activate_transition_mapping[
                 state.behavior_state
             ]
+        elif command.deactivate_event:
+            state.behavior_state = self.deactivate_transition_mapping[
+                state.behavior_state
+            ]
         elif command.trot_event:
             state.behavior_state = self.trot_transition_mapping[state.behavior_state]
-        elif command.hop_event:
-            state.behavior_state = self.hop_transition_mapping[state.behavior_state]
+        elif command.walk_event:
+            state.behavior_state = self.walk_transition_mapping[state.behavior_state]
+        elif command.stand_event:
+            state.behavior_state = self.stand_transition_mapping[state.behavior_state]
 
         if state.behavior_state == BehaviorState.TROT:
             state.foot_locations, contact_modes = self.step_gait(state, command)
+            # Apply the desired body rotation
+            state.final_foot_locations = (
+                euler2mat(command.roll, command.pitch, 0.0) @ state.foot_locations
+            )
+            state.joint_angles = self.inverse_kinematics(
+                state.final_foot_locations, self.config
+            )
+
+        if state.behavior_state == BehaviorState.WALK:
+            self.virtual_vehicle.command_velocity(command.horizontal_velocity[0], command.horizontal_velocity[1], command.yaw_rate)
+            self.virtual_vehicle.increment_time()
+            state.foot_locations = np.vstack(self.virtual_vehicle.get_relative_foot_positions(command.height)).T
             
             # Apply the desired body rotation
             state.final_foot_locations = (
@@ -100,23 +128,23 @@ class Controller:
                 state.final_foot_locations, self.config
             )
 
-        elif state.behavior_state == BehaviorState.HOP:
-            state.foot_locations = (
-                self.config.default_stance + np.array([0, 0, -0.09])[:, np.newaxis]
-            )
-            state.final_foot_locations = state.foot_locations.copy()
-            state.joint_angles = self.inverse_kinematics(
-                state.final_foot_locations, self.config
-            )
+        # elif state.behavior_state == BehaviorState.HOP:
+        #     state.foot_locations = (
+        #         self.config.default_stance + np.array([0, 0, -0.09])[:, np.newaxis]
+        #     )
+        #     state.final_foot_locations = state.foot_locations.copy()
+        #     state.joint_angles = self.inverse_kinematics(
+        #         state.final_foot_locations, self.config
+        #     )
 
-        elif state.behavior_state == BehaviorState.FINISHHOP:
-            state.foot_locations = (
-                self.config.default_stance + np.array([0, 0, -0.22])[:, np.newaxis]
-            )
-            state.final_foot_locations = state.foot_locations.copy()
-            state.joint_angles = self.inverse_kinematics(
-                state.final_foot_locations, self.config
-            )
+        # elif state.behavior_state == BehaviorState.FINISHHOP:
+        #     state.foot_locations = (
+        #         self.config.default_stance + np.array([0, 0, -0.22])[:, np.newaxis]
+        #     )
+        #     state.final_foot_locations = state.foot_locations.copy()
+        #     state.joint_angles = self.inverse_kinematics(
+        #         state.final_foot_locations, self.config
+        #     )
 
         elif state.behavior_state == BehaviorState.REST:
             yaw_proportion = command.yaw_rate / self.config.max_yaw_rate

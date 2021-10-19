@@ -5,6 +5,7 @@ from transforms3d.euler import euler2mat
 class SwingController:
     def __init__(self, config):
         self.config = config
+        self.prev_foot_locations = self.config.default_stance + np.array([0, 0, self.config.default_z_ref])[:, np.newaxis]
 
     def raibert_touchdown_location(self, leg_index, command):
         delta_p_2d = (
@@ -23,7 +24,7 @@ class SwingController:
         R = euler2mat(0, 0, theta)
         return R @ self.config.default_stance[:, leg_index] + delta_p
 
-    def swing_height(self, swing_phase, triangular=True):
+    def swing_height(self, swing_phase, triangular=False):
         if triangular:
             if swing_phase < 0.5:
                 swing_height_ = swing_phase / 0.5 * self.config.z_clearance
@@ -31,6 +32,14 @@ class SwingController:
                 swing_height_ = self.config.z_clearance * (
                     1 - (swing_phase - 0.5) / 0.5
                 )
+        else:
+            interpolant = lambda t: self.config.z_clearance * (-2 * t ** 3 + 3 * t ** 2)
+            if swing_phase < 0.5:
+                segment_phase = swing_phase / 0.5
+                swing_height_ = interpolant(segment_phase)
+            else:
+                segment_phase = 1 - (swing_phase - 0.5) / 0.5
+                swing_height_ = interpolant(segment_phase)
         return swing_height_
 
     def next_foot_location(self, swing_prop, leg_index, state, command):
