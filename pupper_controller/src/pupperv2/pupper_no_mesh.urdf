@@ -1,0 +1,403 @@
+<?xml version="1.0"?>
+<!-- created with Phobos 1.0.1 "Capricious Choutengan" -->
+  <robot name="pupper_v2_dji">
+
+    <link name="leftFrontLeg">
+      <inertial>
+        <origin xyz="0.0139 0.0254 0" rpy="0 0 0"/>
+        <mass value="0.106"/>
+        <inertia ixx="2e-05" ixy="0" ixz="0" iyy="6e-05" iyz="0" izz="6e-05"/>
+      </inertial>
+      <collision name="Hip L">
+        <origin xyz="0.0235 0.0265 0" rpy="1.5708 0 -1.5708"/>
+        <geometry>
+          <cylinder radius="0.015" length="0.075"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <link name="leftFrontLowerLeg">
+      <inertial>
+        <origin xyz="0.00558 -0.00075 -0.0658" rpy="0 0 0"/>
+        <mass value="0.038"/>
+        <inertia ixx="0.00018" ixy="0" ixz="0" iyy="0.00018" iyz="0" izz="2e-05"/>
+      </inertial>
+      <collision name="Lower Leg L">
+        <origin xyz="0.00699 0 -0.05223" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.00951 0.012 0.10758"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <link name="leftFrontToe">
+      <inertial>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <mass value="0.0001"/>
+        <inertia ixx="2e-05" ixy="0" ixz="0" iyy="2e-05" iyz="0" izz="2e-05"/>
+      </inertial>
+      <visual>
+        <origin rpy="0.00000 -0.00000 0.00000" xyz="0.00 0.00000 0.000"/>
+        <geometry>
+          <sphere radius="0.01"/>
+        </geometry>
+        <material name="red">
+          <color rgba="1.00000 .100000 .100000 1.00000" />
+        </material>
+		  </visual>
+      <collision name="Sphere.003">
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <sphere radius="0.0095"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <link name="leftFrontUpperLeg">
+      <inertial>
+        <origin xyz="0.0172 0 -0.061" rpy="0 0 0"/>
+        <mass value="0.142"/>
+        <inertia ixx="0.00014" ixy="0" ixz="0" iyy="0.00016" iyz="0" izz="3e-05"/>
+      </inertial>
+      <collision name="Upper Leg - Pupper 2.1 v57">
+        <origin xyz="0.0169 0 -0.08" rpy="1.5708 0 1.5708"/>
+        <geometry>
+          <cylinder radius="0.015" length="0.065"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <link name="leftRearLeg">
+      <inertial>
+        <origin xyz="0.0139 0.0254 0" rpy="0 0 0"/>
+        <mass value="0.106"/>
+        <inertia ixx="2e-05" ixy="0" ixz="0" iyy="6e-05" iyz="0" izz="6e-05"/>
+      </inertial>
+      <collision name="Hip L">
+        <origin xyz="0.0235 0.0265 0" rpy="1.5708 0 -1.5708"/>
+        <geometry>
+          <cylinder radius="0.015" length="0.075"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <link name="leftRearLowerLeg">
+      <inertial>
+        <origin xyz="0.00558 -0.00075 -0.0658" rpy="0 0 0"/>
+        <mass value="0.038"/>
+        <inertia ixx="0.00018" ixy="0" ixz="0" iyy="0.00018" iyz="0" izz="2e-05"/>
+      </inertial>
+      <collision name="Lower Leg L">
+        <origin xyz="0.00699 0 -0.05223" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.00951 0.012 0.10758"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <link name="leftRearToe">
+      <inertial>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <mass value="0.0001"/>
+        <inertia ixx="2e-05" ixy="0" ixz="0" iyy="2e-05" iyz="0" izz="2e-05"/>
+      </inertial>
+    <visual>
+			<origin rpy="0.00000 -0.00000 0.00000" xyz="0.00 0.00000 0.000"/>
+			<geometry>
+				<sphere radius="0.01"/>
+			</geometry>
+			<material name="blue">
+				<color rgba=".100000 .100000 1.00000 1.00000" />
+			</material>
+		</visual>
+      <collision name="Sphere">
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <sphere radius="0.0095"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <link name="leftRearUpperLeg">
+      <inertial>
+        <origin xyz="0.0172 0 -0.061" rpy="0 0 0"/>
+        <mass value="0.142"/>
+        <inertia ixx="0.00014" ixy="0" ixz="0" iyy="0.00016" iyz="0" izz="3e-05"/>
+      </inertial>
+      <collision name="Upper Leg - Pupper 2.1 v57">
+        <origin xyz="0.0169 0 -0.08" rpy="1.5708 0 1.5708"/>
+        <geometry>
+          <cylinder radius="0.015" length="0.065"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <link name="pupper_v2_dji_chassis">
+      <inertial>
+        <origin xyz="0 -0.048 -0.00964" rpy="0 0 0"/>
+        <mass value="0.991"/>
+        <inertia ixx="0.00626" ixy="2e-05" ixz="0" iyy="0.00175" iyz="2e-05" izz="0.00678"/>
+      </inertial>
+      <collision name="Cube">
+        <origin xyz="0 0.1 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="meshes/Cube.003.obj" scale="1.0 1.0 1.0"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <link name="rightFrontLeg">
+      <inertial>
+        <origin xyz="0.0139 -0.0269 0" rpy="0 0 0"/>
+        <mass value="0.106"/>
+        <inertia ixx="2e-05" ixy="0" ixz="0" iyy="6e-05" iyz="0" izz="6e-05"/>
+      </inertial>
+      <collision name="Hip R">
+        <origin xyz="0.0235 -0.028 0" rpy="1.5708 0 -1.5708"/>
+        <geometry>
+          <cylinder radius="0.015" length="0.075"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <link name="rightFrontLowerLeg">
+      <inertial>
+        <origin xyz="-0.00588 -0.00075 -0.0658" rpy="0 0 0"/>
+        <mass value="0.038"/>
+        <inertia ixx="0.00018" ixy="0" ixz="0" iyy="0.00018" iyz="0" izz="2e-05"/>
+      </inertial>
+      <collision name="Lower Leg R">
+        <origin xyz="-0.00698 0 -0.05223" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.00953 0.012 0.10758"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <link name="rightFrontToe">
+      <inertial>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <mass value="0.0001"/>
+        <inertia ixx="2e-05" ixy="0" ixz="0" iyy="2e-05" iyz="0" izz="2e-05"/>
+      </inertial>
+      <visual>
+        <origin rpy="0.00000 -0.00000 0.00000" xyz="0.00 0.00000 0.000"/>
+        <geometry>
+          <sphere radius="0.01"/>
+        </geometry>
+          <material name="green">
+          <color rgba=".100000 1.00000 .100000 1.00000" />
+        </material>
+		  </visual>
+      <collision name="Sphere.002">
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <sphere radius="0.0095"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <link name="rightFrontUpperLeg">
+      <inertial>
+        <origin xyz="0.0172 0 -0.061" rpy="0 0 0"/>
+        <mass value="0.142"/>
+        <inertia ixx="0.00014" ixy="0" ixz="0" iyy="0.00016" iyz="0" izz="3e-05"/>
+      </inertial>
+      <collision name="Upper Leg - Pupper 2.1 v57">
+        <origin xyz="0.0169 0 -0.08" rpy="1.5708 0 -1.5708"/>
+        <geometry>
+          <cylinder radius="0.015" length="0.065"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <link name="rightRearLeg">
+      <inertial>
+        <origin xyz="0.0139 -0.0269 0" rpy="0 0 0"/>
+        <mass value="0.106"/>
+        <inertia ixx="2e-05" ixy="0" ixz="0" iyy="6e-05" iyz="0" izz="6e-05"/>
+      </inertial>
+      <collision name="Hip R">
+        <origin xyz="0.0235 -0.028 0" rpy="1.5708 0 -1.5708"/>
+        <geometry>
+          <cylinder radius="0.015" length="0.075"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <link name="rightRearLowerLeg">
+      <inertial>
+        <origin xyz="-0.00588 -0.00075 -0.0658" rpy="0 0 0"/>
+        <mass value="0.038"/>
+        <inertia ixx="0.00018" ixy="0" ixz="0" iyy="0.00018" iyz="0" izz="2e-05"/>
+      </inertial>
+      <collision name="Lower Leg R">
+        <origin xyz="-0.00698 0 -0.05223" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.00953 0.012 0.10758"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <link name="rightRearToe">
+      <inertial>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <mass value="0.0001"/>
+        <inertia ixx="2e-05" ixy="0" ixz="0" iyy="2e-05" iyz="0" izz="2e-05"/>
+      </inertial>
+      <visual>
+        <origin rpy="0.00000 -0.00000 0.00000" xyz="0.0 0.0 0.00"/>
+        <geometry>
+          <sphere radius="0.01"/>
+        </geometry>
+        <material name="black">
+          <color rgba=".100000 .100000 .100000 1.00000" />
+        </material>
+		  </visual>
+      <collision name="Sphere.001">
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <sphere radius="0.0095"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <link name="rightRearUpperLeg">
+      <inertial>
+        <origin xyz="0.0172 0 -0.061" rpy="0 0 0"/>
+        <mass value="0.142"/>
+        <inertia ixx="0.00014" ixy="0" ixz="0" iyy="0.00016" iyz="0" izz="3e-05"/>
+      </inertial>
+      <collision name="Upper Leg - Pupper 2.1 v57">
+        <origin xyz="0.0169 0 -0.08" rpy="1.5708 0 -1.5708"/>
+        <geometry>
+          <cylinder radius="0.015" length="0.065"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="leftFrontLegMotor" type="revolute">
+      <origin xyz="0.047 -0.1015 0" rpy="0 0 0"/>
+      <parent link="pupper_v2_dji_chassis"/>
+      <child link="leftFrontLeg"/>
+      <axis xyz="0 -1.0 0"/>
+      <limit lower="-0.7854" upper="0.7854" effort="0" velocity="0"/>
+    </joint>
+
+    <joint name="leftFrontLowerLegMotor" type="revolute">
+      <origin xyz="-0.004 0 -0.08" rpy="0 0 3.14159"/>
+      <parent link="leftFrontUpperLeg"/>
+      <child link="leftFrontLowerLeg"/>
+      <axis xyz="-1.0 0 0"/>
+      <limit lower="-2.87979" upper="2.87979" effort="0" velocity="0"/>
+    </joint>
+
+    <joint name="leftFrontToe" type="floating">
+      <origin xyz="0.002 0 -0.11" rpy="0 0 -3.14159"/>
+      <parent link="leftFrontLowerLeg"/>
+      <child link="leftFrontToe"/>
+    </joint>
+
+    <joint name="leftFrontUpperLegMotor" type="revolute">
+      <origin xyz="0.0395 0.0265 0" rpy="0 0 0"/>
+      <parent link="leftFrontLeg"/>
+      <child link="leftFrontUpperLeg"/>
+      <axis xyz="1.0 0 0"/>
+      <limit lower="-1.309" upper="4.45059" effort="0" velocity="0"/>
+    </joint>
+
+    <joint name="leftRearLegMotor" type="revolute">
+      <origin xyz="0.047 0.0985 0" rpy="0 0 0"/>
+      <parent link="pupper_v2_dji_chassis"/>
+      <child link="leftRearLeg"/>
+      <axis xyz="0 -1.0 0"/>
+      <limit lower="-0.7854" upper="0.7854" effort="0" velocity="0"/>
+    </joint>
+
+    <joint name="leftRearLowerLegMotor" type="revolute">
+      <origin xyz="-0.004 0 -0.08" rpy="0 0 3.14159"/>
+      <parent link="leftRearUpperLeg"/>
+      <child link="leftRearLowerLeg"/>
+      <axis xyz="-1.0 0 0"/>
+      <limit lower="-2.87979" upper="2.87979" effort="0" velocity="0"/>
+    </joint>
+
+    <joint name="leftRearToe" type="floating">
+      <origin xyz="0.002 0 -0.11" rpy="0 0 -3.14159"/>
+      <parent link="leftRearLowerLeg"/>
+      <child link="leftRearToe"/>
+    </joint>
+
+    <joint name="leftRearUpperLegMotor" type="revolute">
+      <origin xyz="0.0395 0.0265 0" rpy="0 0 0"/>
+      <parent link="leftRearLeg"/>
+      <child link="leftRearUpperLeg"/>
+      <axis xyz="1.0 0 0"/>
+      <limit lower="-1.309" upper="4.45059" effort="0" velocity="0"/>
+    </joint>
+
+    <joint name="rightFrontLegMotor" type="revolute">
+      <origin xyz="-0.047 -0.103 0" rpy="0 0 -3.14159"/>
+      <parent link="pupper_v2_dji_chassis"/>
+      <child link="rightFrontLeg"/>
+      <axis xyz="0 1.0 0"/>
+      <limit lower="-0.7854" upper="0.7854" effort="0" velocity="0"/>
+    </joint>
+
+    <joint name="rightFrontLowerLegMotor" type="revolute">
+      <origin xyz="-0.004 0 -0.08" rpy="0 0 0"/>
+      <parent link="rightFrontUpperLeg"/>
+      <child link="rightFrontLowerLeg"/>
+      <axis xyz="-1.0 0 0"/>
+      <limit lower="-2.87979" upper="2.87979" effort="0" velocity="0"/>
+    </joint>
+
+    <joint name="rightFrontToe" type="floating">
+      <origin xyz="-0.002 0 -0.11" rpy="0 0 3.14159"/>
+      <parent link="rightFrontLowerLeg"/>
+      <child link="rightFrontToe"/>
+    </joint>
+
+    <joint name="rightFrontUpperLegMotor" type="revolute">
+      <origin xyz="0.0395 -0.028 0" rpy="0 0 0"/>
+      <parent link="rightFrontLeg"/>
+      <child link="rightFrontUpperLeg"/>
+      <axis xyz="-1.0 0 0"/>
+      <limit lower="-1.309" upper="4.45059" effort="0" velocity="0"/>
+    </joint>
+
+    <joint name="rightRearLegMotor" type="revolute">
+      <origin xyz="-0.047 0.097 0" rpy="0 0 -3.14159"/>
+      <parent link="pupper_v2_dji_chassis"/>
+      <child link="rightRearLeg"/>
+      <axis xyz="0 1.0 0"/>
+      <limit lower="-0.7854" upper="0.7854" effort="0" velocity="0"/>
+    </joint>
+
+    <joint name="rightRearLowerLegMotor" type="revolute">
+      <origin xyz="-0.004 0 -0.08" rpy="0 0 0"/>
+      <parent link="rightRearUpperLeg"/>
+      <child link="rightRearLowerLeg"/>
+      <axis xyz="-1.0 0 0"/>
+      <limit lower="-2.87979" upper="2.87979" effort="0" velocity="0"/>
+    </joint>
+
+    <joint name="rightRearToe" type="floating">
+      <origin xyz="-0.002 0 -0.11" rpy="0 0 3.14159"/>
+      <parent link="rightRearLowerLeg"/>
+      <child link="rightRearToe"/>
+    </joint>
+
+    <joint name="rightRearUpperLegMotor" type="revolute">
+      <origin xyz="0.0395 -0.028 0" rpy="0 0 0"/>
+      <parent link="rightRearLeg"/>
+      <child link="rightRearUpperLeg"/>
+      <axis xyz="-1.0 0 0"/>
+      <limit lower="-1.309" upper="4.45059" effort="0" velocity="0"/>
+    </joint>
+
+    <material name="PupperMaterial">
+      <color rgba="0.8 0.8 0.8 1.0"/>
+    </material>
+
+  </robot>

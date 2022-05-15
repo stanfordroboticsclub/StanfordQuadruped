@@ -1,0 +1,12 @@
+# Blender MTL File: 'pupperv2_from_obj_centered_zup.blend'
+# Material Count: 1
+
+newmtl Plastic_-_Matte_(White)
+Ns 179.999996
+Ka 1.000000 1.000000 1.000000
+Kd 0.964706 0.964706 0.952941
+Ks 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 3
