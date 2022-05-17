@@ -100,6 +100,7 @@ def main(FLAGS):
                       hardware_interface.set_actuator_positions(
                           state.joint_angles
                       )
+                    print(str(list(np.reshape(state.final_foot_locations,-1))).strip('[]'))
                     
                     last_loop = now
     except KeyboardInterrupt:
