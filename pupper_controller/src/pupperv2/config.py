@@ -21,7 +21,7 @@ class Config:
 
         #################### STANCE ####################
         self.delta_x = 0.1
-        self.delta_y = 0.1
+        self.delta_y = 0.07
         self.x_shift = 0.005
         self.default_z_ref = -0.14
 
@@ -60,10 +60,6 @@ class Config:
         self.HIP_W = 0.0744
         self.HIP_T = 0.0214
         self.HIP_OFFSET = 0.0132
-
-        self.L = 0.276
-        self.W = 0.100
-        self.T = 0.050
 
         self.LEG_ORIGINS = np.array(
             [
