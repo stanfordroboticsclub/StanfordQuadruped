@@ -15,9 +15,10 @@ class PupperEnv(gym.Env):
         render=True,
         render_meshes=False,
     ):
+        # Defines lower and upper bounds on possible actions
         self.action_space = gym.spaces.Box(
-            np.array([-0.5]),
-            np.array([0.5]),
+            np.array([-0.5, -0.5, -4, -0.18, -0.35, -0.1]),
+            np.array([0.5, 0.5, 4, -0.05, 0.35, 0.1]),
             dtype=np.float32)
 
         self.observation_space = gym.spaces.Box(
@@ -44,7 +45,16 @@ class PupperEnv(gym.Env):
         return abs(roll) > math.pi/4 or abs(pitch) > math.pi/4
 
     def step(self, actions):
-        observation = self.pupper.step(actions)
+        if isinstance(actions, dict):
+            action_dict = actions
+        else:
+            action_dict = {'x_velocity': actions[0],
+                           'y_velocity': actions[1],
+                           'yaw_rate': actions[2],
+                           'height': actions[3],
+                           'pitch': actions[4],
+                           'com_x_shift': actions[5]}
+        observation = self.pupper.step(action_dict)
         reward = self.reward(observation)
         done = self.terminate(observation)
         return observation, reward, done, {}

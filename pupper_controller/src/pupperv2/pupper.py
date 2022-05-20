@@ -9,7 +9,7 @@ from pupper_controller.src.pupperv2 import kinematics
 from pupper_hardware_interface import interface
 from pupper_controller.src.pupperv2 import pybullet_interface
 from pupper_controller.src.pupperv2 import robot_utils
-
+from collections import defaultdict
 
 class Pupper:
     def __init__(self, run_on_robot=False, render=True, render_meshes=False, LOG=False, ):
@@ -34,8 +34,21 @@ class Pupper:
         self.controller.run(self.state, pupper_command)
 
     def step(self, action):
+        """
+        Make pupper controller take one action (push one timestep forward).
+
+        Args:
+            action: Dictionary containing actions
+        """
+        action = defaultdict(int, action)
         pupper_command = command.Command(self.config.default_z_ref)
-        pupper_command.horizontal_velocity = np.array([action[0], 0])
+        # The expression action[x] or y results in y if x is not in the dictionary
+        pupper_command.horizontal_velocity = np.array(
+            [action['x_velocity'] or 0.0, action['y_velocity'] or 0.0])
+        pupper_command.yaw_rate = action['yaw_rate'] or 0.0
+        pupper_command.height = action['height'] or self.config.default_z_ref
+        pupper_command.pitch = action['pitch'] or 0.0
+        self.config.x_shift = action['com_x_shift'] or self.config.x_shift
 
         self.controller.run(self.state, pupper_command)
         self.hardware_interface.set_cartesian_positions(
@@ -54,7 +67,8 @@ class Pupper:
         # self.hardware_interface.shutdown()
 
     def get_observation(self):
-        self.hardware_interface.read_incoming_data()  # reads up to 1024 bytes # TODO fix hardware interface code
+        # reads up to 1024 bytes # TODO fix hardware interface code
+        self.hardware_interface.read_incoming_data()
         base_roll_pitch = np.array(
             [self.hardware_interface.robot_state.roll, self.hardware_interface.robot_state.pitch])
         joint_positions = self.hardware_interface.robot_state.position
