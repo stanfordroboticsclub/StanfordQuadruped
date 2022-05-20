@@ -11,11 +11,13 @@ from pupper_controller.src.pupperv2 import pybullet_interface
 from pupper_controller.src.pupperv2 import robot_utils
 from collections import defaultdict
 
+
 class Pupper:
     def __init__(self, run_on_robot=False, render=True, render_meshes=False, LOG=False, ):
         self.config = config.Config()
 
-        if run_on_robot:
+        self.run_on_robot = run_on_robot
+        if self.run_on_robot:
             self.hardware_interface = interface.Interface(
                 port=robot_utils.get_teensy_serial_port())
         else:
@@ -27,6 +29,21 @@ class Pupper:
             self.config, kinematics.four_legs_inverse_kinematics)
         self.state = robot_state.RobotState(
             height=-0.05)  # self.config.default_z_ref
+
+    def slow_stand(self, do_sleep=False):
+        """
+        Blocking slow stand up behavior.
+
+        Set do_sleep to False if you want simulated robot to go faster than real time
+        """
+        for height in np.linspace(-0.06, -0.14, int(1.0 / self.config.dt)):
+            ob = self.get_observation()
+            self.step({'height': height})
+            if self.run_on_robot:
+                time.sleep(self.config.dt)
+            else:
+                if do_sleep:
+                    time.sleep(self.config.dt)
 
     def start_trot(self):
         pupper_command = command.Command(self.config.default_z_ref)
@@ -40,6 +57,7 @@ class Pupper:
         Args:
             action: Dictionary containing actions
         """
+        # converting to int defaultdict makes non existent keys return 0
         action = defaultdict(int, action)
         pupper_command = command.Command(self.config.default_z_ref)
         # The expression action[x] or y results in y if x is not in the dictionary

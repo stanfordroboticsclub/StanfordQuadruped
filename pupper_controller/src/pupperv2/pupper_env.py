@@ -31,6 +31,7 @@ class PupperEnv(gym.Env):
 
     def reset(self):
         ob = self.pupper.reset()
+        self.pupper.slow_stand(do_sleep=False)
         self.pupper.start_trot()
         return self.pupper.get_observation()
 

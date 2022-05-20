@@ -16,14 +16,15 @@ def run_example():
     try:
         env_step = 0
         while True:
-            env_step += 1
-            time.sleep(0.005)
             obs, reward, done, _ = env.step(actions=[0.0, 0, 0.0, -0.14, 0.2, 0.005])
+            
+            env_step += 1
             if env_step > 1000:
                 env.reset()
                 env_step = 0
             print("obs: ", obs)
             print("reward: ", reward)
+            time.sleep(0.005)
     finally:
         env.shutdown()
 
