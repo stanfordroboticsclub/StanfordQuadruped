@@ -119,7 +119,12 @@ class Configuration:
                     -self.delta_x + self.x_shift,
                     -self.delta_x + self.x_shift,
                 ],
-                [-self.delta_y, self.delta_y, -self.delta_y, self.delta_y],
+                [
+                    -self.delta_y + self.y_shift,
+                    self.delta_y + self.y_shift,
+                    -self.delta_y + self.y_shift,
+                    self.delta_y + self.y_shift,
+                ],
                 [0, 0, 0, 0],
             ]
         )
