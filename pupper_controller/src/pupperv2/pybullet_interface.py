@@ -9,6 +9,14 @@ from pupper_controller.src.pupperv2 import data
 import os
 
 
+def rotate_y(theta):
+    return [0, 1 * np.sin(theta/2), 0, np.cos(theta/2)]
+
+
+def rotate_z(theta):
+    return [0, 0, 1 * np.sin(theta/2), np.cos(theta/2)]
+
+
 class Interface:
     """Interface for reading from and controlling Pupper V2 robot.
 
@@ -28,6 +36,7 @@ class Interface:
         action_repeat=10,
         position_kp=4.0,
         position_kd=0.1,
+        plane_tilt=0.0,
         initial_cartesian_kps=(5000.0, 5000.0, 3000.0),
         initial_cartesian_kds=(250.0, 250.0, 200.0),
         initial_max_current=2.0,
@@ -36,6 +45,7 @@ class Interface:
         self.action_repeat = action_repeat
         self.position_kp = position_kp
         self.position_kd = position_kd
+        self.plane_tilt = plane_tilt
 
         if render:
             self._bullet_client = bullet_client.BulletClient(
@@ -43,8 +53,8 @@ class Interface:
             self._bullet_client.configureDebugVisualizer(
                 self._bullet_client.COV_ENABLE_GUI, 0)
             self._bullet_client.resetDebugVisualizerCamera(
-                cameraDistance=0.3,
-                cameraYaw=46,
+                cameraDistance=0.4,
+                cameraYaw=0,
                 cameraPitch=-30,
                 cameraTargetPosition=[0, 0, 0.1])
         else:
@@ -71,6 +81,8 @@ class Interface:
         return (position, velocity)
 
     def read_incoming_data(self):
+        self.point_camera_at_robot() # TODO: figure out right home for this line
+
         (base_pos, base_quat) = self._bullet_client.getBasePositionAndOrientation(
             self.robot_id)
         base_roll_pitch_yaw = self._bullet_client.getEulerFromQuaternion(
@@ -100,9 +112,12 @@ class Interface:
     def activate(self):
         pybullet.setAdditionalSearchPath(
             pybullet_data.getDataPath())  # optionally
-        self._bullet_client.loadURDF("plane.urdf")
+        self.floor_id = self._bullet_client.loadURDF(
+            "plane.urdf",
+            baseOrientation=rotate_y(theta=self.plane_tilt))
+
         self.robot_id = self._bullet_client.loadURDF(
-            self.urdf_filename, useFixedBase=False, basePosition=[0, 0, 0.25])
+            self.urdf_filename, useFixedBase=False, basePosition=[0, 0, 0.25], baseOrientation=rotate_z(np.pi/2))
         self._bullet_client.setGravity(0, 0, -9.8)
         self.num_joints = self._bullet_client.getNumJoints(self.robot_id)
         self._bullet_client.setTimeStep(0.001)
@@ -141,6 +156,7 @@ class Interface:
             joint_torques = self.position_kp * \
                 (joint_angles.T.flatten() - position) + \
                 self.position_kd * -velocity
+            joint_torques = np.clip(joint_torques, -1.7, 1.7)
 
             self._bullet_client.setJointMotorControlArray(bodyUniqueId=self.robot_id,
                                                           jointIndices=self.motor_ids,
@@ -159,3 +175,13 @@ class Interface:
         joint_positions = kinematics.four_legs_inverse_kinematics(
             cartesian_positions, self.config)
         self.set_actuator_postions(joint_positions)
+
+    def point_camera_at_robot(self):
+        [yaw, pitch, dist] = self._bullet_client.getDebugVisualizerCamera()[
+            8:11]
+        base_pos, _ = self._bullet_client.getBasePositionAndOrientation(
+            self.robot_id)
+        self._bullet_client.resetDebugVisualizerCamera(dist,
+                                                       yaw,
+                                                       pitch,
+                                                       base_pos)

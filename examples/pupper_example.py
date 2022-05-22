@@ -17,7 +17,7 @@ def run_example():
 
     try:
         while True:
-            pup.step(action={})
+            pup.step(action={"x_velocity":0.5, "height":-0.14})
             ob = pup.get_observation()
             time.sleep(0.01)
     finally:

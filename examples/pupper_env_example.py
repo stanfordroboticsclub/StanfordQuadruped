@@ -10,14 +10,20 @@ FLAGS = flags.FLAGS
 
 
 def run_example():
-    env = pupper_env.PupperEnv(run_on_robot=FLAGS.run_on_robot)
+    env = pupper_env.PupperEnv(run_on_robot=FLAGS.run_on_robot, plane_tilt=-0.2)
     env.reset()
 
     try:
         env_step = 0
         while True:
-            obs, reward, done, _ = env.step(actions=[0.0, 0, 0.0, -0.14, 0.2, 0.005])
-            
+            actions = {"x_velocity": 0.3,
+                       "y_velocity": 0,
+                       "yaw_rate": 0.0,
+                       "height": -0.14,
+                       "pitch": 0,
+                       "com_x_shift": -0.04}
+            obs, reward, done, _ = env.step(actions=actions)
+
             env_step += 1
             if env_step > 1000:
                 env.reset()

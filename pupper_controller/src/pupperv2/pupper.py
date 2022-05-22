@@ -13,30 +13,38 @@ from collections import defaultdict
 
 
 class Pupper:
-    def __init__(self, run_on_robot=False, render=True, render_meshes=False, LOG=False, ):
+    def __init__(self, run_on_robot=False, render=True, render_meshes=False, plane_tilt=0.0, LOG=False, ):
         self.config = config.Config()
 
         self.run_on_robot = run_on_robot
         if self.run_on_robot:
             self.hardware_interface = interface.Interface(
                 port=robot_utils.get_teensy_serial_port())
+            time.sleep(0.1)
         else:
             self.hardware_interface = pybullet_interface.Interface(config=self.config,
-                                                                   render=render, render_meshes=render_meshes)
+                                                                   render=render,
+                                                                   render_meshes=render_meshes,
+                                                                   plane_tilt=plane_tilt)
 
-        time.sleep(0.1)
         self.controller = controller.Controller(
             self.config, kinematics.four_legs_inverse_kinematics)
         self.state = robot_state.RobotState(
-            height=-0.05)  # self.config.default_z_ref
+            height=-0.05)
 
-    def slow_stand(self, do_sleep=False):
+    def slow_stand(self,
+                   duration=1.0,
+                   min_height=-0.07,
+                   max_height=-0.11,
+                   do_sleep=False):
         """
         Blocking slow stand up behavior.
 
-        Set do_sleep to False if you want simulated robot to go faster than real time
+        Args:
+            duration: How long the slow stand takes in seconds. Increase to make it slower.
+            do_sleep: Set to False if you want simulated robot to go faster than real time
         """
-        for height in np.linspace(-0.06, -0.14, int(1.0 / self.config.dt)):
+        for height in np.linspace(min_height, max_height, int(duration / self.config.dt)):
             ob = self.get_observation()
             self.step({'height': height})
             if self.run_on_robot:
@@ -55,7 +63,13 @@ class Pupper:
         Make pupper controller take one action (push one timestep forward).
 
         Args:
-            action: Dictionary containing actions
+            action: Dictionary containing actions. Available keys are:
+                x_velocity
+                y_velocity
+                yaw_rate
+                height
+                pitch
+                com_x_shift
         """
         # converting to int defaultdict makes non existent keys return 0
         action = defaultdict(int, action)
@@ -85,9 +99,25 @@ class Pupper:
         # self.hardware_interface.shutdown()
 
     def get_observation(self):
+        """
+        TODO: Add: Body angular velocity, linear acceleration (need to check data), joint velocities
+        """
         # reads up to 1024 bytes # TODO fix hardware interface code
         self.hardware_interface.read_incoming_data()
         base_roll_pitch = np.array(
-            [self.hardware_interface.robot_state.roll, self.hardware_interface.robot_state.pitch])
+            [self.hardware_interface.robot_state.roll,
+             self.hardware_interface.robot_state.pitch])
         joint_positions = self.hardware_interface.robot_state.position
         return np.concatenate((base_roll_pitch, joint_positions))
+
+    def body_velocity(self):
+        """
+        TODO: put this function in the respective hardware interfaces
+        Note: Can use this on real robot https://github.com/erwincoumans/motion_imitation/blob/master/mpc_controller/com_velocity_estimator.py
+        """
+        if self.run_on_robot:
+            raise NotImplementedError
+        else:
+            (linear, angular) = self.hardware_interface._bullet_client.getBaseVelocity(
+                self.hardware_interface.robot_id)
+            return linear

@@ -292,7 +292,7 @@
       <limit lower="-2.87979" upper="2.87979" effort="0" velocity="0"/>
     </joint>
 
-    <joint name="leftFrontToe" type="floating">
+    <joint name="leftFrontToe" type="fixed">
       <origin xyz="0.002 0 -0.11" rpy="0 0 -3.14159"/>
       <parent link="leftFrontLowerLeg"/>
       <child link="leftFrontToe"/>
@@ -322,7 +322,7 @@
       <limit lower="-2.87979" upper="2.87979" effort="0" velocity="0"/>
     </joint>
 
-    <joint name="leftRearToe" type="floating">
+    <joint name="leftRearToe" type="fixed">
       <origin xyz="0.002 0 -0.11" rpy="0 0 -3.14159"/>
       <parent link="leftRearLowerLeg"/>
       <child link="leftRearToe"/>
@@ -352,7 +352,7 @@
       <limit lower="-2.87979" upper="2.87979" effort="0" velocity="0"/>
     </joint>
 
-    <joint name="rightFrontToe" type="floating">
+    <joint name="rightFrontToe" type="fixed">
       <origin xyz="-0.002 0 -0.11" rpy="0 0 3.14159"/>
       <parent link="rightFrontLowerLeg"/>
       <child link="rightFrontToe"/>
@@ -382,7 +382,7 @@
       <limit lower="-2.87979" upper="2.87979" effort="0" velocity="0"/>
     </joint>
 
-    <joint name="rightRearToe" type="floating">
+    <joint name="rightRearToe" type="fixed">
       <origin xyz="-0.002 0 -0.11" rpy="0 0 3.14159"/>
       <parent link="rightRearLowerLeg"/>
       <child link="rightRearToe"/>
