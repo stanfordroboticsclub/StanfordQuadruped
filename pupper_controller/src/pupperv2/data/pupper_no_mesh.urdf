@@ -52,8 +52,7 @@
         </geometry>
       </collision>
       <contact>
-        <lateral_friction value="1.5"/>
-        <spinning_friction value="1.5"/>
+        <lateral_friction value="0.75"/>
       </contact>
     </link>
 
@@ -121,8 +120,7 @@
         </geometry>
       </collision>
       <contact>
-        <lateral_friction value="1.5"/>
-        <spinning_friction value="1.5"/>
+        <lateral_friction value="0.75"/>
       </contact>
     </link>
 
@@ -204,8 +202,7 @@
         </geometry>
       </collision>
       <contact>
-        <lateral_friction value="1.5"/>
-        <spinning_friction value="1.5"/>
+        <lateral_friction value="0.75"/>
       </contact>
     </link>
 
@@ -273,8 +270,7 @@
         </geometry>
       </collision>
       <contact>
-        <lateral_friction value="1.5"/>
-        <spinning_friction value="1.5"/>
+        <lateral_friction value="0.75"/>
       </contact>
     </link>
 
