@@ -1,4 +1,3 @@
-from turtle import position
 from pupper_hardware_interface import robot_state
 import numpy as np
 import pybullet
