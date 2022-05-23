@@ -114,6 +114,8 @@ class Interface:
         self.floor_id = self._bullet_client.loadURDF(
             "plane.urdf",
             baseOrientation=rotate_y(theta=self.plane_tilt))
+        # Set floor friction coefficient to 1.5
+        self._bullet_client.changeDynamics(self.floor_id, -1, lateralFriction=1.5)
 
         self.robot_id = self._bullet_client.loadURDF(
             self.urdf_filename, useFixedBase=False, basePosition=[0, 0, 0.25], baseOrientation=rotate_z(np.pi/2))

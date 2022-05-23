@@ -51,6 +51,10 @@
           <sphere radius="0.0095"/>
         </geometry>
       </collision>
+      <contact>
+        <lateral_friction value="1.5"/>
+        <spinning_friction value="1.5"/>
+      </contact>
     </link>
 
     <link name="leftFrontUpperLeg">
@@ -116,6 +120,10 @@
           <sphere radius="0.0095"/>
         </geometry>
       </collision>
+      <contact>
+        <lateral_friction value="1.5"/>
+        <spinning_friction value="1.5"/>
+      </contact>
     </link>
 
     <link name="leftRearUpperLeg">
@@ -195,6 +203,10 @@
           <sphere radius="0.0095"/>
         </geometry>
       </collision>
+      <contact>
+        <lateral_friction value="1.5"/>
+        <spinning_friction value="1.5"/>
+      </contact>
     </link>
 
     <link name="rightFrontUpperLeg">
@@ -260,6 +272,10 @@
           <sphere radius="0.0095"/>
         </geometry>
       </collision>
+      <contact>
+        <lateral_friction value="1.5"/>
+        <spinning_friction value="1.5"/>
+      </contact>
     </link>
 
     <link name="rightRearUpperLeg">
