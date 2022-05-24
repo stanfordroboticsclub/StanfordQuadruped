@@ -33,9 +33,11 @@ class Interface:
         render,
         render_meshes=False,
         action_repeat=10,
-        position_kp=4.0,
+        position_kp=3.0,
         position_kd=0.1,
         plane_tilt=0.0,
+        plane_friction=0.5,
+        feet_friction=0.5,
         initial_cartesian_kps=(5000.0, 5000.0, 3000.0),
         initial_cartesian_kds=(250.0, 250.0, 200.0),
         initial_max_current=2.0,
@@ -45,6 +47,8 @@ class Interface:
         self.position_kp = position_kp
         self.position_kd = position_kd
         self.plane_tilt = plane_tilt
+        self.plane_friction = plane_friction
+        self.feet_friction = feet_friction
 
         if render:
             self._bullet_client = bullet_client.BulletClient(
@@ -68,7 +72,12 @@ class Interface:
                 data.get_data_path(), "pupper_no_mesh.urdf")
 
         self.robot_state = robot_state.RobotState()
-        self.motor_ids = np.array([0, 1, 2, 4, 5, 6, 8, 9, 10, 12, 13, 14])
+        self.front_left_ids = [0, 1, 2]
+        self.back_left_ids = [4, 5, 6]
+        self.front_right_ids = [8, 9, 10]
+        self.back_right_ids = [12, 13, 14]
+        self.motor_ids = np.array(
+            self.front_right_ids + self.front_left_ids + self.back_right_ids + self.back_left_ids)
 
     def read_joint_position_velocity(self):
         joint_states = self._bullet_client.getJointStates(
@@ -80,7 +89,7 @@ class Interface:
         return (position, velocity)
 
     def read_incoming_data(self):
-        self.point_camera_at_robot() # TODO: figure out right home for this line
+        self.point_camera_at_robot()  # TODO: figure out right home for this line
 
         (base_pos, base_quat) = self._bullet_client.getBasePositionAndOrientation(
             self.robot_id)
@@ -114,8 +123,6 @@ class Interface:
         self.floor_id = self._bullet_client.loadURDF(
             "plane.urdf",
             baseOrientation=rotate_y(theta=self.plane_tilt))
-        # Set floor friction coefficient to 0.75 (default is 0.5)
-        self._bullet_client.changeDynamics(self.floor_id, -1, lateralFriction=0.75)
 
         self.robot_id = self._bullet_client.loadURDF(
             self.urdf_filename, useFixedBase=False, basePosition=[0, 0, 0.25], baseOrientation=rotate_z(np.pi/2))
@@ -131,6 +138,13 @@ class Interface:
                 controlMode=self._bullet_client.POSITION_CONTROL,
                 targetVelocity=0,
                 force=0)
+
+        # Set floor and feet friction
+        self._bullet_client.changeDynamics(
+            self.floor_id, -1, lateralFriction=self.plane_friction)
+        for toe_id in [3, 7, 11, 15]:
+            self._bullet_client.changeDynamics(
+                self.robot_id, toe_id, lateralFriction=self.feet_friction)
 
         # for joint_id in range(self.num_joints):
         #     res = self._bullet_client.getJointInfo(self.robot_id, joint_id)
@@ -149,15 +163,14 @@ class Interface:
             Joint angles, radians, with body axes RH rule convention
         """
 
-        # joint_angles = np.array([0, 0.6, -1.2]*4)
-        # joint_angles[0, :] = 0.0
-
         for i in range(self.action_repeat):
             (position, velocity) = self.read_joint_position_velocity()
             joint_torques = self.position_kp * \
                 (joint_angles.T.flatten() - position) + \
                 self.position_kd * -velocity
+            # TODO: make configurable
             joint_torques = np.clip(joint_torques, -1.7, 1.7)
+            # TODO: add lag
 
             self._bullet_client.setJointMotorControlArray(bodyUniqueId=self.robot_id,
                                                           jointIndices=self.motor_ids,

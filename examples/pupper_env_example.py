@@ -17,7 +17,7 @@ def run_example():
         env_step = 0
         while True:
             actions = {"x_velocity": 0.3,
-                       "y_velocity": 0,
+                       "y_velocity": 0.0,
                        "yaw_rate": 0.0,
                        "height": -0.14,
                        "pitch": 0,

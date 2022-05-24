@@ -1,11 +1,16 @@
 import numpy as np
 
+
 class Config:
     def __init__(self):
         #################### COMMANDS ####################
+        self.min_x_velocity = -0.6
         self.max_x_velocity = 0.6
+        self.min_y_velocity = -0.6
         self.max_y_velocity = 0.6
+        self.min_yaw_rate = -2.5
         self.max_yaw_rate = 2.5
+        self.min_pitch = -30.0 * np.pi / 180.0
         self.max_pitch = 30.0 * np.pi / 180.0
 
         #################### MOVEMENT PARAMS ####################
@@ -19,10 +24,15 @@ class Config:
         self.max_stance_yaw = 1.2
         self.max_stance_yaw_rate = 2.0
 
+        self.min_height = -0.16
+        self.max_height = -0.10
+
         #################### STANCE ####################
         self.delta_x = 0.1
-        self.delta_y = 0.07
+        self.delta_y = 0.08
         self.x_shift = 0.005
+        self.min_x_shift = -0.05
+        self.max_x_shift = 0.05
         self.default_z_ref = -0.14
 
         #################### SWING ######################
@@ -129,7 +139,8 @@ class Config:
     @property
     def phase_ticks(self):
         return np.array(
-            [self.overlap_ticks, self.swing_ticks, self.overlap_ticks, self.swing_ticks]
+            [self.overlap_ticks, self.swing_ticks,
+                self.overlap_ticks, self.swing_ticks]
         )
 
     @property

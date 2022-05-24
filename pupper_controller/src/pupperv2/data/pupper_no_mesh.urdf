@@ -51,9 +51,6 @@
           <sphere radius="0.0095"/>
         </geometry>
       </collision>
-      <contact>
-        <lateral_friction value="0.75"/>
-      </contact>
     </link>
 
     <link name="leftFrontUpperLeg">
@@ -119,9 +116,6 @@
           <sphere radius="0.0095"/>
         </geometry>
       </collision>
-      <contact>
-        <lateral_friction value="0.75"/>
-      </contact>
     </link>
 
     <link name="leftRearUpperLeg">
@@ -201,9 +195,6 @@
           <sphere radius="0.0095"/>
         </geometry>
       </collision>
-      <contact>
-        <lateral_friction value="0.75"/>
-      </contact>
     </link>
 
     <link name="rightFrontUpperLeg">
@@ -269,9 +260,6 @@
           <sphere radius="0.0095"/>
         </geometry>
       </collision>
-      <contact>
-        <lateral_friction value="0.75"/>
-      </contact>
     </link>
 
     <link name="rightRearUpperLeg">
@@ -288,11 +276,11 @@
       </collision>
     </link>
 
-    <joint name="leftFrontLegMotor" type="revolute">
+    <joint name="leftFrontAbductionMotor" type="revolute">
       <origin xyz="0.047 -0.1015 0" rpy="0 0 0"/>
       <parent link="pupper_v2_dji_chassis"/>
       <child link="leftFrontLeg"/>
-      <axis xyz="0 1.0 0"/>
+      <axis xyz="0 -1.0 0"/>
       <limit lower="-0.7854" upper="0.7854" effort="0" velocity="0"/>
     </joint>
 
@@ -318,7 +306,7 @@
       <limit lower="-1.309" upper="4.45059" effort="0" velocity="0"/>
     </joint>
 
-    <joint name="leftRearLegMotor" type="revolute">
+    <joint name="leftRearAbductionMotor" type="revolute">
       <origin xyz="0.047 0.0985 0" rpy="0 0 0"/>
       <parent link="pupper_v2_dji_chassis"/>
       <child link="leftRearLeg"/>
@@ -348,7 +336,7 @@
       <limit lower="-1.309" upper="4.45059" effort="0" velocity="0"/>
     </joint>
 
-    <joint name="rightFrontLegMotor" type="revolute">
+    <joint name="rightFrontAbductionMotor" type="revolute">
       <origin xyz="-0.047 -0.103 0" rpy="0 0 -3.14159"/>
       <parent link="pupper_v2_dji_chassis"/>
       <child link="rightFrontLeg"/>
@@ -378,11 +366,11 @@
       <limit lower="-1.309" upper="4.45059" effort="0" velocity="0"/>
     </joint>
 
-    <joint name="rightRearLegMotor" type="revolute">
+    <joint name="rightRearAbductionMotor" type="revolute">
       <origin xyz="-0.047 0.097 0" rpy="0 0 -3.14159"/>
       <parent link="pupper_v2_dji_chassis"/>
       <child link="rightRearLeg"/>
-      <axis xyz="0 -1.0 0"/>
+      <axis xyz="0 1.0 0"/>
       <limit lower="-0.7854" upper="0.7854" effort="0" velocity="0"/>
     </joint>
 

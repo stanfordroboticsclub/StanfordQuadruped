@@ -14,7 +14,7 @@ class PupperEnv(gym.Env):
         run_on_robot=False,
         render=True,
         render_meshes=False,
-        plane_tilt= 0.0
+        plane_tilt=0.0
     ):
         """
         Create pupper gym environment.

@@ -13,8 +13,14 @@ from collections import defaultdict
 
 
 class Pupper:
-    def __init__(self, run_on_robot=False, render=True, render_meshes=False, plane_tilt=0.0, LOG=False, ):
+    def __init__(self,
+                 run_on_robot=False,
+                 render=True,
+                 render_meshes=False,
+                 plane_tilt=0.0,
+                 LOG=False, ):
         self.config = config.Config()
+        self.command = None
 
         self.run_on_robot = run_on_robot
         if self.run_on_robot:
@@ -58,6 +64,43 @@ class Pupper:
         pupper_command.trot_event = True
         self.controller.run(self.state, pupper_command)
 
+    def _update_actions(self, action):
+        """
+        Update the command and config based on the given action dictionary.
+        """
+
+        # Convert to defaultdict(int) makes non existent keys return 0
+        action = defaultdict(int, action)
+        self.command = command.Command(self.config.default_z_ref)
+        # Update actions or use default value if no value provided
+        x_vel = action['x_velocity'] or 0.0
+        y_vel = action['y_velocity'] or 0.0
+        self.command.horizontal_velocity = np.array((x_vel, y_vel))
+        self.command.yaw_rate = action['yaw_rate'] or 0.0
+        self.command.height = action['height'] or self.config.default_z_ref
+        self.command.pitch = action['pitch'] or 0.0
+        self.config.x_shift = action['com_x_shift'] or self.config.x_shift
+
+        # Clip actions to reasonable values
+        self.command.horizontal_velocity = np.clip(self.command.horizontal_velocity,
+                                                   (self.config.min_x_velocity,
+                                                    self.config.min_y_velocity),
+                                                   (self.config.max_x_velocity, self.config.max_y_velocity))
+        self.command.yaw_rate = np.clip(
+            self.command.yaw_rate,
+            self.config.min_yaw_rate,
+            self.config.max_yaw_rate)
+        self.command.height = np.clip(
+            self.command.height,
+            self.config.min_height,
+            self.config.max_height)
+        self.command.pitch = np.clip(self.command.pitch,
+                                     self.config.min_pitch,
+                                     self.config.max_pitch)
+        self.config.x_shift = np.clip(self.config.x_shift,
+                                      self.config.min_x_shift,
+                                      self.config.max_x_shift)
+
     def step(self, action):
         """
         Make pupper controller take one action (push one timestep forward).
@@ -71,21 +114,10 @@ class Pupper:
                 pitch
                 com_x_shift
         """
-        # converting to int defaultdict makes non existent keys return 0
-        action = defaultdict(int, action)
-        pupper_command = command.Command(self.config.default_z_ref)
-        # The expression action[x] or y results in y if x is not in the dictionary
-        pupper_command.horizontal_velocity = np.array(
-            [action['x_velocity'] or 0.0, action['y_velocity'] or 0.0])
-        pupper_command.yaw_rate = action['yaw_rate'] or 0.0
-        pupper_command.height = action['height'] or self.config.default_z_ref
-        pupper_command.pitch = action['pitch'] or 0.0
-        self.config.x_shift = action['com_x_shift'] or self.config.x_shift
-
-        self.controller.run(self.state, pupper_command)
+        self._update_actions(action)
+        self.controller.run(self.state, self.command)
         self.hardware_interface.set_cartesian_positions(
             self.state.final_foot_locations)
-
         return self.get_observation()
 
     def reset(self):

@@ -6,15 +6,9 @@ python3 pupper_ars_run_policy.py --expert_policy_file=data/lin_policy_plus_best_
 
 """
 import numpy as np
-import gym
 import time
-import pybullet_envs
-try:
-  import tds_environments
-except:
-  pass
 import json
-from arspb.policies import *
+from arspb import policies
 import time
 import arspb.trained_policies as tp
 import os
@@ -23,8 +17,6 @@ import os
 
 import os
 import pickle
-import gin
-from pybullet import COV_ENABLE_GUI
 
 from pupper_controller.src.pupperv2 import pupper_env
 
@@ -97,10 +89,10 @@ def main(argv):
     policy_sizes_list = [int(item) for item in policy_sizes_string]
     print("policy_sizes_list=",policy_sizes_list)
     policy_params['policy_network_size'] = policy_sizes_list
-    policy = FullyConnectedNeuralNetworkPolicy(policy_params, update_filter=False)
+    policy = policies.FullyConnectedNeuralNetworkPolicy(policy_params, update_filter=False)
   else:
     print("LinearPolicy2")
-    policy = LinearPolicy2(policy_params, update_filter=False)
+    policy = policies.LinearPolicy2(policy_params, update_filter=False)
   policy.get_weights()
 
   returns = []
