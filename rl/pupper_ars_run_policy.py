@@ -38,7 +38,8 @@ def main(argv):
   parser.add_argument('--profile', default=False, action='store_true', help='whether to print timing for parts of the code. Default is False.')
   parser.add_argument('--plot', default=False, action='store_true', help='whether to plot action and observation histories after running the policy.')
   parser.add_argument("--log_to_file", default=False, action='store_true', help="Whether to log data to the disk.")
-  parser.add_argument("--realtime", default=False, help="Run at realtime.")
+  parser.add_argument("--realtime", default=False, action="store_true", help="Run at realtime.")
+  parser.add_argument("--playback_speed", type=float, default=None, help="Playback speed if using the realtime flag.")
   if len(argv):
     args = parser.parse_args(argv)
   else:
@@ -115,11 +116,11 @@ def main(argv):
     last_spammy_log = 0.0
     # while not done or args.run_on_robot:
     while True:
-      if args.realtime or args.run_on_robot:  # always run at realtime with real robot
+      if args.realtime or args.run_on_robot or args.playback_speed is not None:  # always run at realtime with real robot
         # Sync to real time.
         wall_elapsed = time.time() - env_start_time_wall
         sim_elapsed = env.env_step_counter * env.env_time_step
-        sleep_time = sim_elapsed - wall_elapsed
+        sleep_time = sim_elapsed - args.playback_speed * wall_elapsed
         if sleep_time > 0:
           time.sleep(sleep_time)
         elif sleep_time < -1 and time.time() - last_spammy_log > 1.0:
