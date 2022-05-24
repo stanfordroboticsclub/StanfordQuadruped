@@ -31,8 +31,8 @@ class PupperEnv(gym.Env):
         # Order of elements:
         # x velocity, y velocity, yaw rate, height, pitch, x_com_shift
         self.action_space = gym.spaces.Box(
-            np.array([-0.8, -0.1, -0.1, -0.14, -0.1, -0.01]),
-            np.array([0.8, 0.1, 0.1, -0.08, 0.1, 0.01]),
+            np.array([-1.2, -0.4, -2.0, -0.14, -0.1, -0.01]),
+            np.array([1.2, 0.4, 2.0, -0.08, 0.1, 0.01]),
             dtype=np.float32)
 
         # Defines expected lower and upper bounds on observations
@@ -49,6 +49,12 @@ class PupperEnv(gym.Env):
 
         self.pupper = pupper.Pupper(
             run_on_robot, render=render, render_meshes=render_meshes, plane_tilt=plane_tilt)
+        
+        # Overwrite the config values to match the specified action limits
+        self.pupper.config.min_x_velocity = -1.2
+        self.pupper.config.max_x_velocity = 1.2
+        self.pupper.config.min_yaw_rate = -4.0
+        self.pupper.config.max_yaw_rate = 4.0
         
         self.env_time_step = self.pupper.config.dt
 
