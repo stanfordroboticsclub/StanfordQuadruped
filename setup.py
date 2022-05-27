@@ -27,7 +27,6 @@ setup(
         "pybullet",
         "arspb",
         "absl-py",
-        "ray",
         "matplotlib",
         "pupper_hardware_interface @ git+https://github.com/stanfordroboticsclub/Pupper-V2-Interface.git",
     ],

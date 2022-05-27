@@ -14,16 +14,16 @@ def run_example():
                         plane_tilt=0)  # -math.pi/8)
     pup.reset()
     pup.slow_stand(do_sleep=True)
-    pup.start_trot()
+    #pup.start_trot()
 
     try:
         while True:
-            pup.step(action={"x_velocity": 0.0,
-                             "y_velocity": 0.2,
+            pup.step(action={"x_velocity": 0.2,
+                             "y_velocity": 0.0,
                              "height": -0.14,
                              "com_x_shift": 0.005})
             ob = pup.get_observation()
-            time.sleep(0.01)
+            time.sleep(0.007)
     finally:
         pup.shutdown()
 

@@ -25,7 +25,9 @@ class Pupper:
         self.run_on_robot = run_on_robot
         if self.run_on_robot:
             self.hardware_interface = interface.Interface(
-                port=robot_utils.get_teensy_serial_port())
+                port=robot_utils.get_teensy_serial_port(),
+                initial_max_current=7.0,
+                )
             time.sleep(0.1)
         else:
             self.hardware_interface = pybullet_interface.Interface(config=self.config,
@@ -40,7 +42,7 @@ class Pupper:
 
     def slow_stand(self,
                    duration=1.0,
-                   min_height=-0.07,
+                   min_height=-0.05,
                    max_height=-0.11,
                    do_sleep=False):
         """
