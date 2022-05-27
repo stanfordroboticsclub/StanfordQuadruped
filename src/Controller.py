@@ -80,7 +80,7 @@ class Controller:
             new_foot_locations[:, leg_index] = new_location
         return new_foot_locations, contact_modes
 
-    def run(self, state, command):
+    def run(self, state, command, hardware_int):
         """Steps the controller forward one timestep
 
         Parameters
@@ -107,6 +107,9 @@ class Controller:
 
         if state.behavior_state == BehaviorState.TROT:
             state.foot_locations, contact_modes = self.step_gait(state, command)
+
+            hardware_int.set_contact_legs(contact_modes)
+
             # Apply the desired body rotation
             state.final_foot_locations = (
                 euler2mat(command.roll, command.pitch, 0.0) @ state.foot_locations
