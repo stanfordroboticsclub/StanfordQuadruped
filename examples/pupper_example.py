@@ -20,8 +20,16 @@ def run_example():
 
     try:
         while True:
-            pup.step(action={"x_velocity": 0.2,
-                             "y_velocity": 0.0,
+            with open('~/depthai_blazepose/pupper_instructions.txt') as f:
+                lines = f.readlines()
+            if (lines == "left"):
+                x_velocity = -0.25
+            elif (lines == "right"):
+                y_velocity = 0.25
+            elif (lines == "both"):
+                y_velocity = 0.25
+            pup.step(action={"x_velocity": x_velocity,
+                             "y_velocity": y_velocity,
                              "height": -0.14,
                              "com_x_shift": 0.005})
             ob = pup.get_observation()
