@@ -67,7 +67,8 @@ class Pupper:
         """
         Update the command and config based on the given action dictionary.
         """
-        
+        with open('C:\Users\user\depthai_blazepose\pupper_instructions.txt') as f:
+            lines = f.readlines()
 
         # Convert to defaultdict(int) makes non existent keys return 0
         action = defaultdict(int, action)
@@ -76,11 +77,14 @@ class Pupper:
         x_vel = action['x_velocity'] or 0.0
         y_vel = action['y_velocity'] or 0.0
         self.command.horizontal_velocity = np.array((x_vel, y_vel))
-        # read text file and if it says "left" then
-        self.command.horizontal_velocity[1] = -0.25
+        if (lines == "left"): 
+            self.command.horizontal_velocity[1] = -0.25
         # if it says "right" then
-        self.command.horizontal_velocity[1] = 0.25
+        elif (lines == "right"):
+            self.command.horizontal_velocity[1] = 0.25
         # else
+        elif (lines == "both"):
+            self.command.horizontal_velocity[0] = 0.25
         self.command.yaw_rate = action['yaw_rate'] or 0.0
         self.command.height = action['height'] or self.config.default_z_ref
         self.command.pitch = action['pitch'] or 0.0
