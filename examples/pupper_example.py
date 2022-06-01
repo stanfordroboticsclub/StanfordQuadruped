@@ -13,6 +13,8 @@ def run_example():
     pup = pupper.Pupper(run_on_robot=FLAGS.run_on_robot,
                         plane_tilt=0)  # -math.pi/8)
     pup.reset()
+    pup.hardware_interface.send_dict({"home":True})
+    time.sleep(8)
     pup.slow_stand(do_sleep=True)
     #pup.start_trot()
 
@@ -25,6 +27,7 @@ def run_example():
             ob = pup.get_observation()
             time.sleep(0.007)
     finally:
+        pup.hardware_interface.deactivate()
         pup.shutdown()
 
 
