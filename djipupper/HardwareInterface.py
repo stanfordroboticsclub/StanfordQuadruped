@@ -171,3 +171,14 @@ class HardwareInterface:
         """
         cart_positions_list = cartesian_positions.flatten("F").tolist()
         self.send_dict({"cart_pos": cart_positions_list})
+
+    def set_contact_legs(self, phase):
+        """[summary]
+
+        Parameters
+        ----------
+        joint_angles : [numpy array (3, 4)]
+            Joint angles, radians, with body axes RH rule convention
+        """
+        # joint_angles_vector = motor_frame_angles.flatten("F").tolist()
+        self.send_dict({"phase": phase})

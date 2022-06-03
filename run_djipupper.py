@@ -96,10 +96,11 @@ def main(FLAGS):
                         time.sleep(0.1)
                         state.activation = 0
                         continue
-                    controller.run(state, command)
+                    controller.run(state, command, hardware_interface)
                     hardware_interface.set_cartesian_positions(
                         state.final_foot_locations
                     )
+
                     last_loop = now
     except KeyboardInterrupt:
         if FLAGS.log:
