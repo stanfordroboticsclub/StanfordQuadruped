@@ -107,8 +107,8 @@ class Controller:
 
         if state.behavior_state == BehaviorState.TROT:
             state.foot_locations, contact_modes = self.step_gait(state, command)
-
-            hardware_int.set_contact_legs(contact_modes)
+            
+            hardware_int.set_contact_legs(contact_modes.tolist())
 
             # Apply the desired body rotation
             state.final_foot_locations = (
