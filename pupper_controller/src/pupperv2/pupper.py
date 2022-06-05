@@ -25,7 +25,8 @@ class Pupper:
         self.run_on_robot = run_on_robot
         if self.run_on_robot:
             self.hardware_interface = interface.Interface(
-                port=robot_utils.get_teensy_serial_port())
+                port=robot_utils.get_teensy_serial_port(),
+                initial_max_current=7.0,)
             time.sleep(0.1)
         else:
             self.hardware_interface = pybullet_interface.Interface(config=self.config,
