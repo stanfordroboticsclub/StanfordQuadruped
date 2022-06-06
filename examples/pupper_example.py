@@ -21,9 +21,9 @@ def run_example():
     try:
         while True:
             pup.step(action={"x_velocity": 0.4,
-                             "y_velocity": 0.0,
-                             "height": -0.14,
-                             "com_x_shift": 0.005})
+                                "y_velocity": 0.0,
+                                "height": -0.14,
+                                "com_x_shift": 0.005})
             ob = pup.get_observation()
             print("Pitch: ", ob[0], "Roll: ", ob[1])
             time.sleep(0.007)
@@ -32,3 +32,5 @@ def run_example():
         pup.shutdown()
 def main(_):
     run_example()
+
+app.run(main)   
