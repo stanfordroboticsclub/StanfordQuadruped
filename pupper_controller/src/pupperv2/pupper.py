@@ -116,9 +116,11 @@ class Pupper:
                 com_x_shift
         """
         self._update_actions(action)
-        self.controller.run(self.state, self.command)
+        self.controller.run(self.state, self.command, self.hardware_interface)
         self.hardware_interface.set_cartesian_positions(
             self.state.final_foot_locations)
+        self.hardware_interface.set_feed_forward_forces(
+            self.state.feed_forward_forces)
         return self.get_observation()
 
     def reset(self):
@@ -137,11 +139,17 @@ class Pupper:
         """
         # reads up to 1024 bytes # TODO fix hardware interface code
         self.hardware_interface.read_incoming_data()
-        base_roll_pitch = np.array(
-            [self.hardware_interface.robot_state.roll,
-             self.hardware_interface.robot_state.pitch])
+        body_rotation_state = np.array(
+            [self.hardware_interface.robot_state.yaw,
+             self.hardware_interface.robot_state.pitch,
+             self.hardware_interface.robot_state.roll,
+             self.hardware_interface.robot_state.yaw_rate,
+             self.hardware_interface.robot_state.pitch_rate,
+             self.hardware_interface.robot_state.roll_rate
+             ])
         joint_positions = self.hardware_interface.robot_state.position
-        return np.concatenate((base_roll_pitch, joint_positions))
+        joint_velocities = self.hardware_interface.robot_state.velocity
+        return np.concatenate((body_rotation_state, joint_positions, joint_velocities))
 
     def body_velocity(self):
         """

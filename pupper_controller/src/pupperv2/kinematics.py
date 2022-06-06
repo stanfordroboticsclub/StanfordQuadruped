@@ -1,6 +1,58 @@
 import numpy as np
+import  math as m
 from transforms3d.euler import euler2mat
 
+
+def Rx(theta):
+    return np.matrix([[1, 0, 0],
+                      [0, m.cos(theta), -m.sin(theta)],
+                      [0, m.sin(theta), m.cos(theta)]])
+
+def leg_explicit_forward_kinematics(joint_angles, leg_index, config):
+    """Finds the hip relative foot positions given joint positions
+
+            Parameters
+            ----------
+
+            Returns
+            -------
+            numpy array (3)
+                Array of corresponding foot position.
+            """
+    l1 = config.LEG_L1
+    l2 = config.LEG_L2
+
+    alpha = joint_angles(0)
+    theta = joint_angles(1)
+    phi = joint_angles(2)
+
+    px = -l1 * np.sin(theta) - l2 * np.sin(theta + phi)
+    py = config.ABDUCTION_OFFSETS[leg_index]
+    pz = -l1 * np.cos(theta) - l2 * np.cos(theta + phi)
+
+    tilted_frame_coordinates = np.array([px, py, pz])
+    cartesian_coordinates = Rx(alpha) * tilted_frame_coordinates
+
+    return cartesian_coordinates
+
+def leg_forward_kinematics(joint_pos, config):
+    """Finds the body relative foot positions given joint positions
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+        numpy array (3, 4)
+            Array of corresponding foot positions.
+        """
+    foot_pos = np.zeros((3, 4))
+    for i in range(4):
+        body_offset = config.LEG_ORIGINS[:, i]
+        foot_pos[:, i] = leg_explicit_forward_kinematics(
+            joint_pos[:, i] + body_offset, i, config
+        )
+    return foot_pos
 
 def leg_explicit_inverse_kinematics(r_body_foot, leg_index, config):
     """Find the joint angles corresponding to the given hip-relative foot position for a given leg and configuration

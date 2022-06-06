@@ -1,3 +1,5 @@
+import math as m
+
 from pupper_controller.src.common import gaits
 from pupper_controller.src.common import stance_controller
 from pupper_controller.src.common import static_gait
@@ -5,7 +7,11 @@ from pupper_controller.src.common import swing_controller
 from pupper_controller.src.common import utilities
 from pupper_controller.src.common import robot_state
 
+from pupper_controller.src.pupperv2 import kinematics
+
 import numpy as np
+from scipy import optimize
+
 from transforms3d.euler import euler2mat, quat2euler
 from transforms3d.quaternions import qconjugate, quat2axangle
 from transforms3d.axangles import axangle2mat
@@ -51,6 +57,7 @@ class Controller:
             robot_state.BehaviorState.TROT: robot_state.BehaviorState.REST,
             robot_state.BehaviorState.WALK: robot_state.BehaviorState.REST,
         }
+        self.last_ff_forces = np.zeros(12)
 
     def step_gait(self, state, command):
         """Calculate the desired foot locations for the next timestep
@@ -80,7 +87,104 @@ class Controller:
             new_foot_locations[:, leg_index] = new_location
         return new_foot_locations, contact_modes
 
-    def run(self, state, command):
+    def angular_pd(self, state, hardware_interface):
+        Ibody = np.matrix([[0.00626, 0, 0],
+                           [0, 2e-05, 0],
+                           [0, 0, 2e-05]])
+
+        wn_rot = 1  # m/s
+        zeta_rot = 1
+        kp_rot = wn_rot * wn_rot
+        kd_rot = 2 * zeta_rot * wn_rot
+
+        current_state = hardware_interface.robot_state
+
+        print("Pitch Error: ", state.pitch - current_state.pitch)
+        print("Roll Error: ", state.roll - current_state.roll)
+        print("current_state.pitch_rate: ", current_state.pitch_rate)
+
+        Rdif = euler2mat(0, state.pitch - current_state.pitch, state.roll - current_state.roll)
+        w_dif = np.array([0 - current_state.roll_rate,
+                          0 - current_state.pitch_rate,
+                          state.yaw_rate - current_state.yaw_rate])
+        angular_acceleration_control = kp_rot * np.log(Rdif) + kd_rot * w_dif
+        torques = Ibody * angular_acceleration_control
+
+        return torques
+
+    def foot_ff_forces(self, state, net_forces, net_torques, foot_positions):
+        """Calculate the desired foot feed forward forces from the net force / torque
+
+        Returns
+        -------
+        Numpy array (3, 4)
+            Matrix of feed forward forces.
+        """
+        contact_modes = self.gait_controller.contacts(state.ticks)
+
+        b = np.concatenate(net_forces, net_torques, np.zeros((12,1)), self.last_ff_forces)
+
+        alpha = 0.02  # Weight for minimizing forces
+        beta = 0.02  # Weight for minimizing the force change between steps
+        gamma = 100  # Weight for enforcing F_notgrounded = 0
+        mu = 0.4  # Friction Co-eff
+        A = np.zeros((30, 12))
+
+        for j in range(4):
+            i = j * 3
+            A[0:3, i:i + 3] = np.identity(3)
+            r = foot_positions[:, i]  # Add force identity
+
+            r_crossmatrix = np.cross(r, np.identity(r.shape[0]) * -1)
+            A[3:6, i:i+3] = r_crossmatrix  # Add r x F
+            k
+            if (contact_modes == 0):
+                k = gamma # if not on the ground, enforce F = 0
+            else:
+                k = alpha # if on the ground, minimise force (with lower weight)
+
+            A[6+i:6+i+3, i:i+3] = np.identity(3) * k  # minimise total force
+        A[18: 30, 0:12] = np.identity(12) * beta  # minimises difference from prev
+
+        CF = np.zeros((12, 12))
+        for j in range(4):
+            i = j * 3
+            friction_M = np.zeros((3, 3))
+            friction_M[0, 2] = -mu
+            friction_M[1, 2] = -mu
+
+            CF[i:i + 3, i:i + 3] = friction_M
+
+        P = np.dot(A.T, A)
+        q = -np.dot(A.T, b)
+        h = np.zeros((3,1))
+        foot_forces_vector = utilities.cvxopt_solve_qp(P, q, CF, h)
+
+        self.last_ff_forces = foot_forces_vector
+        return foot_forces_vector
+
+    def body_controller(self, state, hardware_interface):
+        """Calculate the desired feed forward forces for the next timestep
+
+        Returns
+        -------
+        Numpy array (3, 4)
+            Matrix of feed forward forces.
+        """
+        current_state = hardware_interface.robot_state
+
+        angular_pd_torques = self.angular_pd(state, hardware_interface)
+
+        net_forces = np.zeros((3, 1))
+        net_forces[3] += 9.8 * 1.5 # m/s^2 * kg
+        net_torques = angular_pd_torques
+
+        foot_positions = kinematics.leg_forward_kinematics(current_state.position, self.config)
+        ff_forces = self.foot_ff_forces(state, net_forces, net_torques, foot_positions)
+        print(ff_forces)
+        return ff_forces
+
+    def run(self, state, command, hardware_interface):
         """Steps the controller forward one timestep
 
         Parameters
@@ -160,6 +264,8 @@ class Controller:
         state.pitch = command.pitch
         state.roll = command.roll
         state.height = command.height
+
+        state.feed_forward_forces = self.body_controller(state, hardware_interface)
 
     # def set_pose_to_default(self):
     #     state.foot_locations = (
