@@ -25,7 +25,7 @@ def run_example():
                                 "height": -0.14,
                                 "com_x_shift": 0.005})
             ob = pup.get_observation()
-            print("Pitch: ", ob[0], "Roll: ", ob[1])
+            print(f"Roll: {ob[0]:0.2f} Pitch: {ob[1]:0.2f}")
             time.sleep(0.007)
     finally:
         pup.hardware_interface.deactivate()

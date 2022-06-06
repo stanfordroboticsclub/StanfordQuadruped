@@ -95,8 +95,8 @@ class Interface:
             self.robot_id)
         base_roll_pitch_yaw = self._bullet_client.getEulerFromQuaternion(
             base_quat)
-        self.robot_state.roll = base_roll_pitch_yaw[0]
-        self.robot_state.pitch = base_roll_pitch_yaw[1]
+        self.robot_state.roll = -base_roll_pitch_yaw[1] # TODO: use proper order of roll and pitch rotations. 
+        self.robot_state.pitch = base_roll_pitch_yaw[0] # TODO: use proper order of roll and pitch rotations. Incorrect pitch when robot is on its side
 
         self.robot_state.position, self.robot_state.velocity = self.read_joint_position_velocity()
 
