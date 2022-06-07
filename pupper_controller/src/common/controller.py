@@ -94,11 +94,10 @@ class Controller:
         '''Ibody = np.matrix([[0.00626, 0, 0],
                            [0, 2e-05, 0],
                            [0, 0, 2e-05]])'''
-
-        wn_rot = 1
+        wn_rot = 6
         zeta_rot = 1
-        kp_rot = 1 # wn_rot * wn_rot
-        kd_rot = 0# 2 * zeta_rot * wn_rot
+        kp_rot = wn_rot * wn_rot
+        kd_rot = 2 * zeta_rot * wn_rot
 
         current_state = hardware_interface.robot_state
 
@@ -108,7 +107,7 @@ class Controller:
                           state.yaw_rate - current_state.yaw_rate])
         r_dif = vec * theta
         #print("rotation_dif: ", r_dif)
-        #print("yaw_rate: ", current_state.yaw_rate)
+        ##print("yaw_rate: ", current_state.yaw_rate)
         #print("pitch_rate: ", current_state.pitch_rate)
         #print("roll_rate: ", current_state.roll_rate)
 
@@ -116,6 +115,7 @@ class Controller:
         #print("angular acceleration control: ", angular_acceleration_control)
         #torques = np.asarray(np.dot(Ibody, angular_acceleration_control)).flatten()
         torques = kp_rot * r_dif + kd_rot * w_dif
+        #print("torques: ", torques)
 
         return torques
 
@@ -135,13 +135,13 @@ class Controller:
 
         b = np.concatenate((net_forces, net_torques, np.zeros(12), self.last_ff_forces * beta), axis=0)
         #print("b: ", b)
-
         A = np.zeros((30, 12))
 
         for j in range(4):
             i = j * 3
             A[0:3, i:i + 3] = np.identity(3) # Add force identity
             r = foot_positions[:, j]
+            #print("r ", j, ": ", r)
 
             r_crossmatrix = np.cross(r, np.identity(r.shape[0]) * -1)
             A[3:6, i:i+3] = r_crossmatrix  # Add r x F
@@ -171,6 +171,7 @@ class Controller:
         foot_forces_vector, f, xu, iterations, lagrangian, iact = quadprog.solve_qp(G, a) # removed constraint
         #print("Solve Time: ", time.time() - start_time)
 
+        '''
         errors = np.dot(A, foot_forces_vector) - b
         print("Feet on Ground:", self.cond_contact_modes)
         for j in range(4):
@@ -185,8 +186,11 @@ class Controller:
         print("Torque Commanded: ", (errors+b)[3:6])
         print("Size Errors: ", np.linalg.norm(errors[6:18]))
         print("From last Errors: ", np.linalg.norm(errors[18:30]))
-
+        '''
         self.last_ff_forces = foot_forces_vector
+
+        foot_forces_vector = -foot_forces_vector  # swap direction
+
         return foot_forces_vector
 
     def body_controller(self, state, hardware_interface):
@@ -197,7 +201,6 @@ class Controller:
         Numpy array (3, 4)
             Matrix of feed forward forces.
         """
-        current_state = hardware_interface.robot_state
 
         angular_pd_torques = self.angular_pd(state, hardware_interface)
 
@@ -207,8 +210,7 @@ class Controller:
         #print("Forces: ", net_forces)
         #print("Torques: ", net_torques)
 
-        foot_positions = kinematics.leg_forward_kinematics(current_state.position, self.config)
-        ff_forces = self.foot_ff_forces(state, net_forces, net_torques, foot_positions)
+        ff_forces = self.foot_ff_forces(state, net_forces, net_torques, state.final_foot_locations)
         #print(ff_forces)
         return ff_forces
 

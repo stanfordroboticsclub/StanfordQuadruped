@@ -104,10 +104,10 @@ class JoystickInterface:
         )
         command.pitch = state.pitch + message_dt * pitch_rate
 
-        height_movement = 0
-        command.height = (
-            state.height - message_dt * self.config.z_speed * height_movement
-        )
+        # height_movement = 0
+        # command.height = (
+        #     state.height - message_dt * self.config.z_speed * height_movement
+        # )
 
         roll_movement = 0
         command.roll = (

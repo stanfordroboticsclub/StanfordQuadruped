@@ -15,14 +15,18 @@ def run_controller():
                         plane_tilt=0)  # -math.pi/8)
 
     timestep = 0.01 # s
+    speed_constant = 1.33
+    pup.config.dt = timestep * speed_constant
+    print_time = 0.3
     last_time = 0
     iteration = 0
-    mode = "stand"
+    it_max = math.ceil(print_time / timestep)
+    skipped_steps = 0
 
     pup.reset()
-    if (FLAGS.run_on_robot):
+    '''if (FLAGS.run_on_robot):
         pup.hardware_interface.send_dict({"home": True})
-        time.sleep(6)
+        time.sleep(6)'''
     print("starting...")
     pup.slow_stand(do_sleep=True)
 
@@ -33,34 +37,18 @@ def run_controller():
             if (cur_time > last_time + timestep):
                 last_time = cur_time
                 command = joystick_interface.get_command(pup.state)
-                if (command.trot_event):
-                    mode = "trot"
-                    pup.start_trot()
-                if (command.stand_event):
-                    mode = "stand"
-                    pup.stop_trot()
-                if (command.walk_event):
-                    mode = "walk"
-
-                print(mode)
                 pup.step_with_command(command)
-                '''
-                if (mode == "trot"):
-                    pup.step(action={"x_velocity": command.horizontal_velocity[0],
-                                     "y_velocity": command.horizontal_velocity[1],
-                                     "yaw_rate": command.yaw_rate,
-                                     "height": command.height,
-                                     "com_x_shift": 0.005})
-                if (mode == "stand"):
-                    pup.step({'height': command.height})
-                if (mode == "walk"):
-                    print("Mode: walk not implemented")'''
 
-
-                if(iteration % 100 == 0):
-                    print("Time_step:", time.time() - last_time)
-                iteration += 1
                 state = pup.get_observation()
+
+                if(iteration % it_max == 0):
+                    time_spent = (time.time() - last_time)
+                    print("Calculation Time:", "{0:.5f}".format(time_spent),
+                          "\t Skipped Steps:", skipped_steps)
+                iteration += 1
+                skipped_steps = 0
+            else:
+                skipped_steps += 1
     finally:
         pup.shutdown()
 def main(_):
