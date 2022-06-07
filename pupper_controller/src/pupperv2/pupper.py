@@ -131,6 +131,19 @@ class Pupper:
             pass
         return self.get_observation()
 
+    def step_with_command(self, command):
+        self.command = command
+        self.controller.run(self.state, self.command, self.hardware_interface)
+        self.hardware_interface.set_cartesian_positions(
+            self.state.final_foot_locations)
+        try:
+            self.hardware_interface.set_feed_forward_forces(
+                self.state.feed_forward_forces)
+        except:
+            pass
+        return self.get_observation()
+
+
     def reset(self):
         # TODO figure out how to do a slow stand on real robot, but in sim doing 1) slow stand for realistic mode 2) instantaenous stand for training mode
         self.hardware_interface.deactivate()

@@ -30,7 +30,7 @@ class Controller:
         self.smoothed_yaw = 0.0  # for REST mode only
         self.inverse_kinematics = inverse_kinematics
 
-        self.contact_modes = np.zeros(4)
+        self.cond_contact_modes = np.zeros(4)
         self.gait_controller = gaits.GaitController(self.config)
         self.swing_controller = swing_controller.SwingController(self.config)
         self.stance_controller = stance_controller.StanceController(
@@ -95,10 +95,10 @@ class Controller:
                            [0, 2e-05, 0],
                            [0, 0, 2e-05]])'''
 
-        wn_rot = 60
+        wn_rot = 1
         zeta_rot = 1
-        kp_rot = wn_rot * wn_rot
-        kd_rot = 2 * zeta_rot * wn_rot
+        kp_rot = 1 # wn_rot * wn_rot
+        kd_rot = 0# 2 * zeta_rot * wn_rot
 
         current_state = hardware_interface.robot_state
 
@@ -112,9 +112,11 @@ class Controller:
         #print("pitch_rate: ", current_state.pitch_rate)
         #print("roll_rate: ", current_state.roll_rate)
 
-        angular_acceleration_control = kp_rot * r_dif + kd_rot * w_dif
+        #angular_acceleration_control = kp_rot * r_dif + kd_rot * w_dif
         #print("angular acceleration control: ", angular_acceleration_control)
-        torques = np.asarray(np.dot(Ibody, angular_acceleration_control)).flatten()
+        #torques = np.asarray(np.dot(Ibody, angular_acceleration_control)).flatten()
+        torques = kp_rot * r_dif + kd_rot * w_dif
+
         return torques
 
     def foot_ff_forces(self, state, net_forces, net_torques, foot_positions):
@@ -125,9 +127,8 @@ class Controller:
         Numpy array (3, 4)
             Matrix of feed forward forces.
         """
-        contact_modes = self.gait_controller.contacts(state.ticks)
 
-        alpha = 0.002  # Weight for minimizing forces
+        alpha = 0.002  # Weight for minimizing foot forces
         beta = 0.002  # Weight for minimizing the force change between steps
         gamma = 100  # Weight for enforcing F_notgrounded = 0
         mu = 0.4  # Friction Co-eff
@@ -139,13 +140,13 @@ class Controller:
 
         for j in range(4):
             i = j * 3
-            A[0:3, i:i + 3] = np.identity(3)
-            r = foot_positions[:, j]  # Add force identity
+            A[0:3, i:i + 3] = np.identity(3) # Add force identity
+            r = foot_positions[:, j]
 
             r_crossmatrix = np.cross(r, np.identity(r.shape[0]) * -1)
             A[3:6, i:i+3] = r_crossmatrix  # Add r x F
             k = 0
-            if (contact_modes[j] == 0):
+            if (self.cond_contact_modes[j] == 0):
                 k = gamma # if not on the ground, enforce F = 0
             else:
                 k = alpha # if on the ground, minimise force (with lower weight)
@@ -170,9 +171,8 @@ class Controller:
         foot_forces_vector, f, xu, iterations, lagrangian, iact = quadprog.solve_qp(G, a) # removed constraint
         #print("Solve Time: ", time.time() - start_time)
 
-        print(b.shape)
         errors = np.dot(A, foot_forces_vector) - b
-        print("Feet on Ground:", contact_modes)
+        print("Feet on Ground:", self.cond_contact_modes)
         for j in range(4):
             i = j * 3
             print("Foot Forces ", j, ": ", foot_forces_vector[i:i+3])
@@ -238,7 +238,7 @@ class Controller:
             state.behavior_state = self.stand_transition_mapping[state.behavior_state]
 
         if state.behavior_state == robot_state.BehaviorState.TROT:
-            state.foot_locations, contact_modes = self.step_gait(
+            state.foot_locations, self.cond_contact_modes = self.step_gait(
                 state, command)
             # Apply the desired body rotation
             state.final_foot_locations = (
@@ -266,6 +266,7 @@ class Controller:
             )
 
         elif state.behavior_state == robot_state.BehaviorState.REST:
+            self.cond_contact_modes = [1, 1, 1, 1]
             yaw_proportion = command.yaw_rate / self.config.max_yaw_rate
             self.smoothed_yaw += self.config.dt * utilities.clipped_first_order_filter(
                 self.smoothed_yaw,

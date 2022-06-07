@@ -43,7 +43,8 @@ def run_controller():
                     mode = "walk"
 
                 print(mode)
-
+                pup.step_with_command(command)
+                '''
                 if (mode == "trot"):
                     pup.step(action={"x_velocity": command.horizontal_velocity[0],
                                      "y_velocity": command.horizontal_velocity[1],
@@ -53,7 +54,7 @@ def run_controller():
                 if (mode == "stand"):
                     pup.step({'height': command.height})
                 if (mode == "walk"):
-                    print("Mode: walk not implemented")
+                    print("Mode: walk not implemented")'''
 
 
                 if(iteration % 100 == 0):
