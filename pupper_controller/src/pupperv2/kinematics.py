@@ -22,16 +22,16 @@ def leg_explicit_forward_kinematics(joint_angles, leg_index, config):
     l1 = config.LEG_L1
     l2 = config.LEG_L2
 
-    alpha = joint_angles(0)
-    theta = joint_angles(1)
-    phi = joint_angles(2)
+    alpha = joint_angles[0]
+    theta = joint_angles[1]
+    phi = joint_angles[2]
 
     px = -l1 * np.sin(theta) - l2 * np.sin(theta + phi)
     py = config.ABDUCTION_OFFSETS[leg_index]
     pz = -l1 * np.cos(theta) - l2 * np.cos(theta + phi)
 
     tilted_frame_coordinates = np.array([px, py, pz])
-    cartesian_coordinates = Rx(alpha) * tilted_frame_coordinates
+    cartesian_coordinates = np.dot(Rx(alpha),tilted_frame_coordinates)
 
     return cartesian_coordinates
 
@@ -50,7 +50,7 @@ def leg_forward_kinematics(joint_pos, config):
     for i in range(4):
         body_offset = config.LEG_ORIGINS[:, i]
         foot_pos[:, i] = leg_explicit_forward_kinematics(
-            joint_pos[:, i] + body_offset, i, config
+            joint_pos[i*3 : i*3+3] + body_offset, i, config
         )
     return foot_pos
 

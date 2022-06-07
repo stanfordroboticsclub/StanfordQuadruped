@@ -63,7 +63,12 @@ class Pupper:
     def start_trot(self):
         pupper_command = command.Command(self.config.default_z_ref)
         pupper_command.trot_event = True
-        self.controller.run(self.state, pupper_command)
+        self.controller.run(self.state, pupper_command, self.hardware_interface)
+
+    def stop_trot(self):
+        pupper_command = command.Command(self.config.default_z_ref)
+        pupper_command.trot_event = False
+        self.controller.run(self.state, pupper_command, self.hardware_interface)
 
     def _update_actions(self, action):
         """
@@ -119,8 +124,11 @@ class Pupper:
         self.controller.run(self.state, self.command, self.hardware_interface)
         self.hardware_interface.set_cartesian_positions(
             self.state.final_foot_locations)
-        self.hardware_interface.set_feed_forward_forces(
-            self.state.feed_forward_forces)
+        try:
+            self.hardware_interface.set_feed_forward_forces(
+                self.state.feed_forward_forces)
+        except:
+            pass
         return self.get_observation()
 
     def reset(self):

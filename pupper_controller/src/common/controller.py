@@ -11,8 +11,11 @@ from pupper_controller.src.pupperv2 import kinematics
 
 import numpy as np
 from scipy import optimize
+from scipy import linalg
+import time
+import quadprog
 
-from transforms3d.euler import euler2mat, quat2euler
+from transforms3d.euler import euler2mat, quat2euler, euler2axangle
 from transforms3d.quaternions import qconjugate, quat2axangle
 from transforms3d.axangles import axangle2mat
 
@@ -88,28 +91,30 @@ class Controller:
         return new_foot_locations, contact_modes
 
     def angular_pd(self, state, hardware_interface):
-        Ibody = np.matrix([[0.00626, 0, 0],
+        '''Ibody = np.matrix([[0.00626, 0, 0],
                            [0, 2e-05, 0],
-                           [0, 0, 2e-05]])
+                           [0, 0, 2e-05]])'''
 
-        wn_rot = 1  # m/s
+        wn_rot = 60
         zeta_rot = 1
         kp_rot = wn_rot * wn_rot
         kd_rot = 2 * zeta_rot * wn_rot
 
         current_state = hardware_interface.robot_state
 
-        print("Pitch Error: ", state.pitch - current_state.pitch)
-        print("Roll Error: ", state.roll - current_state.roll)
-        print("current_state.pitch_rate: ", current_state.pitch_rate)
-
-        Rdif = euler2mat(0, state.pitch - current_state.pitch, state.roll - current_state.roll)
+        vec, theta = euler2axangle(0, state.pitch - current_state.pitch, state.roll - current_state.roll, axes='szyx')
         w_dif = np.array([0 - current_state.roll_rate,
                           0 - current_state.pitch_rate,
                           state.yaw_rate - current_state.yaw_rate])
-        angular_acceleration_control = kp_rot * np.log(Rdif) + kd_rot * w_dif
-        torques = Ibody * angular_acceleration_control
+        r_dif = vec * theta
+        #print("rotation_dif: ", r_dif)
+        #print("yaw_rate: ", current_state.yaw_rate)
+        #print("pitch_rate: ", current_state.pitch_rate)
+        #print("roll_rate: ", current_state.roll_rate)
 
+        angular_acceleration_control = kp_rot * r_dif + kd_rot * w_dif
+        #print("angular acceleration control: ", angular_acceleration_control)
+        torques = np.asarray(np.dot(Ibody, angular_acceleration_control)).flatten()
         return torques
 
     def foot_ff_forces(self, state, net_forces, net_torques, foot_positions):
@@ -122,23 +127,25 @@ class Controller:
         """
         contact_modes = self.gait_controller.contacts(state.ticks)
 
-        b = np.concatenate(net_forces, net_torques, np.zeros((12,1)), self.last_ff_forces)
-
-        alpha = 0.02  # Weight for minimizing forces
-        beta = 0.02  # Weight for minimizing the force change between steps
+        alpha = 0.002  # Weight for minimizing forces
+        beta = 0.002  # Weight for minimizing the force change between steps
         gamma = 100  # Weight for enforcing F_notgrounded = 0
         mu = 0.4  # Friction Co-eff
+
+        b = np.concatenate((net_forces, net_torques, np.zeros(12), self.last_ff_forces * beta), axis=0)
+        #print("b: ", b)
+
         A = np.zeros((30, 12))
 
         for j in range(4):
             i = j * 3
             A[0:3, i:i + 3] = np.identity(3)
-            r = foot_positions[:, i]  # Add force identity
+            r = foot_positions[:, j]  # Add force identity
 
             r_crossmatrix = np.cross(r, np.identity(r.shape[0]) * -1)
             A[3:6, i:i+3] = r_crossmatrix  # Add r x F
-            k
-            if (contact_modes == 0):
+            k = 0
+            if (contact_modes[j] == 0):
                 k = gamma # if not on the ground, enforce F = 0
             else:
                 k = alpha # if on the ground, minimise force (with lower weight)
@@ -147,18 +154,37 @@ class Controller:
         A[18: 30, 0:12] = np.identity(12) * beta  # minimises difference from prev
 
         CF = np.zeros((12, 12))
+        friction_M = np.identity(3)
+        friction_M[0, 2] = -mu
+        friction_M[1, 2] = -mu
         for j in range(4):
             i = j * 3
-            friction_M = np.zeros((3, 3))
-            friction_M[0, 2] = -mu
-            friction_M[1, 2] = -mu
-
             CF[i:i + 3, i:i + 3] = friction_M
 
-        P = np.dot(A.T, A)
-        q = -np.dot(A.T, b)
-        h = np.zeros((3,1))
-        foot_forces_vector = utilities.cvxopt_solve_qp(P, q, CF, h)
+        G = np.dot(A.T, A)
+        a = np.asarray(np.dot(A.T, b)).flatten()
+        b_0 = np.zeros(12)
+
+        #start_time = time.time()
+        #foot_forces_vector, f, xu, iterations, lagrangian, iact = quadprog.solve_qp(G, a, CF, b_0)
+        foot_forces_vector, f, xu, iterations, lagrangian, iact = quadprog.solve_qp(G, a) # removed constraint
+        #print("Solve Time: ", time.time() - start_time)
+
+        print(b.shape)
+        errors = np.dot(A, foot_forces_vector) - b
+        print("Feet on Ground:", contact_modes)
+        for j in range(4):
+            i = j * 3
+            print("Foot Forces ", j, ": ", foot_forces_vector[i:i+3])
+
+        print("Force Errors: ", np.linalg.norm(errors[0:3]))
+        print("Force Desired: ", net_forces)
+        print("Force Commanded: ", (errors + b)[0:3])
+        print("Torque Errors: ", np.linalg.norm(errors[3:6]))
+        print("Torque Desired: ", net_torques)
+        print("Torque Commanded: ", (errors+b)[3:6])
+        print("Size Errors: ", np.linalg.norm(errors[6:18]))
+        print("From last Errors: ", np.linalg.norm(errors[18:30]))
 
         self.last_ff_forces = foot_forces_vector
         return foot_forces_vector
@@ -175,13 +201,15 @@ class Controller:
 
         angular_pd_torques = self.angular_pd(state, hardware_interface)
 
-        net_forces = np.zeros((3, 1))
-        net_forces[3] += 9.8 * 1.5 # m/s^2 * kg
+        net_forces = np.zeros(3)
+        net_forces[2] += 9.8 * 2.0 # gravity ff
         net_torques = angular_pd_torques
+        #print("Forces: ", net_forces)
+        #print("Torques: ", net_torques)
 
         foot_positions = kinematics.leg_forward_kinematics(current_state.position, self.config)
         ff_forces = self.foot_ff_forces(state, net_forces, net_torques, foot_positions)
-        print(ff_forces)
+        #print(ff_forces)
         return ff_forces
 
     def run(self, state, command, hardware_interface):
