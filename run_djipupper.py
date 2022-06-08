@@ -14,7 +14,7 @@ def run_controller():
     pup = pupper.Pupper(run_on_robot=FLAGS.run_on_robot,
                         plane_tilt=0)  # -math.pi/8)
 
-    timestep = 0.01 # s
+    timestep = 0.010 # s
     speed_constant = 1.33
     pup.config.dt = timestep * speed_constant
     print_time = 0.3
@@ -24,9 +24,9 @@ def run_controller():
     skipped_steps = 0
 
     pup.reset()
-    '''if (FLAGS.run_on_robot):
+    if (FLAGS.run_on_robot):
         pup.hardware_interface.send_dict({"home": True})
-        time.sleep(6)'''
+        time.sleep(6)
     print("starting...")
     pup.slow_stand(do_sleep=True)
 

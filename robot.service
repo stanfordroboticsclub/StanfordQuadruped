@@ -5,7 +5,7 @@ After=multi-user.target
 [Service]
 WorkingDirectory=/home/pi/
 User=pi
-ExecStart=/usr/bin/python3 /home/pi/StanfordQuadruped/run_djipupper.py
+ExecStart=/usr/bin/python3 /home/pi/StanfordQuadruped/run_djipupper.py -run_on_robot
 KillSignal=2
 TimeoutStopSec=10
 

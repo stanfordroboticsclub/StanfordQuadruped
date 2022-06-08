@@ -94,10 +94,10 @@ class Controller:
         '''Ibody = np.matrix([[0.00626, 0, 0],
                            [0, 2e-05, 0],
                            [0, 0, 2e-05]])'''
-        wn_rot = 6
-        zeta_rot = 1
-        kp_rot = wn_rot * wn_rot
-        kd_rot = 2 * zeta_rot * wn_rot
+        wn_rot = 7
+        zeta_rot = 0.6
+        kp_rot = 80#wn_rot * wn_rot
+        kd_rot = 6#2 * zeta_rot * wn_rot
 
         current_state = hardware_interface.robot_state
 
@@ -114,6 +114,7 @@ class Controller:
         #angular_acceleration_control = kp_rot * r_dif + kd_rot * w_dif
         #print("angular acceleration control: ", angular_acceleration_control)
         #torques = np.asarray(np.dot(Ibody, angular_acceleration_control)).flatten()
+        print("Control From P:", np.linalg.norm(kp_rot * r_dif), "\t Control From D:", np.linalg.norm(kd_rot * w_dif))
         torques = kp_rot * r_dif + kd_rot * w_dif
         #print("torques: ", torques)
 
@@ -146,7 +147,8 @@ class Controller:
             r_crossmatrix = np.cross(r, np.identity(r.shape[0]) * -1)
             A[3:6, i:i+3] = r_crossmatrix  # Add r x F
             k = 0
-            if (self.cond_contact_modes[j] == 0):
+            #if (self.cond_contact_modes[j] == 0):
+            if (False):
                 k = gamma # if not on the ground, enforce F = 0
             else:
                 k = alpha # if on the ground, minimise force (with lower weight)
