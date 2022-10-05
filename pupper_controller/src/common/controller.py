@@ -114,7 +114,7 @@ class Controller:
                           'syxz') @ state.foot_locations
             )
             state.joint_angles = self.inverse_kinematics(
-                state.final_foot_locations, self.config
+                state.final_foot_locations, self.config, state.joint_angles
             )
 
         if state.behavior_state == robot_state.BehaviorState.WALK:
@@ -130,7 +130,7 @@ class Controller:
                           'syxz') @ state.foot_locations
             )
             state.joint_angles = self.inverse_kinematics(
-                state.final_foot_locations, self.config
+                state.final_foot_locations, self.config, state.joint_angles
             )
 
         elif state.behavior_state == robot_state.BehaviorState.REST:
@@ -153,7 +153,7 @@ class Controller:
                 @ state.foot_locations
             )
             state.joint_angles = self.inverse_kinematics(
-                state.final_foot_locations, self.config
+                state.final_foot_locations, self.config, state.joint_angles
             )
 
         state.ticks += 1

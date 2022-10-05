@@ -22,10 +22,11 @@ def leg_explicit_inverse_kinematics(r_body_foot, leg_index, config):
     (x, y, z) = r_body_foot
 
     # Distance from the leg origin to the foot, projected into the y-z plane
-    R_body_foot_yz = (y ** 2 + z ** 2) ** 0.5
+    R_body_foot_yz = (y**2 + z**2)**0.5
 
     # Distance from the leg's forward/back point of rotation to the foot
-    R_hip_foot_yz = max(R_body_foot_yz ** 2 - config.ABDUCTION_OFFSET ** 2, 1e-6) ** 0.5
+    R_hip_foot_yz = max(R_body_foot_yz**2 - config.ABDUCTION_OFFSET**2,
+                        1e-6)**0.5
 
     # Interior angle of the right triangle formed in the y-z plane by the leg that is coincident to the ab/adduction axis
     # For feet 2 (front left) and 4 (back left), the abduction offset is positive, for the right feet, the abduction offset is negative.
@@ -43,12 +44,11 @@ def leg_explicit_inverse_kinematics(r_body_foot, leg_index, config):
     theta = np.arctan2(-x, R_hip_foot_yz)
 
     # Distance between the hip and foot
-    R_hip_foot = (R_hip_foot_yz ** 2 + x ** 2) ** 0.5
+    R_hip_foot = (R_hip_foot_yz**2 + x**2)**0.5
 
     # Angle between the line going from hip to foot and the link L1
-    arccos_argument = (config.LEG_L1 ** 2 + R_hip_foot ** 2 - config.LEG_L2 ** 2) / (
-        2 * config.LEG_L1 * R_hip_foot
-    )
+    arccos_argument = (config.LEG_L1**2 + R_hip_foot**2 -
+                       config.LEG_L2**2) / (2 * config.LEG_L1 * R_hip_foot)
     arccos_argument = np.clip(arccos_argument, -0.99, 0.99)
     phi = np.arccos(arccos_argument)
 
@@ -56,9 +56,8 @@ def leg_explicit_inverse_kinematics(r_body_foot, leg_index, config):
     hip_angle = theta + phi
 
     # Angle between the leg links L1 and L2
-    arccos_argument = (config.LEG_L1 ** 2 + config.LEG_L2 ** 2 - R_hip_foot ** 2) / (
-        2 * config.LEG_L1 * config.LEG_L2
-    )
+    arccos_argument = (config.LEG_L1**2 + config.LEG_L2**2 -
+                       R_hip_foot**2) / (2 * config.LEG_L1 * config.LEG_L2)
     arccos_argument = np.clip(arccos_argument, -0.99, 0.99)
     trident = np.arccos(arccos_argument)
 
@@ -68,7 +67,7 @@ def leg_explicit_inverse_kinematics(r_body_foot, leg_index, config):
     return np.array([abduction_angle, hip_angle, knee_angle])
 
 
-def four_legs_inverse_kinematics(r_body_foot, config):
+def four_legs_inverse_kinematics(r_body_foot, config, intitial_guess):
     """Find the joint angles for all twelve DOF correspoinding to the given matrix of body-relative foot positions.
     
     Parameters
@@ -87,6 +86,5 @@ def four_legs_inverse_kinematics(r_body_foot, config):
     for i in range(4):
         body_offset = config.LEG_ORIGINS[:, i]
         alpha[:, i] = leg_explicit_inverse_kinematics(
-            r_body_foot[:, i] - body_offset, i, config
-        )
+            r_body_foot[:, i] - body_offset, i, config)
     return alpha
