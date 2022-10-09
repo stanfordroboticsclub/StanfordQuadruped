@@ -31,7 +31,7 @@ class Interface:
         # # self.exe.add_node(self.sleep_node)
         # self.exe.spin()
         # also doesn't work:
-
+        
         rclpy.spin(self.sub)
 
         # while(rclpy.ok()):
@@ -102,7 +102,7 @@ class JointStateSub(Node):
         super().__init__('pupper_v3_joint_state_sub')
         self.subscriber_ = self.create_subscription(
             JointState, '/joint_states', self.joint_state_callback,
-            QoSPresetProfiles.SENSOR_DATA.value)
+            rclpy.qos.qos_profile_sensor_data)
         self.joint_state_queue = queue.Queue(maxsize=1)
         self.latest = None
 
