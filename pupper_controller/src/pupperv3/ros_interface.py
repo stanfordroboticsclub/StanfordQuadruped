@@ -14,7 +14,7 @@ class Interface:
 
     def __init__(self):
         rclpy.init()
-        self.executor = rclpy.executors.SingleThreadedExecutor()
+        # self.executor = rclpy.executors.SingleThreadedExecutor()
         self.sleep_node = SleepNode()
         self.pub = JointCommandPub()
         self.robot_state = robot_state.RobotState(height=-0.07)
@@ -28,10 +28,10 @@ class Interface:
     def sub_thread_fn(self):
         # self.exe = rclpy.executors.SingleThreadedExecutor()
         # self.exe.add_node(self.sub)
-        # # self.exe.add_node(self.sleep_node)
+        # self.exe.add_node(self.sleep_node)
         # self.exe.spin()
         # also doesn't work:
-        
+
         rclpy.spin(self.sub)
 
         # while(rclpy.ok()):
@@ -41,7 +41,7 @@ class Interface:
         self.pub.set_joint_angles(joint_angles)
 
     def read_incoming_data(self):
-        self.robot_state.joint_angles = self.sub.latest_joint_angles()
+        self.robot_state.joint_angles = self.sub.latest()
 
     def activate(self):
         self.pub.activate()
@@ -92,7 +92,7 @@ class JointCommandPub(Node):
         self.publisher_.publish(msg)
 
         self.get_logger().info(
-            f"Publishing: {msg.header} {msg.kp} {msg.kd} {msg.position_target} {msg.velocity_target} {msg.feedforward_torque}"
+            f"Publishing: {msg}"
         )
 
 
@@ -103,23 +103,17 @@ class JointStateSub(Node):
         self.subscriber_ = self.create_subscription(
             JointState, '/joint_states', self.joint_state_callback,
             rclpy.qos.qos_profile_sensor_data)
-        self.joint_state_queue = queue.Queue(maxsize=1)
-        self.latest = None
+        self.latest_lock = threading.Lock()
+        self.latest_ = None
 
     def joint_state_callback(self, msg):
-        self.get_logger().info("recvd joint state: ", msg.header.stamp)
-        joint_angles = np.array(msg.position).reshape((4, 3)).T
-        self.joint_state_queue.put(joint_angles)
+        self.get_logger().info(f"recvd joint state: {msg}")
+        self.latest_lock.acquire()
+        self.latest_ = np.array(msg.position).reshape((4, 3)).T
+        self.latest_lock.release()
 
-    def latest_joint_angles(self):
-        if self.joint_state_queue.empty():
-            if self.latest is None:
-                self.get_logger().warn(
-                    "Nothing in joint state queue and nothing stored")
-                return np.zeros((3, 4))
-            else:
-                return self.latest
-
-        else:
-            self.latest = self.joint_state_queue.get()
-            return self.latest
+    def latest(self):
+        self.latest_lock.acquire()
+        res = np.array(self.latest_, copy=True)
+        self.latest_lock.release()
+        return res
