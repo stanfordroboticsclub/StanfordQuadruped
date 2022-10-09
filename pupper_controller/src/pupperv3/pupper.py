@@ -1,5 +1,7 @@
 import numpy as np
 import time
+from collections import defaultdict
+
 from pupper_controller.src.common import controller
 from pupper_controller.src.common import command
 from pupper_controller.src.common import robot_state
@@ -7,12 +9,6 @@ from pupper_controller.src.pupperv3 import config
 
 from pupper_controller.src.pupperv3 import kinematics
 from pupper_controller.src.pupperv3 import ros_interface
-# from pupper_hardware_interface import interface
-# from pupper_controller.src.pupperv3 import pybullet_interface
-# from pupper_controller.src.pupperv3 import robot_utils
-from collections import defaultdict
-
-import rclpy
 
 
 class Pupper:
@@ -29,10 +25,13 @@ class Pupper:
             self.config, kinematics.four_legs_inverse_kinematics)
         self.state = robot_state.RobotState(height=-0.05)
 
+    def sleep(self, sleep_sec: float):
+        self.interface.sleep(sleep_sec)
+
     def slow_stand(self,
                    duration=1.0,
                    min_height=-0.07,
-                   max_height=-0.11,
+                   max_height=-0.18,
                    do_sleep=False):
         """
         Blocking slow stand up behavior.
@@ -112,6 +111,7 @@ class Pupper:
 
     def shutdown(self):  # TODO LATER
         self.interface.deactivate()
+        self.interface.shutdown()
 
     def get_observation(self):
         """

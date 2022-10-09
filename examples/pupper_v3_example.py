@@ -1,11 +1,9 @@
 from pupper_controller.src.pupperv3 import pupper
 import math
 import time
-from absl import app
-from absl import flags
-# flags.DEFINE_bool("run_on_robot", False,
-#                   "Whether to run on robot or in simulation.")
-FLAGS = flags.FLAGS
+"""
+TODO: Control-C causes an error. Says ROS wasn't shut down
+"""
 
 
 def run_example():
@@ -14,24 +12,24 @@ def run_example():
     print("starting...")
     pup.slow_stand(do_sleep=True)
     pup.start_trot()
+    # last_loop = pup.time()
     try:
         while True:
+            # Run the control loop
             pup.step(
                 action={
-                    "x_velocity": 0.3,
+                    "x_velocity": 0.25,
                     "y_velocity": 0.0,
                     "height": -0.18,
                     "com_x_shift": 0.005
                 })
             ob = pup.get_observation()
-            # print(f"Roll: {ob[0]:0.2f} Pitch: {ob[1]:0.2f}")
-            time.sleep(0.007)
+
+            # Sleep until it's time to run the control loop again
+            pup.sleep(0.008)
     finally:
         pup.shutdown()
 
 
-def main(_):
+if __name__ == "__main__":
     run_example()
-
-
-app.run(main)
