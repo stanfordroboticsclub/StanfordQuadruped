@@ -10,9 +10,8 @@ def run_example():
     pup = pupper.Pupper()
     pup.reset()
     print("starting...")
-    pup.slow_stand(do_sleep=True)
+    # pup.slow_stand(do_sleep=True)
     pup.start_trot()
-    # last_loop = pup.time()
     try:
         while True:
             # Run the control loop
