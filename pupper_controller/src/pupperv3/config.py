@@ -31,14 +31,14 @@ class Config:
         #################### STANCE ####################
         self.delta_x = 0.1
         self.delta_y = 0.08
-        self.x_shift = 0.00
+        self.x_shift = 0.0
         self.min_x_shift = -0.05
         self.max_x_shift = 0.05
         self.default_z_ref = -0.18
 
         #################### SWING ######################
         self.z_coeffs = None
-        self.z_clearance = 0.18
+        self.z_clearance = 0.06
         self.alpha = (
             0.5  # Ratio between touchdown distance and total horizontal stance movement
         )
@@ -88,7 +88,7 @@ class Config:
 
         self.MOTOR_DIRECTIONS = np.array([
             [-1, 1, -1, 1],
-            [1, 1, 1, 1],
+            [-1, -1, -1, -1],
             [-1, 1, -1, 1],
         ])
 
