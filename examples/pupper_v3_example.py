@@ -18,7 +18,7 @@ def run_example():
             # Run the control loop
             pup.step(
                 action={
-                    "x_velocity": 0.25,
+                    "x_velocity": 0.5,
                     "y_velocity": 0.0,
                     "height": -0.18,
                     "com_x_shift": 0.005

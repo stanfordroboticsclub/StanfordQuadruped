@@ -44,7 +44,7 @@ class Pupper:
                                   int(duration / self.config.dt)):
             ob = self.get_observation()
             self.step({'height': height})
-            time.sleep(self.config.dt)
+            self.interface.sleep(self.config.dt)
 
     def start_trot(self):
         pupper_command = command.Command(self.config.default_z_ref)

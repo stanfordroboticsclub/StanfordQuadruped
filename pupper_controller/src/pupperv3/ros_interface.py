@@ -1,3 +1,4 @@
+import queue
 from pupper_controller.src.common import robot_state
 from rclpy.node import Node
 import rclpy
@@ -13,77 +14,61 @@ class Interface:
 
     def __init__(self):
         rclpy.init()
-        print("Initialized RCLPY")
-        self.interface_lock = threading.Lock()
-        self.interface_node = InterfaceNode()
-        self.spin_thread = threading.Thread(target=self.thread_function,
-                                            daemon=False)
-        self.spin_thread.start()
+        self.executor = rclpy.executors.SingleThreadedExecutor()
+        self.sleep_node = SleepNode()
+        self.pub = JointCommandPub()
+        self.robot_state = robot_state.RobotState(height=-0.07)
+        self.sub = JointStateSub()
+        self.sub_thread = threading.Thread(target=self.sub_thread_fn)
+        self.sub_thread.start()
 
-    def __del__(self):
-        self.spin_thread.join()
+    def sleep(self, sleep_sec):
+        self.sleep_node.sleep(sleep_sec)
 
-    def sleep(self, sleep_sec: float):
-        self.interface_node.sleep(sleep_sec)
-
-    def thread_function(self):
-        # causes lots of badness on ctrl-c
-        # rclpy.spin(self.interface_node) 
-
-        while rclpy.ok():
-            with self.interface_lock:
-                rclpy.spin_once(self.interface_node, timeout_sec=0)
-
-    def activate(self):
-        with self.interface_lock:
-            self.interface_node.activate()
-
-    def deactivate(self):
-        with self.interface_lock:
-            self.interface_node.deactivate()
-    
-    def shutdown(self):
-        rclpy.shutdown()
+    def sub_thread_fn(self):
+        self.exe = rclpy.executors.SingleThreadedExecutor()
+        self.exe.add_node(self.sub)
+        self.exe.add_node(self.sleep_node)
+        self.exe.spin()
+        # also doesn't work: rclpy.spin(self.sub)
 
     def set_joint_angles(self, joint_angles: np.array):
-        # how does python handle multithreaded protection?
-        with self.interface_lock:
-            self.interface_node.set_joint_angles(joint_angles)
+        self.pub.set_joint_angles(joint_angles)
 
     def read_incoming_data(self):
+        self.robot_state.joint_angles = self.sub.latest_joint_angles()
+
+    def activate(self):
+        self.pub.activate()
+
+    def deactivate(self):
+        self.pub.deactivate()
+
+    def shutdown(self):
         pass
-
-    @property
-    def robot_state(self):
-        with self.interface_lock:
-            return self.interface_node.robot_state
+        # rclpy.shutdown()
 
 
-class InterfaceNode(Node):
+"""
+Does not work with rostime. Not getting spun?"""
+
+
+class SleepNode(Node):
+
+    def __init__(self):
+        super().__init__('sleeper')
+
+    def sleep(self, sleep_sec):
+        self.get_clock().sleep_for(rclpy.duration.Duration(seconds=sleep_sec))
+
+
+class JointCommandPub(Node):
 
     def __init__(self):
         super().__init__('pupper_v3_joint_command_publisher')
-
-        self.robot_state = robot_state.RobotState(-0.05)
         self.publisher_ = self.create_publisher(
             JointCommand, '/joint_commands',
-            QoSPresetProfiles.SENSOR_DATA.value)  # TODO: why 10?
-
-        self.subscriber_ = self.create_subscription(
-            JointState, '/joint_states', self.joint_state_callback,
             QoSPresetProfiles.SENSOR_DATA.value)
-
-    def time(self):
-        return self.get_clock().now().to_msg()
-
-    def sleep(self, sleep_sec: float):
-        self.get_clock().sleep_for(rclpy.duration.Duration(seconds=sleep_sec))
-
-    def joint_state_callback(self, msg):
-        self.robot_state.joint_angles = np.array(msg.position).reshape(
-            (4, 3)).T
-        self.get_logger().info(
-            f"Recv joint state. Pos: {msg.position} Vel: {msg.velocity}")
 
     def activate(self):
         pass
@@ -105,6 +90,30 @@ class InterfaceNode(Node):
             f"Publishing: {msg.header} {msg.kp} {msg.kd} {msg.position_target} {msg.velocity_target} {msg.feedforward_torque}"
         )
 
-    def read_incoming_data(self):
-        # spin ros node to subscribe to imu and joint positions
-        pass
+
+class JointStateSub(Node):
+
+    def __init__(self):
+        super().__init__('pupper_v3_joint_state_sub')
+        self.subscriber_ = self.create_subscription(
+            JointState, '/joint_states', self.joint_state_callback,
+            QoSPresetProfiles.SENSOR_DATA.value)
+        self.joint_state_queue = queue.Queue(maxsize=1)
+        self.latest = None
+
+    def joint_state_callback(self, msg):
+        joint_angles = np.array(msg.position).reshape((4, 3)).T
+        self.joint_state_queue.put(joint_angles)
+
+    def latest_joint_angles(self):
+        if self.joint_state_queue.empty():
+            if self.latest is None:
+                self.get_logger().warn(
+                    "Nothing in joint state queue and nothing stored")
+                return np.zeros((3, 4))
+            else:
+                return self.latest
+
+        else:
+            self.latest = self.joint_state_queue.get()
+            return self.latest
