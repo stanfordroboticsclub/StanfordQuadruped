@@ -74,10 +74,15 @@ def leg_ik(center_to_foot_vector, leg_config, initial_guess=None, alpha=1.0):
     for i in range(20):
         matrix = np.linalg.pinv(leg_jacobian(*guess, leg_config))
         error = leg_fk(*guess, leg_config) - center_to_foot_vector
-        guess -= alpha * matrix @ error
-        guess = np.fmod(guess + np.pi, 2 * np.pi) - np.pi
+        step = - alpha * matrix @ error
+
+        # prevent big solver steps
+        guess += np.clip(step, -1, 1)
         if np.linalg.norm(error) < 1e-6:
             break
+
+    # constrain to -pi to pi
+    guess = np.fmod(guess + np.pi, 2 * np.pi) - np.pi 
     return guess
 
 
@@ -98,6 +103,8 @@ def four_legs_inverse_kinematics(r_body_foot, config, initial_guess=None):
         Matrix of corresponding joint angles.
     """
     alpha = np.zeros((3, 4))
+
+    initial_guess = np.zeros((3, 4))
     initial_guess *= config.MOTOR_DIRECTIONS
 
     # print(r_body_foot)

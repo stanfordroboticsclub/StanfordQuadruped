@@ -26,7 +26,7 @@ def run_example():
             ob = pup.get_observation()
 
             # Sleep until it's time to run the control loop again
-            pup.sleep(0.008)
+            pup.sleep(0.2)
     finally:
         pup.shutdown()
 

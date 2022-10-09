@@ -26,11 +26,16 @@ class Interface:
         self.sleep_node.sleep(sleep_sec)
 
     def sub_thread_fn(self):
-        self.exe = rclpy.executors.SingleThreadedExecutor()
-        self.exe.add_node(self.sub)
-        self.exe.add_node(self.sleep_node)
-        self.exe.spin()
-        # also doesn't work: rclpy.spin(self.sub)
+        # self.exe = rclpy.executors.SingleThreadedExecutor()
+        # self.exe.add_node(self.sub)
+        # # self.exe.add_node(self.sleep_node)
+        # self.exe.spin()
+        # also doesn't work:
+
+        rclpy.spin(self.sub)
+
+        # while(rclpy.ok()):
+        #     rclpy.spin_once(self.sub)
 
     def set_joint_angles(self, joint_angles: np.array):
         self.pub.set_joint_angles(joint_angles)
@@ -102,6 +107,7 @@ class JointStateSub(Node):
         self.latest = None
 
     def joint_state_callback(self, msg):
+        self.get_logger().info("recvd joint state: ", msg.header.stamp)
         joint_angles = np.array(msg.position).reshape((4, 3)).T
         self.joint_state_queue.put(joint_angles)
 
