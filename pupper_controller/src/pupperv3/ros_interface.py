@@ -22,17 +22,20 @@ class Interface:
         self.sub_thread = threading.Thread(target=self.sub_thread_fn)
         self.sub_thread.start()
 
+    def time(self):
+        return self.sleep_node.get_clock().now().nanoseconds / 1.0e9
+
     def sleep(self, sleep_sec):
         self.sleep_node.sleep(sleep_sec)
 
     def sub_thread_fn(self):
-        # self.exe = rclpy.executors.SingleThreadedExecutor()
-        # self.exe.add_node(self.sub)
-        # self.exe.add_node(self.sleep_node)
-        # self.exe.spin()
+        self.exe = rclpy.executors.SingleThreadedExecutor()
+        self.exe.add_node(self.sub)
+        self.exe.add_node(self.sleep_node)
+        self.exe.spin()
         # also doesn't work:
 
-        rclpy.spin(self.sub)
+        # rclpy.spin(self.sub)
 
         # while(rclpy.ok()):
         #     rclpy.spin_once(self.sub)
@@ -91,9 +94,7 @@ class JointCommandPub(Node):
         msg.feedforward_torque = tuple(np.zeros(12))
         self.publisher_.publish(msg)
 
-        self.get_logger().info(
-            f"Publishing: {msg}"
-        )
+        self.get_logger().info(f"Publishing: {msg}")
 
 
 class JointStateSub(Node):
@@ -107,7 +108,7 @@ class JointStateSub(Node):
         self.latest_ = None
 
     def joint_state_callback(self, msg):
-        self.get_logger().info(f"recvd joint state: {msg}")
+        # self.get_logger().info(f"recvd joint state: {msg}")
         self.latest_lock.acquire()
         self.latest_ = np.array(msg.position).reshape((4, 3)).T
         self.latest_lock.release()

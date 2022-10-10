@@ -125,6 +125,9 @@ class Pupper:
         joint_positions = self.interface.robot_state.joint_angles.T.flatten()
         return np.concatenate((base_roll_pitch, joint_positions))
 
+    def time(self):
+        return self.interface.time()
+
     def body_velocity(self):
         """
         TODO: put this function in the respective hardware interfaces
