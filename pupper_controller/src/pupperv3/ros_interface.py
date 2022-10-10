@@ -14,11 +14,15 @@ class Interface:
 
     def __init__(self):
         rclpy.init()
-        # self.executor = rclpy.executors.SingleThreadedExecutor()
+
         self.sleep_node = SleepNode()
         self.pub = JointCommandPub()
         self.robot_state = robot_state.RobotState(height=-0.07)
         self.sub = JointStateSub()
+        self.executor = rclpy.executors.SingleThreadedExecutor()
+        self.executor.add_node(self.sub)
+        self.executor.add_node(self.sleep_node)
+
         self.sub_thread = threading.Thread(target=self.sub_thread_fn)
         self.sub_thread.start()
 
@@ -29,16 +33,10 @@ class Interface:
         self.sleep_node.sleep(sleep_sec)
 
     def sub_thread_fn(self):
-        self.exe = rclpy.executors.SingleThreadedExecutor()
-        self.exe.add_node(self.sub)
-        self.exe.add_node(self.sleep_node)
-        self.exe.spin()
-        # also doesn't work:
+        self.executor.spin()
 
+        # Just spinning sub causes sleep node to not update time
         # rclpy.spin(self.sub)
-
-        # while(rclpy.ok()):
-        #     rclpy.spin_once(self.sub)
 
     def set_joint_angles(self, joint_angles: np.array):
         self.pub.set_joint_angles(joint_angles)
