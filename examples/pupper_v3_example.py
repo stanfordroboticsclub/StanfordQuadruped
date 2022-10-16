@@ -31,7 +31,7 @@ def run_example():
             observation = pup.get_observation()
             pup.step(
                 action={
-                    "x_velocity": 0.5,
+                    "x_velocity": 0.0,#0.5,
                     "y_velocity": 0.0,
                     "height": -0.18,
                     "com_x_shift": 0.005
