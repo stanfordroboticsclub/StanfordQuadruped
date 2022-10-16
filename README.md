@@ -23,5 +23,6 @@ From inside this repo
 
 #### Controller B: Joystick control
 From inside this repo
-1. ```ros2 run joy joy_node &```
-2. ```python3 examples/pupper_v3_ds4_control.py```
+1. Connect DS4 controller over bluetooth/USB
+2. ```ros2 run joy joy_node &```
+3. ```python3 examples/pupper_v3_ds4_control.py```
