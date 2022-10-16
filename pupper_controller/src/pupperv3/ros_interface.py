@@ -3,7 +3,7 @@ from pupper_controller.src.common import robot_state
 from rclpy.node import Node
 import rclpy
 from pupper_interfaces.msg import JointCommand
-from sensor_msgs.msg import JointState
+from sensor_msgs.msg import JointState, Joy
 import numpy as np
 import time
 import threading
@@ -13,15 +13,18 @@ from rclpy.qos import QoSPresetProfiles
 class Interface:
 
     def __init__(self):
-        rclpy.init()
+        if not rclpy.ok():
+            rclpy.init()
 
         self.sleep_node = SleepNode()
         self.pub = JointCommandPub()
         self.robot_state = robot_state.RobotState(height=-0.07)
         self.sub = JointStateSub()
+        # self.joy_sub = JoystickSub()
         self.executor = rclpy.executors.SingleThreadedExecutor()
         self.executor.add_node(self.sub)
         self.executor.add_node(self.sleep_node)
+        # self.executor.add_node(self.joy_sub)
 
         self.sub_thread = threading.Thread(target=self.sub_thread_fn)
         self.sub_thread.start()
@@ -92,7 +95,7 @@ class JointCommandPub(Node):
         msg.feedforward_torque = tuple(np.zeros(12))
         self.publisher_.publish(msg)
 
-        self.get_logger().info(f"Publishing: {msg.header}")
+        # self.get_logger().info(f"Publishing: {msg.header}")
 
 
 class JointStateSub(Node):
@@ -116,3 +119,27 @@ class JointStateSub(Node):
         res = np.array(self.latest_, copy=True)
         self.latest_lock.release()
         return res
+
+
+# class Joystick:
+
+#     def __init__(self):
+#         self.joy_sub = JoystickSub()
+#         self.sub_thread = threading.Thread(target=self.sub_thread_fn)
+#         self.sub_thread.start()
+
+#     def sub_thread_fn(self):
+#         rclpy.spin(self.joy_sub)
+
+
+# class JoystickSub(Node):
+
+#     def __init__(self):
+#         super().__init__('joystick_sub')
+#         self.subscriber_ = self.create_subscription(
+#             Joy, '/joy', self.joy_callback, rclpy.qos.qos_profile_sensor_data)
+#         self.latest_joy_ = None
+
+#     def joy_callback(self, msg):
+#         print("got joystick message!")
+#         print(msg)

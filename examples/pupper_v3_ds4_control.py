@@ -1,13 +1,12 @@
-from pupper_controller.src.pupperv3 import pupper
-import math
+from pupper_controller.src.pupperv3 import pupper, ros_joystick_interface
 import time
-import rclpy
 """
 TODO: Control-C causes an error. Says ROS wasn't shut down
 """
 
 
 def run_example():
+    joystick = ros_joystick_interface.Joystick()
     pup = pupper.Pupper()
     pup.reset()
     print("starting...")
@@ -18,21 +17,19 @@ def run_example():
         while True:
             # Busy-wait until it's time to run the control loop again
             while pup.time() - last_control < pup.config.dt:
-                # Sleep for less time if your sim is running > 10x realtime
+                # Reduce sleep time if your sim runs > 10x realtime
                 time.sleep(0.0005)
             last_control = pup.time()
 
-            # Does not obey sim time
-            # clock = rclpy.clock.ROSClock()
-            # clock.sleep_for(rclpy.duration.Duration(seconds=2.0)) # uses wallclock even if rosclock
-            # print(clock.now().nanoseconds/1e9)
-
             # Run the control loop
             observation = pup.get_observation()
+            joystick_vals = joystick.joystick_values()
+            print("received joystick values: ", joystick_vals)
             pup.step(
                 action={
-                    "x_velocity": 0.0,#0.5,
-                    "y_velocity": 0.0,
+                    "x_velocity": joystick_vals["left_y"] / 1.5,
+                    "y_velocity": -joystick_vals["left_x"] / 1.5,
+                    "yaw_rate": -joystick_vals["right_x"] * 4,
                     "height": -0.18,
                     "com_x_shift": 0.005
                 })
