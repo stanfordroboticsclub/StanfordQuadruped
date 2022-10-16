@@ -92,7 +92,7 @@ class JointCommandPub(Node):
         msg.feedforward_torque = tuple(np.zeros(12))
         self.publisher_.publish(msg)
 
-        self.get_logger().info(f"Publishing: {msg}")
+        self.get_logger().info(f"Publishing: {msg.header}")
 
 
 class JointStateSub(Node):
