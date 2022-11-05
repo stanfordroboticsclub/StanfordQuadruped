@@ -29,9 +29,9 @@ class Pupper:
         self.interface.sleep(sleep_sec)
 
     def slow_stand(self,
+                   min_height,
+                   max_height=None,
                    duration=1.0,
-                   min_height=-0.07,
-                   max_height=-0.18,
                    do_sleep=False):
         """
         Blocking slow stand up behavior.
@@ -40,6 +40,8 @@ class Pupper:
             duration: How long the slow stand takes in seconds. Increase to make it slower.
             do_sleep: Set to False if you want simulated robot to go faster than real time
         """
+        if max_height is None:
+            max_height = self.config.default_z_ref
         for height in np.linspace(min_height, max_height,
                                   int(duration / self.config.dt)):
             ob = self.get_observation()
@@ -85,7 +87,7 @@ class Pupper:
                                       self.config.min_x_shift,
                                       self.config.max_x_shift)
 
-    def step(self, action):
+    def step(self, action, behavior_state_override=None):
         """
         Make pupper controller take one action (push one timestep forward).
 
@@ -99,8 +101,15 @@ class Pupper:
                 com_x_shift
         """
         self._update_actions(action)
+
+        if behavior_state_override == "trot":
+            self.state.behavior_state = robot_state.BehaviorState.TROT
+        if behavior_state_override == "rest":
+            self.state.behavior_state = robot_state.BehaviorState.REST
+
         self.controller.run(self.state, self.command)
         self.interface.set_joint_angles(self.state.joint_angles)
+        # self.interface.set_joint_angles(np.zeros((3,4)))
         return self.get_observation()
 
     def reset(self):

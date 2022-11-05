@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from mimetypes import init
 import numpy as np
 from numpy import sin, cos
 
@@ -118,6 +117,8 @@ def four_legs_inverse_kinematics(r_body_foot, config, initial_guess=None):
         alpha[:, i] = leg_ik(r_body_foot[:, i],
                              leg_config,
                              initial_guess=initial_guess[:, i])
+        # FK model treats shank vertical as zero angle while 
+        # simulator and real robot use 30 deg angle
         alpha[2, i] += np.radians(30)
 
         # print(i)

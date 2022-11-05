@@ -19,12 +19,24 @@ class Joystick:
 
     def joystick_values(self):
         msg = self.joy_sub.latest_msg()
-        return {
-            "left_x": -msg.axes[0],
-            "left_y": msg.axes[1],
-            "right_x": -msg.axes[3],
-            "right_y": msg.axes[4]
-        }
+        if msg is not None:
+            return {
+                "left_x": -msg.axes[
+                    0],  # TODO should not be negative, wrong direction in URDF
+                "left_y": msg.axes[1],
+                "right_x": -msg.axes[3],
+                "right_y": msg.axes[4],
+                "L2": msg.axes[2]
+            }
+        else:
+            print("Warning, no joystick message received yet.")
+            return {
+                "left_x": 0,
+                "left_y": 0,
+                "right_x": 0,
+                "right_y": 0,
+                "L2": 0
+            }
 
 
 class JoystickSub(Node):
@@ -44,6 +56,7 @@ class JoystickSub(Node):
         self.latest_msg_lock.release()
 
     def latest_msg(self):
+        """Return latest joystick message. Returns none if none received yet."""
         self.latest_msg_lock.acquire()
         msg_copy = copy.copy(self.latest_joy_msg)
         self.latest_msg_lock.release()

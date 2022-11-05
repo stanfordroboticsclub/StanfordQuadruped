@@ -22,7 +22,7 @@ class Config:
         self.max_pitch_rate = 0.15
         self.roll_speed = 0.16  # maximum roll rate [rad/s]
         self.yaw_time_constant = 0.3
-        self.max_stance_yaw = 1.2
+        self.max_stance_yaw = 0.8
         self.max_stance_yaw_rate = 2.0
 
         self.min_height = -0.16
@@ -30,11 +30,11 @@ class Config:
 
         #################### STANCE ####################
         self.delta_x = 0.1
-        self.delta_y = 0.08
-        self.x_shift = 0.0
+        self.delta_y = 0.07
+        self.x_shift = -0.01
         self.min_x_shift = -0.05
         self.max_x_shift = 0.05
-        self.default_z_ref = -0.18
+        self.default_z_ref = -0.16
 
         #################### SWING ######################
         self.z_coeffs = None

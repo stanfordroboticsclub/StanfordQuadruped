@@ -88,7 +88,7 @@ class JointCommandPub(Node):
     def set_joint_angles(self, joint_angles):
         msg = JointCommand()
         msg.header.stamp = self.get_clock().now().to_msg()
-        msg.kp = tuple(np.ones(12) * 5.0)
+        msg.kp = tuple(np.ones(12) * 7.5)
         msg.kd = tuple(np.ones(12) * 0.5)
         msg.position_target = tuple(joint_angles.T.flatten())
         msg.velocity_target = tuple(np.zeros(12))
