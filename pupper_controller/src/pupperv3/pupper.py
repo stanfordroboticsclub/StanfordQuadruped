@@ -68,6 +68,7 @@ class Pupper:
         self.command.yaw_rate = action['yaw_rate'] or 0.0
         self.command.height = action['height'] or self.config.default_z_ref
         self.command.pitch = action['pitch'] or 0.0
+        self.command.roll = action['roll'] or 0.0
         self.config.x_shift = action['com_x_shift'] or self.config.x_shift
 
         # Clip actions to reasonable values

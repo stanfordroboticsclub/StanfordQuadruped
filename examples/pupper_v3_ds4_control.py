@@ -33,6 +33,7 @@ def run_example():
                 "x_velocity": joystick_vals["left_y"] / 1.5,
                 "y_velocity": -joystick_vals["left_x"] / 1.5,
                 "yaw_rate": -joystick_vals["right_x"] * 4,
+                "pitch": joystick_vals["right_y"] * -0.25,
                 "height": -0.16,
                 "com_x_shift": -0.01
             },

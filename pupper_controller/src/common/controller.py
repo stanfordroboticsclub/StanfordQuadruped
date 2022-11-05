@@ -110,7 +110,7 @@ class Controller:
                 state, command)
             # Apply the desired body rotation
             state.final_foot_locations = (
-                euler2mat(command.roll, command.pitch, 0.0,
+                euler2mat(command.pitch, command.roll, 0.0,
                           'syxz') @ state.foot_locations
             )
             state.joint_angles = self.inverse_kinematics(
@@ -126,7 +126,7 @@ class Controller:
 
             # Apply the desired body rotation
             state.final_foot_locations = (
-                euler2mat(command.roll, command.pitch, 0.0,
+                euler2mat(command.pitch, command.roll, 0.0,
                           'syxz') @ state.foot_locations
             )
             state.joint_angles = self.inverse_kinematics(
@@ -148,7 +148,7 @@ class Controller:
             )
             # Apply the desired body rotation
             state.final_foot_locations = (
-                euler2mat(command.roll, command.pitch,
+                euler2mat(command.pitch, command.roll,
                           self.smoothed_yaw, 'syxz')
                 @ state.foot_locations
             )
