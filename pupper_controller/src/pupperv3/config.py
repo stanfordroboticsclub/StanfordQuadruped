@@ -4,6 +4,10 @@ import numpy as np
 class Config:
 
     def __init__(self):
+        #################### ACTAUTOR ####################
+        self.pos_gain = 7.5 # 7.5 is good
+        self.vel_gain = 0.5 # 0.5 is good
+
         #################### COMMANDS ####################
         self.min_x_velocity = -0.6
         self.max_x_velocity = 0.6

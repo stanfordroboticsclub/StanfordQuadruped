@@ -12,12 +12,12 @@ from rclpy.qos import QoSPresetProfiles
 
 class Interface:
 
-    def __init__(self):
+    def __init__(self, pos_gain, vel_gain):
         if not rclpy.ok():
             rclpy.init()
 
         self.sleep_node = SleepNode()
-        self.pub = JointCommandPub()
+        self.pub = JointCommandPub(pos_gain, vel_gain)
         self.robot_state = robot_state.RobotState(height=-0.07)
         self.sub = JointStateSub()
         # self.joy_sub = JoystickSub()
@@ -73,11 +73,13 @@ class SleepNode(Node):
 
 class JointCommandPub(Node):
 
-    def __init__(self):
+    def __init__(self, pos_gain, vel_gain):
         super().__init__('pupper_v3_joint_command_publisher')
         self.publisher_ = self.create_publisher(
             JointCommand, '/joint_commands',
             QoSPresetProfiles.SENSOR_DATA.value)
+        self.pos_gain = pos_gain
+        self.vel_gain = vel_gain
 
     def activate(self):
         pass
@@ -88,8 +90,8 @@ class JointCommandPub(Node):
     def set_joint_angles(self, joint_angles):
         msg = JointCommand()
         msg.header.stamp = self.get_clock().now().to_msg()
-        msg.kp = tuple(np.ones(12) * 7.5)
-        msg.kd = tuple(np.ones(12) * 0.5)
+        msg.kp = tuple(np.ones(12) * self.pos_gain)
+        msg.kd = tuple(np.ones(12) * self.vel_gain)
         msg.position_target = tuple(joint_angles.T.flatten())
         msg.velocity_target = tuple(np.zeros(12))
         msg.feedforward_torque = tuple(np.zeros(12))
@@ -130,7 +132,6 @@ class JointStateSub(Node):
 
 #     def sub_thread_fn(self):
 #         rclpy.spin(self.joy_sub)
-
 
 # class JoystickSub(Node):
 

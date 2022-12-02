@@ -20,7 +20,8 @@ class Pupper:
         self.config = config.Config()
         self.command = None
 
-        self.interface = ros_interface.Interface()
+        self.interface = ros_interface.Interface(self.config.pos_gain,
+                                                 self.config.vel_gain)
         self.controller = controller.Controller(
             self.config, kinematics.four_legs_inverse_kinematics)
         self.state = robot_state.RobotState(height=-0.05)
