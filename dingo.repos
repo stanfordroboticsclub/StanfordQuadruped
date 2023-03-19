@@ -1,0 +1,7 @@
+repositories:
+  #Note: We add any repos we want in here. One is commented out for nomenclature
+  #ur5_with_robotiq_gripper:
+    #type: git
+    #url: https://github.com/intuitivecomputing/ur5_with_robotiq_gripper
+    #version: melodic-devel
+
