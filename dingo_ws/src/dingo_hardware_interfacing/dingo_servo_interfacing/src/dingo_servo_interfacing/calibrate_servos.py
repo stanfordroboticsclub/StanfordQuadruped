@@ -1,5 +1,5 @@
-from pupper.HardwareInterface import HardwareInterface
-from pupper.Config import PWMParams, ServoParams
+from dingo_servo_interfacing.HardwareInterface import HardwareInterface
+from dingo_servo_interfacing.Config import PWMParams, ServoParams
 import numpy as np
 import re
 

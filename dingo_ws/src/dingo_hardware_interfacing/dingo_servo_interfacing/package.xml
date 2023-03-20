@@ -52,7 +52,10 @@
   <build_depend>rospy</build_depend>
   <build_export_depend>rospy</build_export_depend>
   <exec_depend>rospy</exec_depend>
-
+  <depend>regex</depend>
+  <depend>numpy</depend>
+  <depend>enum</depend>
+  <depend>pigpio</depend>
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>

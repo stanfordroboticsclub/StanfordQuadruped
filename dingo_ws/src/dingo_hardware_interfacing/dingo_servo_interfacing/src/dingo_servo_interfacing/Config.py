@@ -1,6 +1,6 @@
 import numpy as np
-from pupper.ServoCalibration import MICROS_PER_RAD, NEUTRAL_ANGLE_DEGREES
-from pupper.HardwareConfig import PS4_COLOR, PS4_DEACTIVATED_COLOR
+from dingo_servo_interfacing.ServoCalibration import MICROS_PER_RAD, NEUTRAL_ANGLE_DEGREES
+from dingo_joystick_interfacing.HardwareConfig import PS4_COLOR, PS4_DEACTIVATED_COLOR
 from enum import Enum
 
 # TODO: put these somewhere else

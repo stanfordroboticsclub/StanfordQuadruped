@@ -2,8 +2,8 @@
 version: '3.4'
 
 services:
-  teaching:
-    image: dingows
+  dingoquadruped:
+    image: dingo_ws
     network_mode: "host"
     privileged: true
     cap_add:

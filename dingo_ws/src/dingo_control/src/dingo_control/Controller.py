@@ -1,8 +1,8 @@
-from src.Gaits import GaitController
-from src.StanceController import StanceController
-from src.SwingLegController import SwingController
-from src.Utilities import clipped_first_order_filter
-from src.State import BehaviorState, State
+from dingo_control.Gaits import GaitController
+from dingo_control.StanceController import StanceController
+from dingo_control.SwingLegController import SwingController
+from dingo_utilities.Utilities import clipped_first_order_filter
+from dingo_control.State import BehaviorState, State
 
 import numpy as np
 from transforms3d.euler import euler2mat, quat2euler

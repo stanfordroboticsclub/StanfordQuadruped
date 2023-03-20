@@ -52,7 +52,8 @@
   <build_depend>rospy</build_depend>
   <build_export_depend>rospy</build_export_depend>
   <exec_depend>rospy</exec_depend>
-
+  <depend>UDPComms</depend>
+  <depend>numpy</depend>
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>

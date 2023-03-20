@@ -1,9 +1,9 @@
 import UDPComms
 import numpy as np
 import time
-from src.State import BehaviorState, State
-from src.Command import Command
-from src.Utilities import deadband, clipped_first_order_filter
+from dingo_control.State import BehaviorState, State
+from dingo_control.Command import Command
+from dingo_control.Utilities import deadband, clipped_first_order_filter
 
 
 class JoystickInterface:

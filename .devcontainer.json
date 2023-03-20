@@ -1,0 +1,10 @@
+{
+    "name": "dingoquadruped",
+    "service": "dingoquadruped",
+    "dockerComposeFile": "./Docker-compose.yaml",
+    "extensions": [
+        "ms-iot.vscode-ros"
+    ],
+    "workspaceFolder": "/dingo_ws",
+    "shutdownAction": "stopCompose"
+}

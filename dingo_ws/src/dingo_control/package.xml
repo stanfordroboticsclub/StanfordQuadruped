@@ -52,6 +52,9 @@
   <build_depend>rospy</build_depend>
   <build_export_depend>rospy</build_export_depend>
   <exec_depend>rospy</exec_depend>
+  <depend>numpy</depend>
+  <depend>transforms3d</depend>
+  <depend>enum</depend>
 
 
   <!-- The export tag contains other, unspecified, tags -->

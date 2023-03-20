@@ -15,13 +15,13 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from Kinematics import leg_explicit_inverse_kinematics
+from dingo_control.Kinematics import leg_explicit_inverse_kinematics
 from PupperConfig import *
-from Gaits import *
-from StanceController import position_delta, stance_foot_location
-from SwingLegController import *
+from dingo_control.Gaits import *
+from dingo_control.StanceController import position_delta, stance_foot_location
+from dingo_control.SwingLegController import *
 from Types import MovementReference, GaitParams, StanceParams, SwingParams
-from Controller import *
+from dingo_control.Controller import *
 
 # function round_(a, dec)
 #     return map(x -> round(x, digits=dec), a)

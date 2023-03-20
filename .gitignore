@@ -1,3 +1,6 @@
 *.DS_Store
 *.pyc
 **/__pycache__
+dingo_ws/build/*
+dingo_ws/devel/*
+dingo_ws/logs/*

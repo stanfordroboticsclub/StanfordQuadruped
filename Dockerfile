@@ -12,13 +12,25 @@ RUN apt-get update && \
     python3-pymodbus \
     build-essential \
     ros-noetic-catkin \
-    python-catkin-tools \
+    python3-catkin-tools \
     ros-noetic-ros-controllers \
     nano \
     ros-noetic-soem \
     libvlccore-dev \
     libvlc-dev \
     git 
+
+RUN pip3 install \
+    #Following are from pupper code
+    transforms3d \
+    UDPComms \
+    serial \
+    pyserial \
+    pigpio \
+    regex \
+    matplotlib
+    #Following are Nathan/Alex additions
+
 
 # Make the prompt a little nicer
 RUN echo "PS1='${debian_chroot:+($debian_chroot)}\u@:\w\$ '" >> /etc/bash.bashrc 
