@@ -6,5 +6,6 @@
         "ms-iot.vscode-ros"
     ],
     "workspaceFolder": "/dingo_ws",
-    "shutdownAction": "stopCompose"
+    "shutdownAction": "stopCompose",
+    "overrideCommand": true
 }

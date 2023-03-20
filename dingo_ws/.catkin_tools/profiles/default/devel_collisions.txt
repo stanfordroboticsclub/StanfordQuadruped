@@ -1,1 +1,2 @@
 /teaching_ws/devel/./cmake.lock 231
+/dingo_ws/devel/./cmake.lock 6

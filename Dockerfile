@@ -35,17 +35,18 @@ RUN pip3 install \
 # Make the prompt a little nicer
 RUN echo "PS1='${debian_chroot:+($debian_chroot)}\u@:\w\$ '" >> /etc/bash.bashrc 
 
-#RUN /bin/bash -c '. /opt/ros/$ROS_DISTRO/setup.bash; cd teaching_ws; catkin build'
-
-#RUN echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> /etc/bash.bashrc
-#RUN echo "source /teaching_ws/devel/setup.bash" >> /etc/bash.bashrc
-
-#WORKDIR /teaching_ws
-#COPY /teaching_ws/src /teaching_ws/src
-#RUN rosdep update
-#RUN rosdep install --from-paths src --ignore-src -r -y
+WORKDIR /dingo_ws
+COPY /dingo_ws/src /dingo_ws/src
+RUN rosdep update
+RUN rosdep install --from-paths src --ignore-src -r -y
 
 RUN echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> /etc/bash.bashrc
+
+RUN /bin/bash -c 'source /opt/ros/$ROS_DISTRO/setup.bash &&\
+catkin_make --directory /dingo_ws -DCMAKE_BUILD_TYPE=Debug'
+
+RUN echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> /etc/bash.bashrc
+RUN echo "source /dingo_ws/devel/setup.bash" >> /etc/bash.bashrc
 
 ENTRYPOINT ["./ros_entrypoint.sh"]
 CMD [ "bash" ]

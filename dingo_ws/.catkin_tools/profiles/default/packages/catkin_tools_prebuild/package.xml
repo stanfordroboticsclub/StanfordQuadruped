@@ -1,0 +1,10 @@
+<package>
+  <name>catkin_tools_prebuild</name>
+  <description>
+    This package is used to generate catkin setup files.
+  </description>
+  <version>0.0.0</version>
+  <license>BSD</license>
+  <maintainer email="jbo@jhu.edu">jbohren</maintainer>
+  <buildtool_depend>catkin</buildtool_depend>
+</package>
