@@ -1,7 +1,7 @@
 # Dingo Quadruped
 
 ## Overview
-This repository hosts the code for the Dingo Quadruped. This repo is a forked, updated and heavily modified version of the Stanford Pupper and Stanford Woofer code, which can be found here
+This repository hosts the code for the Dingo Quadruped. This repo is a forked, updated and heavily modified version of the Stanford Pupper and Stanford Woofer code, which can be found [here](https://github.com/stanfordroboticsclub/StanfordQuadruped)
 
 ## How it works
 The main program is ```run_robot.py``` which is located in this directory. The robot code is run as a loop, with a joystick interface, a controller, and a hardware interface orchestrating the behavior. 
@@ -18,9 +18,10 @@ Both the stance and swing controllers generate target positions for the feet in 
 
 ## How to Install and Run Dingo Code
 This repository includes several options for building and running Dingo. To get started, follow these instructions:
-On linux:
-- Install git and ros-noetic
-- Create a folder in your home folder called whatever you want.
+To install natively on Ubuntu20.04:
+- Install [ros-noetic](http://wiki.ros.org/noetic/Installation/Ubuntu)
+- Install git via `sudo apt-get install git`
+- Create a folder in your home folder: called whatever you want.
 - Open a terminal, cd into this new folder
 - Git clone the repo
 
