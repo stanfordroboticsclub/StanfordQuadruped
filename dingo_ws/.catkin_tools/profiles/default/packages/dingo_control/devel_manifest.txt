@@ -1,6 +1,19 @@
 dingo_control
 /dingo_ws/devel/.private/dingo_control/cmake.lock /dingo_ws/devel/./cmake.lock
+/dingo_ws/devel/.private/dingo_control/lib/.rosinstall /dingo_ws/devel/lib/.rosinstall
+/dingo_ws/devel/.private/dingo_control/lib/setup.zsh /dingo_ws/devel/lib/setup.zsh
+/dingo_ws/devel/.private/dingo_control/lib/setup.bash /dingo_ws/devel/lib/setup.bash
+/dingo_ws/devel/.private/dingo_control/lib/env.sh /dingo_ws/devel/lib/env.sh
+/dingo_ws/devel/.private/dingo_control/lib/cmake.lock /dingo_ws/devel/lib/cmake.lock
+/dingo_ws/devel/.private/dingo_control/lib/setup.sh /dingo_ws/devel/lib/setup.sh
+/dingo_ws/devel/.private/dingo_control/lib/local_setup.bash /dingo_ws/devel/lib/local_setup.bash
+/dingo_ws/devel/.private/dingo_control/lib/_setup_util.py /dingo_ws/devel/lib/_setup_util.py
+/dingo_ws/devel/.private/dingo_control/lib/local_setup.sh /dingo_ws/devel/lib/local_setup.sh
+/dingo_ws/devel/.private/dingo_control/lib/script.py.in /dingo_ws/devel/lib/script.py.in
+/dingo_ws/devel/.private/dingo_control/lib/local_setup.zsh /dingo_ws/devel/lib/local_setup.zsh
 /dingo_ws/devel/.private/dingo_control/lib/python3/dist-packages/dingo_control/__init__.py /dingo_ws/devel/lib/python3/dist-packages/dingo_control/__init__.py
 /dingo_ws/devel/.private/dingo_control/lib/pkgconfig/dingo_control.pc /dingo_ws/devel/lib/pkgconfig/dingo_control.pc
+/dingo_ws/devel/.private/dingo_control/lib/dingo_control/run_robot.py /dingo_ws/devel/lib/dingo_control/run_robot.py
+/dingo_ws/devel/.private/dingo_control/lib/dingo_control/cmake.lock /dingo_ws/devel/lib/dingo_control/cmake.lock
 /dingo_ws/devel/.private/dingo_control/share/dingo_control/cmake/dingo_controlConfig.cmake /dingo_ws/devel/share/dingo_control/cmake/dingo_controlConfig.cmake
 /dingo_ws/devel/.private/dingo_control/share/dingo_control/cmake/dingo_controlConfig-version.cmake /dingo_ws/devel/share/dingo_control/cmake/dingo_controlConfig-version.cmake
