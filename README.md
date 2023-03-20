@@ -18,31 +18,31 @@ Both the stance and swing controllers generate target positions for the feet in 
 
 ## How to Install and Run Dingo Code
 This repository includes several options for building and running Dingo. To get started, follow these instructions:
-To install natively on Ubuntu20.04:
-- Install [ros-noetic](http://wiki.ros.org/noetic/Installation/Ubuntu)
+### Installing Ubuntu 20.04 Server onto a Raspberry Pi
+
+### Installing natively on Ubuntu20.04:
+- Install [ros-noetic](http://wiki.ros.org/noetic/Installation/Ubuntu). 
 - Install git via `sudo apt-get install git`
-- Create a folder in your home folder: called whatever you want.
-- Open a terminal, cd into this new folder
-- Git clone the repo
+- Create a new folder in your home folder: `mkdir ~/any_folder_name`
+- Change directory to this new folder: `cd ~/any_folder_name`
+- Clone this repository into the folder using the most convenient clone method for you: `git clone ...`
 
 ### Running natively (on Ubuntu 20.04)
-For native installs, the dingo_ws folder contains everything you need and you can ignore the files inside the base folder.
-#### Installing
-- cd into dingo_ws folder
-- run install.sh to install
-#### Running the main program
-- start a roscore
-- rosrun [insert package name here] run_robot.py
+For native installs, the dingo_ws folder contains everything you need and you can ignore the files inside the base folder, as these are for building a docker container.
+- TODO
 
 ### Running from vscode via a docker container
-The files inside the base directory enable a docker container to be built and the code to be run in ROS. This is mostly for debugging purposes as stepping through code is enabled.
-#### Installing on linux
-- Download and install vscode
-- Add the following extensions to vscode: C/C++ Extension Pack, Docker, Dev Containers, ROS
-- In terminal, open base folder containing repository code
-- run . code to open folder in code
-- A prompt will appear saying to build container, click build
-- Check that "ROS1.noetic" appears in the bottom left to indicate that the ros extension has correctly detected the ros version inside the container. If it does not appear, follow these steps
+The files inside the base directory enable a docker container to be built and the code to inspected and debugged in visual studio code. This is mostly for debugging purposes. 
+####Instructions
+- Install [docker](https://docs.docker.com/engine/install/ubuntu/)
+- Install [vscode](https://code.visualstudio.com/docs/setup/linux)
+- Open vscode and add the following extensions: [C/C++ Extension Pack](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools-extension-pack), [Docker](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-docker), [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers), [ROS](https://marketplace.visualstudio.com/items?itemName=ms-iot.vscode-ros)
+- close vscode once extensions are installed
+- In terminal, open the base folder containing the dingo quadruped code: `cd ~/any_folder_name/DingoQuadruped`
+- run `. code` to open the dingo quadruped code in vscode
+- A prompt will appear saying to build container, click "build"
+- Wait for the container to be built
+- Once the container is built, Check that "ROS1.noetic" appears in the bottom left to indicate that the ros extension has correctly detected the ros version inside the container. If it does not appear, follow these steps
 - 
 
 
