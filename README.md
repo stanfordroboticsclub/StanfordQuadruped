@@ -18,32 +18,45 @@ Both the stance and swing controllers generate target positions for the feet in 
 
 ## How to Install and Run Dingo Code
 This repository includes several options for building and running Dingo. To get started, follow these instructions:
-### Installing Ubuntu 20.04 Server onto a Raspberry Pi
+### (Only for implementing this code on the quadruped itself) Installing Ubuntu 20.04 Server onto a Raspberry Pi
 
-### Installing natively on Ubuntu20.04:
+### (For all users) Installing this repository natively on Ubuntu20.04:
 - Install [ros-noetic](http://wiki.ros.org/noetic/Installation/Ubuntu). 
 - Install git via `sudo apt-get install git`
 - Create a new folder in your home folder: `mkdir ~/any_folder_name`
 - Change directory to this new folder: `cd ~/any_folder_name`
 - Clone this repository into the folder using the most convenient clone method for you: `git clone ...`
 
-### Running natively (on Ubuntu 20.04)
+### (For all users) Running natively
 For native installs, the dingo_ws folder contains everything you need and you can ignore the files inside the base folder, as these are for building a docker container.
 - TODO
 
-### Running from vscode via a docker container
-The files inside the base directory enable a docker container to be built and the code to inspected and debugged in visual studio code. This is mostly for debugging purposes. 
-####Instructions
+### [optional] Running from vscode via a docker container
+The files inside the base directory enable a docker container to be built and the code to inspected and debugged in visual studio code. This is mostly for debugging purposes, and is best for an external device debugging or adding to the code, rather than being used on the quadruped itself. Note: These instructions currently assume a linux OS. For windows the steps may vary in implementation but the goal of each step should be the same.
+#### Preparing vscode
 - Install [docker](https://docs.docker.com/engine/install/ubuntu/)
 - Install [vscode](https://code.visualstudio.com/docs/setup/linux)
 - Open vscode and add the following extensions: [C/C++ Extension Pack](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools-extension-pack), [Docker](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-docker), [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers), [ROS](https://marketplace.visualstudio.com/items?itemName=ms-iot.vscode-ros)
 - close vscode once extensions are installed
+#### Building and/or opening the container in vscode
 - In terminal, open the base folder containing the dingo quadruped code: `cd ~/any_folder_name/DingoQuadruped`
-- run `. code` to open the dingo quadruped code in vscode
-- A prompt will appear saying to build container, click "build"
-- Wait for the container to be built
-- Once the container is built, Check that "ROS1.noetic" appears in the bottom left to indicate that the ros extension has correctly detected the ros version inside the container. If it does not appear, follow these steps
-- 
+- run `. code` to open the dingo quadruped base folder in vscode
+- A prompt will appear saying either to build the container or run it, click "build" or "run"
+- Wait for the container to be built and initialised
+- (First time only) Once the container is built, Check that "ROS1.noetic" appears in the bottom left to indicate that the ros extension has correctly detected the ros version inside the container. If it does not appear, follow [these steps](https://youtu.be/JbBMF1aot5k?t=356)
+#### Using the ros workspace in vscode
+The ROS extension provides options to roslaunch and rosrun files inside vscode via the inbuilt terminal without needing to use the native linux terminal. The commands to do so are the same as in a native linux terminal. Currently, this repo has no support for nodes that use visualisation tools but any other files should launch or run as they would if you were using the native linux terminal. 
+
+To start/stop a roscore daemon inside vscode, you can type `ctrl+shift+P` in vscode, and then type `ROS: Start` to start and `ROS: Stop` to stop the roscore daemon.
+
+To build or rebuild the ros workspace, type `ctrl+shift+B`. If this does not work, you may need to edit the tasks.json file which tells vscode how to build the container. Ensure that the catkin build task defined in tasks.json includes the option `-DCMAKE_BUILD_TYPE=Debug`, as without this the vscode debugger will not work correctly.
+
+An important note, as the entire ros workspace is volume mounted, files can be edited inside the container and reflected in your native linux filesystem and vice versa. This means the code can be changed and debugged in the vscode container but run in the native linux terminal, with all changes being reflected. 
+
+#### Debugging with vscode
+The ROS extension has two options to enable debugging. The first is to attach to a running node which you start via the terminal with `rosrun package_name node_name`. The second is to debug from a launch file, where you use the debugger menu in vscode to play a launch file and then set waypoints in any nodes which the launch file starts. To set these up, please watch [this video](https://youtu.be/N2vqBvPQdhE?list=PL2dJBq8ig-vihvDVw-D5zAYOArTMIX0FA)
+
+If the debugger is not stopping at breakpoints, you may need to edit the tasks.json file which tells vscode how to build the container. Ensure that the catkin build task defined in tasks.json includes the option `-DCMAKE_BUILD_TYPE=Debug`.
 
 
 
