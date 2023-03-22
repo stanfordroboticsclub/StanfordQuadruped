@@ -1,2 +1,3 @@
 /teaching_ws/devel/./cmake.lock 231
 /dingo_ws/devel/./cmake.lock 23
+/home/alex/quadruped/DingoQuadruped/dingo_ws/devel/./cmake.lock 13
