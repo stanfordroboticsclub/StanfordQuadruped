@@ -1,0 +1,12 @@
+<launch>
+    <!-- Robot run file -->
+    <node pkg="dingo" type="run_robot.py"
+        name="dingo" output="screen"/>
+
+    <!-- Joystick Node -->
+    <include file="$(find dingo_joystick_interfacing)/launch/joystick.launch" />
+        <!--<arg name="coalesce_interval" value="0.02"/> -->
+        <!-- <arg name="autorepeat_rate" value="50"/> -->
+
+</launch>
+    

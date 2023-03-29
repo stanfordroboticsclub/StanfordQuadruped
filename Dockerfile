@@ -18,6 +18,7 @@ RUN apt-get update && \
     ros-noetic-soem \
     libvlccore-dev \
     libvlc-dev \
+    ros-noetic-joy \
     git 
 
 RUN pip3 install \

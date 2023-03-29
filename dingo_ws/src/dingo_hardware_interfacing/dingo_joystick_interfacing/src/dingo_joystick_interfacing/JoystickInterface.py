@@ -1,83 +1,110 @@
-import UDPComms
+#import UDPComms
+import rospy
 import numpy as np
 import time
 from dingo_control.State import BehaviorState, State
 from dingo_control.Command import Command
 from dingo_utilities.Utilities import deadband, clipped_first_order_filter
+from sensor_msgs.msg import Joy
 
 
 class JoystickInterface:
-    def __init__(
-        self, config, udp_port=8830, udp_publisher_port = 8840,
-    ):
+    def __init__(self, config):
         self.config = config
         self.previous_gait_toggle = 0
         self.previous_state = BehaviorState.REST
         self.previous_hop_toggle = 0
         self.previous_activate_toggle = 0
 
-        self.message_rate = 50
-        self.udp_handle = UDPComms.Subscriber(udp_port, timeout=0.3)
-        self.udp_publisher = UDPComms.Publisher(udp_publisher_port)
+        self.hop_event = 0
+        self.trot_event = 0
+        self.activate_event = 0
 
+        #self.udp_handle = UDPComms.Subscriber(udp_port, timeout=0.3)
+        #self.udp_publisher = UDPComms.Publisher(udp_publisher_port)
 
-    def get_command(self, state, do_print=False):
-        try:
-            msg = self.udp_handle.get()
-            command = Command()
-            
-            ####### Handle discrete commands ########
-            # Check if requesting a state transition to trotting, or from trotting to resting
-            gait_toggle = msg["R1"]
-            command.trot_event = (gait_toggle == 1 and self.previous_gait_toggle == 0)
+        self.joystick_messages = rospy.Subscriber("joy", Joy, self.callback)
+        self.current_command = Command()
+        self.new_command = Command()
+        self.developing_command = Command()
+        #self.previous_call_time = rospy.Time.now()
+        #self.current_call_time = self.previous_call_time
 
-            # Check if requesting a state transition to hopping, from trotting or resting
-            hop_toggle = msg["x"]
-            command.hop_event = (hop_toggle == 1 and self.previous_hop_toggle == 0)            
-            
-            activate_toggle = msg["L1"]
-            command.activate_event = (activate_toggle == 1 and self.previous_activate_toggle == 0)
+    def callback(self, msg):
+        #msg = self.udp_handle.get()
+        self.developing_command = Command()
+        ####### Handle discrete commands ########
+        # Check if requesting a state transition to trotting, or from trotting to resting
+        gait_toggle = msg.buttons[5] #R1
+        if self.trot_event != 1:
+            self.trot_event = (gait_toggle == 1 and self.previous_gait_toggle == 0)
 
-            # Update previous values for toggles and state
-            self.previous_gait_toggle = gait_toggle
-            self.previous_hop_toggle = hop_toggle
-            self.previous_activate_toggle = activate_toggle
+        # Check if requesting a state transition to hopping, from trotting or resting
+        hop_toggle = msg.buttons[0] #x
+        if self.hop_event != 1:
+            self.hop_event = (hop_toggle == 1 and self.previous_hop_toggle == 0)            
+        
+        activate_toggle = msg.buttons[4] #L1
+        if self.activate_event != 1:
+            self.activate_event = (activate_toggle == 1 and self.previous_activate_toggle == 0)
 
-            ####### Handle continuous commands ########
-            x_vel = msg["ly"] * self.config.max_x_velocity
-            y_vel = msg["lx"] * -self.config.max_y_velocity
-            command.horizontal_velocity = np.array([x_vel, y_vel])
-            command.yaw_rate = msg["rx"] * -self.config.max_yaw_rate
+        # Update previous values for toggles and state
+        self.previous_gait_toggle = gait_toggle
+        self.previous_hop_toggle = hop_toggle
+        self.previous_activate_toggle = activate_toggle
 
-            message_rate = msg["message_rate"]
-            message_dt = 1.0 / message_rate
+        ####### Handle continuous commands ########
+        x_vel = msg.axes[1] * self.config.max_x_velocity #ly
+        y_vel = msg.axes[0] * -self.config.max_y_velocity #lx
+        self.developing_command.horizontal_velocity = np.array([x_vel, y_vel])
+        self.developing_command.yaw_rate = msg.axes[3] * -self.config.max_yaw_rate #rx
 
-            pitch = msg["ry"] * self.config.max_pitch
-            deadbanded_pitch = deadband(
-                pitch, self.config.pitch_deadband
-            )
-            pitch_rate = clipped_first_order_filter(
-                state.pitch,
-                deadbanded_pitch,
-                self.config.max_pitch_rate,
-                self.config.pitch_time_constant,
-            )
-            command.pitch = state.pitch + message_dt * pitch_rate
+        
 
-            height_movement = msg["dpady"]
-            command.height = state.height - message_dt * self.config.z_speed * height_movement
-            
-            roll_movement = - msg["dpadx"]
-            command.roll = state.roll + message_dt * self.config.roll_speed * roll_movement
+        self.developing_command.pitch = msg.axes[4] * self.config.max_pitch #ry
+        self.developing_command.height = msg.axes[7] #dpady
+        self.developing_command.roll = msg.axes[6] #dpadx
+        #roll_movement = - msg["dpadx"]
+        #height_movement = msg["dpady"]
+        
 
-            return command
+        #except UDPComms.timeout:
+        #    if do_print:
+        #        print("UDP Timed out")
+        #    return Command()
+        self.new_command = self.developing_command
 
-        except UDPComms.timeout:
-            if do_print:
-                print("UDP Timed out")
-            return Command()
+    def get_command(self, state, message_rate):
 
+        self.current_command = self.new_command
+        self.current_command.trot_event = self.trot_event
+        self.current_command.hop_event  = self.hop_event
+        self.current_command.activate_event = self.activate_event
+        self.hop_event = 0
+        self.trot_event = 0
+        self.activate_event = 0
 
-    def set_color(self, color):
-        joystick_msg = {"ps4_color": color}
-        self.udp_publisher.send(joystick_msg)
+        #self.current_call_time = rospy.Time.now()
+        #time_difference = self.current_call_time- self.previous_call_time
+        #message_dt = (time_difference.to_nsec())/1e-6
+        message_dt = 1.0 / message_rate
+        #self.previous_call_time = self.current_call_time
+
+        deadbanded_pitch = deadband(
+            self.current_command.pitch, self.config.pitch_deadband
+        )
+        pitch_rate = clipped_first_order_filter(
+            state.pitch,
+            deadbanded_pitch,
+            self.config.max_pitch_rate,
+            self.config.pitch_time_constant,
+        )
+        self.current_command.pitch = state.pitch + message_dt * pitch_rate
+        self.current_command.height = state.height - message_dt * self.config.z_speed * self.current_command.height
+        self.current_command.roll = state.roll + message_dt * self.config.roll_speed * self.current_command.roll
+
+        return self.current_command
+    
+    #def set_color(self, color):
+    #    joystick_msg = {"ps4_color": color}
+    #    self.udp_publisher.send(joystick_msg)

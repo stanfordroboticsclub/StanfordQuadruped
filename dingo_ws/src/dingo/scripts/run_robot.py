@@ -1,20 +1,24 @@
 import numpy as np
 import time
+import rospy
 from dingo_nano_interfacing.IMU import IMU
 from dingo_control.Controller import Controller
 from dingo_joystick_interfacing.JoystickInterface import JoystickInterface
 from dingo_control.State import State
-from dingo_servo_interfacing.HardwareInterface import HardwareInterface
+#from dingo_servo_interfacing.HardwareInterface import HardwareInterface
 from dingo_servo_interfacing.Config import Configuration
 from dingo_control.Kinematics import four_legs_inverse_kinematics
 
 def main(use_imu=False):
     """Main program
     """
+    rospy.init_node("dingo")
+    message_rate = 50
+    rate = rospy.Rate(message_rate)
 
     # Create config
     config = Configuration()
-    hardware_interface = HardwareInterface()
+    #hardware_interface = HardwareInterface()
 
     # Create imu handle
     if use_imu:
@@ -40,25 +44,25 @@ def main(use_imu=False):
     print("x shift: ", config.x_shift)
 
     # Wait until the activate button has been pressed
-    while True:
+    while not rospy.is_shutdown():      
         print("Waiting for L1 to activate robot.")
         while True:
-            command = joystick_interface.get_command(state)
-            joystick_interface.set_color(config.ps4_deactivated_color)
+            command = joystick_interface.get_command(state,message_rate)
+            #joystick_interface.set_color(config.ps4_deactivated_color)
             if command.activate_event == 1:
                 break
-            time.sleep(0.1)
+            rate.sleep()
         print("Robot activated.")
-        joystick_interface.set_color(config.ps4_color)
+        #joystick_interface.set_color(config.ps4_color)
 
         while True:
-            now = time.time()
-            if now - last_loop < config.dt:
-                continue
-            last_loop = time.time()
-
+            #now = time.time()
+            #if now - last_loop < config.dt:
+            #    continue
+            #last_loop = time.time()
+            time.start = rospy.Time.now()
             # Parse the udp joystick commands and then update the robot controller's parameters
-            command = joystick_interface.get_command(state)
+            command = joystick_interface.get_command(state,message_rate)
             if command.activate_event == 1:
                 print("Deactivating Robot")
                 break
@@ -72,8 +76,11 @@ def main(use_imu=False):
             # Step the controller forward by dt
             controller.run(state, command)
 
+            time.end = rospy.Time.now()
+            print(str(time.start-time.end))
+            rate.sleep()
             # Update the pwm widths going to the servos
-            hardware_interface.set_actuator_postions(state.joint_angles)
+            #hardware_interface.set_actuator_postions(state.joint_angles)
 
 
 main()
