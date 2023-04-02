@@ -77,7 +77,8 @@ def main(use_imu=False):
             controller.run(state, command)
 
             time.end = rospy.Time.now()
-            print(str(time.start-time.end))
+            #Uncomment following line if want to see how long it takes to execute a control iteration
+            #print(str(time.start-time.end))
             rate.sleep()
             # Update the pwm widths going to the servos
             #hardware_interface.set_actuator_postions(state.joint_angles)

@@ -1,6 +1,6 @@
 dingo_utilities
-/home/alex/quadruped/DingoQuadruped/dingo_ws/devel/.private/dingo_utilities/cmake.lock /home/alex/quadruped/DingoQuadruped/dingo_ws/devel/./cmake.lock
-/home/alex/quadruped/DingoQuadruped/dingo_ws/devel/.private/dingo_utilities/lib/python3/dist-packages/dingo_utilities/__init__.py /home/alex/quadruped/DingoQuadruped/dingo_ws/devel/lib/python3/dist-packages/dingo_utilities/__init__.py
-/home/alex/quadruped/DingoQuadruped/dingo_ws/devel/.private/dingo_utilities/lib/pkgconfig/dingo_utilities.pc /home/alex/quadruped/DingoQuadruped/dingo_ws/devel/lib/pkgconfig/dingo_utilities.pc
-/home/alex/quadruped/DingoQuadruped/dingo_ws/devel/.private/dingo_utilities/share/dingo_utilities/cmake/dingo_utilitiesConfig.cmake /home/alex/quadruped/DingoQuadruped/dingo_ws/devel/share/dingo_utilities/cmake/dingo_utilitiesConfig.cmake
-/home/alex/quadruped/DingoQuadruped/dingo_ws/devel/.private/dingo_utilities/share/dingo_utilities/cmake/dingo_utilitiesConfig-version.cmake /home/alex/quadruped/DingoQuadruped/dingo_ws/devel/share/dingo_utilities/cmake/dingo_utilitiesConfig-version.cmake
+/dingo_ws/devel/.private/dingo_utilities/cmake.lock /dingo_ws/devel/./cmake.lock
+/dingo_ws/devel/.private/dingo_utilities/lib/python3/dist-packages/dingo_utilities/__init__.py /dingo_ws/devel/lib/python3/dist-packages/dingo_utilities/__init__.py
+/dingo_ws/devel/.private/dingo_utilities/lib/pkgconfig/dingo_utilities.pc /dingo_ws/devel/lib/pkgconfig/dingo_utilities.pc
+/dingo_ws/devel/.private/dingo_utilities/share/dingo_utilities/cmake/dingo_utilitiesConfig.cmake /dingo_ws/devel/share/dingo_utilities/cmake/dingo_utilitiesConfig.cmake
+/dingo_ws/devel/.private/dingo_utilities/share/dingo_utilities/cmake/dingo_utilitiesConfig-version.cmake /dingo_ws/devel/share/dingo_utilities/cmake/dingo_utilitiesConfig-version.cmake

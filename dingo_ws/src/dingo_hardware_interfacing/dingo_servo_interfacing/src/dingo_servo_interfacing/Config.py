@@ -81,30 +81,27 @@ class Configuration:
         )
 
         ######################## GEOMETRY ######################
+
+        #FOLLOWING WE ACTUALLY USE
         self.LEG_FB = 0.10  # front-back distance from center line to leg axis
         self.LEG_LR = 0.04  # left-right distance from center line to leg plane
-        self.LEG_L2 = 0.115
-        self.LEG_L1 = 0.1235
-        self.ABDUCTION_OFFSET = 0.03  # distance from abduction axis to leg
-        self.FOOT_RADIUS = 0.01
-
-        self.HIP_L = 0.0394
-        self.HIP_W = 0.0744
-        self.HIP_T = 0.0214
-        self.HIP_OFFSET = 0.0132
-
-        self.L = 0.276
-        self.W = 0.100
-        self.T = 0.050
-
-        self.LEG_ORIGINS = np.array(
+        self.LEG_ORIGINS = np.array( #Origins of the initial frame from the centre of the body
             [
                 [self.LEG_FB, self.LEG_FB, -self.LEG_FB, -self.LEG_FB],
                 [-self.LEG_LR, self.LEG_LR, -self.LEG_LR, self.LEG_LR],
                 [0, 0, 0, 0],
             ]
         )
-
+        self.L1 = 0.04973
+        self.L2 = 0.140
+        self.L3 = 0.1631477
+        self.phi = 73.17
+        
+        
+        #Obsolete but here in case we need them/revert to old IK:
+        self.LEG_L2 = 0.115
+        self.LEG_L1 = 0.1235
+        self.ABDUCTION_OFFSET = 0.03  # distance from abduction axis to leg
         self.ABDUCTION_OFFSETS = np.array(
             [
                 -self.ABDUCTION_OFFSET,
@@ -113,6 +110,16 @@ class Configuration:
                 self.ABDUCTION_OFFSET,
             ]
         )
+        
+        #Think the following can be removed entirely, not referenced anywhere else but here:
+        self.HIP_L = 0.0394
+        self.FOOT_RADIUS = 0.01
+        self.HIP_W = 0.0744
+        self.HIP_T = 0.0214
+        self.HIP_OFFSET = 0.0132
+        self.L = 0.276
+        self.W = 0.100
+        self.T = 0.050
 
         ################### INERTIAL ####################
         self.FRAME_MASS = 0.560  # kg
