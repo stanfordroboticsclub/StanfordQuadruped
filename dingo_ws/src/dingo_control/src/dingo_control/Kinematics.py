@@ -2,7 +2,7 @@ import numpy as np
 from numpy.linalg import inv, norm
 from numpy import array, asarray, matrix
 from math import *
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 from dingo_control.util import RotMatrix3D, point_to_rad
 from transforms3d.euler import euler2mat
 
@@ -25,24 +25,20 @@ def leg_explicit_inverse_kinematics(r_body_foot, leg_index, config):
         Array of corresponding joint angles.
     """
 
+    #Determine if leg is a right or a left leg
     if leg_index == 2 or leg_index == 4:
         is_right = 0
     else:
         is_right = 1
     
-    (x, y, z) = r_body_foot
-
-    #The following will be needed to rotate the origin frame to be on the correct axis for calculating theta_1:
-        #j2 = array([0,config.L1*cos(theta_1),config.L1*sin(theta_1)])
-        #j4 = array(r_body_foot)
-        #j4_2_vec = j4 - j2 # vector from j2 to j4
-        
-        #if is_right: R1 = 
-        #else: R1 = 
-        
-        # create rotation matrix to work on a new 2D plane (XZ_)
-        #rot_mtx = RotMatrix3D([-R2,0,0],is_radians=True)
-        #j4_2_vec_ = rot_mtx * (np.reshape(j4_2_vec,[3,1]))
+    #rotate the origin frame to be in-line with L1 for calculating theta_1 (rotation about x-axis):
+    R1 = 90 - config.phi
+    if is_right: rot_mtx = RotMatrix3D([R1,0,0],is_radians=True)
+    else: rot_mtx = RotMatrix3D([-R1,0,0],is_radians=True)
+    r_body_foot_ = rot_mtx * (np.reshape(r_body_foot,[3,1]))
+    
+    # xyz in the rotated coordinate system
+    (x, y, z) = r_body_foot_
 
     # length of vector projected on the YZ plane. equiv. to len_A = sqrt(y**2 + z**2)
     len_A = norm([0,y,z])   
@@ -104,7 +100,7 @@ def leg_explicit_inverse_kinematics(r_body_foot, leg_index, config):
     j4_ = j3_ + np.reshape(np.array([config.L3*cos(theta_2+theta_3),0, config.L3*sin(theta_2+theta_3)]), [3,1])
     j4 = np.asarray(j2 + np.reshape(np.linalg.inv(rot_mtx)*j4_, [1,3])).flatten()
     
-    #Calculating theta_4 (angle of the servo attached to the linkage to achieve desired theta_3 and theta_2 combo)
+    #Calculating theta_0 (angle of the servo attached to the linkage to achieve desired theta_3 and theta_2 combo)
     #theta_0 = linkage_calculation(theta_2, theta_3)
 
     # modify angles to match robot's configuration (i.e., adding offsets)
