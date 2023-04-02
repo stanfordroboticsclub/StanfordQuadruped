@@ -1,0 +1,3 @@
+<launch>
+    <node pkg = "dingo_lcd_interfacing" type = "dingo_lcd_interfacing.py" name = "dingo_LCD_node" output="screen"></node>
+</launch>
