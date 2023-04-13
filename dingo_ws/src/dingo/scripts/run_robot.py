@@ -49,7 +49,7 @@ def main(use_imu=False):
     config = Configuration()
 
     if is_physical:
-        linkage = Leg_linkage(Configuration)
+        linkage = Leg_linkage(config)
         hardware_interface = HardwareInterface(linkage)
         # Create imu handle
         if use_imu:

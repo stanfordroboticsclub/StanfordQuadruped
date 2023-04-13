@@ -1,2 +1,2 @@
 dingo_gazebo
-/home/alex/quadruped/DingoQuadruped/dingo_ws/devel/.private/notspot_gazebo/cmake.lock /home/alex/quadruped/DingoQuadruped/dingo_ws/devel/./cmake.lock
+/home/admin/DingoQuadruped/dingo_ws/devel/.private/notspot_gazebo/cmake.lock /home/admin/DingoQuadruped/dingo_ws/devel/./cmake.lock

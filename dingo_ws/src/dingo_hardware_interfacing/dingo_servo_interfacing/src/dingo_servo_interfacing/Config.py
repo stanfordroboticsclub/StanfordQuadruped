@@ -2,6 +2,7 @@ import numpy as np
 from dingo_servo_interfacing.ServoCalibration import MICROS_PER_RAD, NEUTRAL_ANGLE_DEGREES
 from dingo_joystick_interfacing.HardwareConfig import PS4_COLOR, PS4_DEACTIVATED_COLOR
 from enum import Enum
+import math as m
 
 
 
@@ -69,9 +70,9 @@ class Configuration:
                 [0, 0, 0, 0],
             ]
         )
-        self.L1 = 0.04973
+        self.L1 = 0.04973   
         self.L2 = 0.140
-        self.L3 = 0.1631477
+        self.L3 = 0.1621477
         self.phi = 73.17
         
         
@@ -220,14 +221,14 @@ class Leg_linkage:
         self.c = 45 #mm
         self.d = 35.23  #mm
         self.e = 67.1 #mm
-        self.f = 130.2 #mm
+        self.f = 142.2 #mm  #new will be 130.2
         self.g = 37 #mm
         self.h = 45 #mm
-        self.upper_leg_length = configuration.L2
-        self.lower_leg_length = configuration.L3
+        self.upper_leg_length = configuration.L2*1000
+        self.lower_leg_length = configuration.L3*1000
         self.lower_leg_bend_angle = m.radians(6.73) # degrees found on CAD
         self.i = self.upper_leg_length
-        self.hip_width = configuration.L1
+        self.hip_width = configuration.L1 * 1000
         self.gamma = m.atan(28.80/20.20)
         self.EDC = m.acos((self.c**2+self.h**2-self.e**2)/(2*self.c*self.h))
 

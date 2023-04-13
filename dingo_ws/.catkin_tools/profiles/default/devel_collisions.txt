@@ -1,4 +1,4 @@
 /teaching_ws/devel/./cmake.lock 231
 /dingo_ws/devel/./cmake.lock 44
-/home/alex/quadruped/DingoQuadruped/dingo_ws/devel/./cmake.lock 65
-/home/admin/DingoQuadruped/dingo_ws/devel/./cmake.lock 14
+/home/alex/quadruped/DingoQuadruped/dingo_ws/devel/./cmake.lock 56
+/home/admin/DingoQuadruped/dingo_ws/devel/./cmake.lock 23
