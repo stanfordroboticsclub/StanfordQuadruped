@@ -7,7 +7,7 @@ from dingo_control.Controller import Controller
 from dingo_joystick_interfacing.JoystickInterface import JoystickInterface
 from dingo_control.State import State
 from dingo_servo_interfacing.HardwareInterface import HardwareInterface
-from dingo_servo_interfacing.Config import Configuration
+from dingo_servo_interfacing.Config import Configuration,Leg_linkage
 from dingo_control.Kinematics import four_legs_inverse_kinematics
 
 def main(use_imu=False):
@@ -49,7 +49,8 @@ def main(use_imu=False):
     config = Configuration()
 
     if is_physical:
-        hardware_interface = HardwareInterface()
+        linkage = Leg_linkage(Configuration)
+        hardware_interface = HardwareInterface(linkage)
         # Create imu handle
         if use_imu:
             imu = IMU(port="/dev/ttyACM0")

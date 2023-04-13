@@ -3,29 +3,6 @@ from dingo_servo_interfacing.ServoCalibration import MICROS_PER_RAD, NEUTRAL_ANG
 from dingo_joystick_interfacing.HardwareConfig import PS4_COLOR, PS4_DEACTIVATED_COLOR
 from enum import Enum
 
-# TODO: put these somewhere else
-class PWMParams:
-    def __init__(self):
-        self.pins = np.array([[2, 14, 18, 23], [3, 15, 27, 24], [4, 17, 22, 25]])
-        self.range = 4000
-        self.freq = 250
-
-
-class ServoParams:
-    def __init__(self):
-        self.neutral_position_pwm = 1500  # Middle position
-        self.micros_per_rad = MICROS_PER_RAD  # Must be calibrated
-
-        # The neutral angle of the joint relative to the modeled zero-angle in degrees, for each joint
-        self.neutral_angle_degrees = NEUTRAL_ANGLE_DEGREES
-
-        self.servo_multipliers = np.array(
-            [[1, 1, 1, 1], [-1, 1, -1, 1], [1, -1, 1, -1]]
-        )
-
-    @property
-    def neutral_angles(self):
-        return self.neutral_angle_degrees * np.pi / 180.0  # Convert to radians
 
 
 class Configuration:
@@ -233,3 +210,24 @@ class SimulationConfig:
         # Force limits
         self.MAX_JOINT_TORQUE = 3.0
         self.REVOLUTE_RANGE = 1.57
+
+
+# Leg Linkage for the purpose of hardware interfacing
+class Leg_linkage:
+    def __init__(self,configuration):
+        self.a = 35.12 #mm
+        self.b = 37.6 #mm
+        self.c = 45 #mm
+        self.d = 35.23  #mm
+        self.e = 67.1 #mm
+        self.f = 130.2 #mm
+        self.g = 37 #mm
+        self.h = 45 #mm
+        self.upper_leg_length = configuration.L2
+        self.lower_leg_length = configuration.L3
+        self.lower_leg_bend_angle = m.radians(6.73) # degrees found on CAD
+        self.i = self.upper_leg_length
+        self.hip_width = configuration.L1
+        self.gamma = m.atan(28.80/20.20)
+        self.EDC = m.acos((self.c**2+self.h**2-self.e**2)/(2*self.c*self.h))
+
