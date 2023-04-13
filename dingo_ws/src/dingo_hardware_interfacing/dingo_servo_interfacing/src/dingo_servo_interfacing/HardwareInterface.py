@@ -214,7 +214,7 @@ joint_angles = np.array([[hip_angle,     hip_angle,      hip_angle,      hip_ang
 
 hardware_interface.set_actuator_postions(joint_angles)
 
-
+##########################################################################################
 # ORIGINAL CODE BELOW
 
 # class HardwareInterface:
