@@ -1,0 +1,28 @@
+<launch>
+
+    <!-- Empty World -->
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+      <arg name="world_name" value="$(find notspot_gazebo)/launch/world/normal.world"/>
+      <arg name="use_sim_time" value="true"/>
+    </include>
+
+    <!-- Robot -->
+    <arg name="robot" default="$(find dingo_description)/urdf/notspot.urdf"/>
+    <param name="robot_description" command="$(find xacro)/xacro --inorder $(arg robot)" />
+    <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-param robot_description -urdf -z 0.5 -model notspot_gazebo"/>
+
+    <!-- Controllers -->
+    <rosparam file="$(find dingo_gazebo)/config/controllers.yaml" command="load"/>
+    <node name="controller_spawner" pkg="controller_manager" type="spawner" output="screen" ns="dingo_controller"
+          args="FR1_joint FR2_joint FR3_joint
+                FL1_joint FL2_joint FL3_joint
+                RR1_joint RR2_joint RR3_joint
+                RL1_joint RL2_joint RL3_joint"/>
+
+    <!-- Robot State Publisher -->
+    <node pkg="robot_state_publisher" type="robot_state_publisher"  name="robot_state_publisher" respawn="false" output="screen">
+      <remap from="/joint_states" to="/dingo_gazebo/joint_states" />
+      <param name="publish_frequency" type="double" value="10" />
+    </node>
+  
+</launch>

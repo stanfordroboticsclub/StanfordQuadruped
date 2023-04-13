@@ -1,0 +1,70 @@
+dingo_controller:
+  
+  joint_states_controller:
+      type: joint_state_controller/JointStateController
+      publish_rate: 25
+
+  # FL Controllers ------------------------------------------------------------ 
+  FL1_joint:
+      type: effort_controllers/JointPositionController
+      joint: FL1_joint
+      pid: {p: 9, i: 0.03, d: 0.3055, i_clamp_min:  -1000, i_clamp_max: 1000}
+        
+  FL2_joint:
+      type: effort_controllers/JointPositionController
+      joint: FL2_joint
+      pid: {p: 9, i: 0.03, d: 0.3055, i_clamp_min:  -1000, i_clamp_max: 1000}
+        
+  FL3_joint:
+      type: effort_controllers/JointPositionController
+      joint: FL3_joint
+      pid: {p: 9, i: 0.03, d: 0.3055, i_clamp_min:  -1000, i_clamp_max: 1000}
+
+  # FR Controllers ------------------------------------------------------------ 
+  FR1_joint:
+      type: effort_controllers/JointPositionController
+      joint: FR1_joint
+      pid: {p: 9, i: 0.03, d: 0.3055, i_clamp_min:  -1000, i_clamp_max: 1000}
+        
+  FR2_joint:
+      type: effort_controllers/JointPositionController
+      joint: FR2_joint
+      pid: {p: 9, i: 0.03, d: 0.3055, i_clamp_min:  -1000, i_clamp_max: 1000}
+        
+  FR3_joint:
+      type: effort_controllers/JointPositionController
+      joint: FR3_joint
+      pid: {p: 9, i: 0.03, d: 0.3055, i_clamp_min:  -1000, i_clamp_max: 1000}
+
+  # RR Controllers ------------------------------------------------------------ 
+  RR1_joint:
+      type: effort_controllers/JointPositionController
+      joint: RR1_joint
+      pid: {p: 9, i: 0.03, d: 0.3055, i_clamp_min:  -1000, i_clamp_max: 1000}
+        
+  RR2_joint:
+      type: effort_controllers/JointPositionController
+      joint: RR2_joint
+      pid: {p: 9, i: 0.03, d: 0.3055, i_clamp_min:  -1000, i_clamp_max: 1000}
+        
+  RR3_joint:
+      type: effort_controllers/JointPositionController
+      joint: RR3_joint
+      pid: {p: 9, i: 0, d: 0.3055, i_clamp_min:  -1000, i_clamp_max: 1000}
+
+  # RL Controllers ------------------------------------------------------------     
+  RL1_joint:
+      type: effort_controllers/JointPositionController
+      joint: RL1_joint
+      pid: {p: 9, i: 0.03, d: 0.3055, i_clamp_min:  -1000, i_clamp_max: 1000}
+        
+  RL2_joint:
+      type: effort_controllers/JointPositionController
+      joint: RL2_joint
+      pid: {p: 9, i: 0.03, d: 0.3055, i_clamp_min:  -1000, i_clamp_max: 1000}
+        
+  RL3_joint:
+      type: effort_controllers/JointPositionController
+      joint: RL3_joint
+      pid: {p: 9, i: 0.03, d: 0.3055, i_clamp_min:  -1000, i_clamp_max: 1000}
+        

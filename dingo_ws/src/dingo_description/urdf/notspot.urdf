@@ -1,0 +1,1020 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Author: lnotspotl -->
+
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com)
+     Commit Version: 1.5.1-0-g916b5db  Build Version: 1.5.7152.31018
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+
+<robot name="notspot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- Maximum torque -->
+  <xacro:property name="effort_limit" value="1.4" />
+
+  <!-- base_link -->
+  <link name="base_link">
+    <inertial>
+      <origin
+        xyz="-0.00048043 9.0814E-05 0.00023409"
+        rpy="0 0 0" />
+      <mass
+        value="0.81776" />
+      <inertia
+        ixx="0.00058474"
+        ixy="-1.0045E-06"
+        ixz="1.0886E-08"
+        iyy="0.00029699"
+        iyz="3.2027E-08"
+        izz="0.00063853" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://notspot_description/meshes/body_obj.obj" />
+      </geometry>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+      	<box size="0.25 0.1285 0.055"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- FR1 -->
+  <link name="FR1">
+    <inertial>
+      <origin
+        xyz="0.011092 -0.0032719 0.00019267"
+        rpy="0 0 0" />
+      <mass
+        value="0.15379" />
+      <inertia
+        ixx="4.474E-05"
+        ixy="-1.0746E-05"
+        ixz="-1.7651E-07"
+        iyy="4.3489E-05"
+        iyz="-7.8105E-08"
+        izz="6.8646E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://notspot_description/meshes/FR1_obj.obj" />
+      </geometry>
+    </visual>
+  </link>
+
+	<!-- FR2 -->
+  <link name="FR2">
+    <inertial>
+      <origin
+        xyz="0.038603 -0.0025578 -0.0001752"
+        rpy="0 0 0" />
+      <mass
+        value="0.15106" />
+      <inertia
+        ixx="2.365E-05"
+        ixy="-5.3771E-07"
+        ixz="-1.6144E-06"
+        iyy="0.00010469"
+        iyz="8.3059E-08"
+        izz="0.00011187" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://notspot_description/meshes/R2_obj.obj" />
+      </geometry>
+    </visual>
+    <collision>
+      <origin
+        xyz="0.04 0 0"
+        rpy="0 1.57075 0" />
+      <geometry>
+        <cylinder length="0.125" radius="0.014"/>
+      </geometry>
+    </collision>
+  </link>
+
+	<!-- FR3 -->
+  <link name="FR3">
+    <inertial>
+      <origin
+        xyz="0.029797 -0.00098828 -9.2749E-05"
+        rpy="0 0 0" />
+      <mass
+        value="0.023372" />
+      <inertia
+        ixx="6.565E-07"
+        ixy="6.8071E-07"
+        ixz="-1.0503E-07"
+        iyy="2.7257E-05"
+        iyz="3.918E-09"
+        izz="2.7469E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://notspot_description/meshes/R3_obj.obj" />
+      </geometry>
+    </visual>
+    <collision>
+      <origin
+        xyz="0.045 0 0"
+        rpy="0 1.57075 0" />
+      <geometry>
+        <cylinder length="0.06" radius="0.007"/>
+      </geometry>
+    </collision>
+  </link>
+
+	<!-- FR4 -->
+  <link name="FR4">
+    <inertial>
+      <origin
+        xyz="0.00 0 0"
+        rpy="0 0 0" />
+     <mass
+        value="0.0391" />
+      <inertia
+        ixx="3.7713E-012"
+        ixy="0"
+        ixz="0"
+        iyy="3.5422E-12"
+        iyz="0"
+        izz="5.443E-012" />
+    </inertial>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <sphere radius="0.0072"/>
+      </geometry>
+    </collision>
+  </link>
+
+	<!-- FL1 -->
+  <link name="FL1">
+    <inertial>
+      <origin
+        xyz="-0.011124 -0.0032814 0.00014476"
+        rpy="0 0 0" />
+      <mass
+        value="0.15334" />
+      <inertia
+        ixx="4.4732E-05"
+        ixy="1.0746E-05"
+        ixz="1.7651E-07"
+        iyy="4.3482E-05"
+        iyz="-7.8105E-08"
+        izz="6.8645E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://notspot_description/meshes/FL1_obj.obj" />
+      </geometry>
+    </visual>
+  </link>
+
+	<!-- FL2 -->
+  <link name="FL2">
+    <inertial>
+      <origin
+        xyz="0.038603 -0.0025578 0.0001752"
+        rpy="0 0 0" />
+      <mass
+        value="0.15106" />
+      <inertia
+        ixx="2.365E-05"
+        ixy="-5.3771E-07"
+        ixz="1.6144E-06"
+        iyy="0.00010469"
+        iyz="-8.306E-08"
+        izz="0.00011187" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://notspot_description/meshes/L2_obj.obj" />
+      </geometry>
+    </visual>
+    <collision>
+      <origin
+        xyz="0.04 0 0"
+        rpy="0 1.57075 0" />
+      <geometry>
+        <cylinder length="0.125" radius="0.014"/>
+      </geometry>
+    </collision>
+  </link>
+
+	<!-- FL3 -->
+  <link name="FL3">
+    <inertial>
+      <origin
+        xyz="0.029797 -0.0009883 9.2751E-05"
+        rpy="0 0 0" />
+      <mass
+        value="0.023372" />
+      <inertia
+        ixx="6.565E-07"
+        ixy="6.8071E-07"
+        ixz="1.0503E-07"
+        iyy="2.7257E-05"
+        iyz="-3.918E-09"
+        izz="2.7469E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://notspot_description/meshes/L3_obj.obj" />
+      </geometry>
+    </visual>
+    <collision>
+      <origin
+        xyz="0.045 0 0"
+        rpy="0 1.57075 0" />
+      <geometry>
+        <cylinder length="0.06" radius="0.007"/>
+      </geometry>
+    </collision>
+  </link>
+
+	<!-- FL4 -->
+  <link name="FL4">
+    <inertial>
+      <origin
+        xyz="0.00 0 0"
+        rpy="0 0 0" />
+     <mass
+        value="0.0391" />
+      <inertia
+        ixx="3.7713E-012"
+        ixy="0"
+        ixz="0"
+        iyy="3.5422E-12"
+        iyz="0"
+        izz="5.443E-012" />
+    </inertial>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <sphere radius="0.0072"/>
+      </geometry>
+    </collision>
+  </link>
+
+	<!-- RR1 -->
+  <link name="RR1">
+    <inertial>
+      <origin
+        xyz="0.011092 -0.0032719 -0.00019266"
+        rpy="0 0 0" />
+      <mass
+        value="0.15379" />
+      <inertia
+        ixx="4.474E-05"
+        ixy="-1.0746E-05"
+        ixz="1.7651E-07"
+        iyy="4.3489E-05"
+        iyz="7.8105E-08"
+        izz="6.8646E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://notspot_description/meshes/RR1_obj.obj" />
+      </geometry>
+    </visual>
+  </link>
+
+	<!-- RR2 -->
+  <link name="RR2">
+    <inertial>
+      <origin
+        xyz="0.038603 -0.0025578 -0.0001752"
+        rpy="0 0 0" />
+      <mass
+        value="0.15106" />
+      <inertia
+        ixx="2.365E-05"
+        ixy="-5.3771E-07"
+        ixz="-1.6144E-06"
+        iyy="0.00010469"
+        iyz="8.3059E-08"
+        izz="0.00011187" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://notspot_description/meshes/R2_obj.obj" />
+      </geometry>
+    </visual>
+    <collision>
+      <origin
+        xyz="0.04 0 0"
+        rpy="0 1.57075 0" />
+      <geometry>
+        <cylinder length="0.125" radius="0.014"/>
+      </geometry>
+    </collision>
+  </link>
+
+	<!-- RR3 -->
+  <link name="RR3">
+    <inertial>
+      <origin
+        xyz="0.029797 -0.00098828 -9.2749E-05"
+        rpy="0 0 0" />
+      <mass
+        value="0.023372" />
+      <inertia
+        ixx="6.565E-07"
+        ixy="6.8071E-07"
+        ixz="-1.0503E-07"
+        iyy="2.7257E-05"
+        iyz="3.918E-09"
+        izz="2.7469E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://notspot_description/meshes/R3_obj.obj" />
+      </geometry>
+    </visual>
+    <collision>
+      <origin
+        xyz="0.045 0 0"
+        rpy="0 1.57075 0" />
+      <geometry>
+        <cylinder length="0.06" radius="0.007"/>
+      </geometry>
+    </collision>
+  </link>
+
+	<!-- RR4 -->
+  <link name="RR4">
+    <inertial>
+      <origin
+        xyz="0.00 0 0"
+        rpy="0 0 0" />
+     <mass
+        value="0.0391" />
+      <inertia
+        ixx="3.7713E-012"
+        ixy="0"
+        ixz="0"
+        iyy="3.5422E-12"
+        iyz="0"
+        izz="5.443E-012" />
+    </inertial>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <sphere radius="0.0072"/>
+      </geometry>
+    </collision>
+  </link>
+
+	<!-- RL1 -->
+  <link name="RL1">
+    <inertial>
+      <origin
+        xyz="-0.011092 -0.0032719 -0.00019266"
+        rpy="0 0 0" />
+      <mass
+        value="0.15379" />
+      <inertia
+        ixx="4.474E-05"
+        ixy="1.0746E-05"
+        ixz="-1.7651E-07"
+        iyy="4.3489E-05"
+        iyz="7.8105E-08"
+        izz="6.8646E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://notspot_description/meshes/RL1_obj.obj" />
+      </geometry>
+    </visual>
+  </link>
+  
+	<!-- RL2 -->
+  <link name="RL2">
+    <inertial>
+      <origin
+        xyz="0.038603 -0.0025578 0.0001752"
+        rpy="0 0 0" />
+      <mass
+        value="0.15106" />
+      <inertia
+        ixx="2.365E-05"
+        ixy="-5.3771E-07"
+        ixz="1.6144E-06"
+        iyy="0.00010469"
+        iyz="-8.306E-08"
+        izz="0.00011187" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://notspot_description/meshes/L2_obj.obj" />
+      </geometry>
+    </visual>
+    <collision>
+      <origin
+        xyz="0.04 0 0"
+        rpy="0 1.57075 0" />
+      <geometry>
+        <cylinder length="0.125" radius="0.014"/>
+      </geometry>
+    </collision>
+  </link>
+
+	<!-- RL3 -->
+  <link name="RL3">
+    <inertial>
+      <origin
+        xyz="0.029797 -0.0009883 9.2751E-05"
+        rpy="0 0 0" />
+      <mass
+        value="0.023372" />
+      <inertia
+        ixx="6.565E-07"
+        ixy="6.8071E-07"
+        ixz="1.0503E-07"
+        iyy="2.7257E-05"
+        iyz="-3.918E-09"
+        izz="2.7469E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://notspot_description/meshes/L3_obj.obj" />
+      </geometry>
+    </visual>
+    <collision>
+      <origin
+        xyz="0.045 0 0"
+        rpy="0 1.57075 0" />
+      <geometry>
+        <cylinder length="0.06" radius="0.007"/>
+      </geometry>
+    </collision>
+  </link>
+
+	<!-- RL4 -->
+  <link name="RL4">
+    <inertial>
+      <origin
+        xyz="0.00 0 0"
+        rpy="0 0 0" />
+     <mass
+        value="0.0391" />
+      <inertia
+        ixx="3.7713E-012"
+        ixy="0"
+        ixz="0"
+        iyy="3.5422E-12"
+        iyz="0"
+        izz="5.443E-012" />
+    </inertial>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <sphere radius="0.0072"/>
+      </geometry>
+    </collision>
+  </link>
+
+<!-- JOINTS -->
+
+  <joint name="FR1_joint"
+    type="revolute">
+    <origin
+      xyz="0.0954 -0.04 0"
+      rpy="1.5708 0 -1.5708" />
+    <parent
+      link="base_link" />
+    <child
+      link="FR1" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-3"
+      upper="3"
+      effort="${effort_limit}"
+      velocity="3" />
+  </joint>
+
+
+  <joint name="FR2_joint"
+    type="revolute">
+    <origin
+      xyz="0.0469 0 0"
+      rpy="1.5708 0 -1.5708" />
+    <parent
+      link="FR1" />
+    <child
+      link="FR2" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-3"
+      upper="3"
+      effort="${effort_limit}"
+      velocity="3" />
+  </joint>
+
+  <joint name="FR3_joint"
+    type="revolute">
+    <origin
+      xyz="0.1 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="FR2" />
+    <child
+      link="FR3" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-3"
+      upper="3"
+      effort="${effort_limit}"
+      velocity="3" />
+  </joint>
+
+  <joint name="FR4_joint"
+    type="fixed">
+    <origin
+      xyz="0.094333 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="FR3" />
+    <child
+      link="FR4" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+
+  <joint name="FL1_joint"
+    type="revolute">
+    <origin
+      xyz="0.0954 0.04 0"
+      rpy="1.5708 0 -1.5708" />
+    <parent
+      link="base_link" />
+    <child
+      link="FL1" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-3"
+      upper="3"
+      effort="${effort_limit}"
+      velocity="3" />
+  </joint>
+
+  <joint name="FL2_joint"
+    type="revolute">
+    <origin
+      xyz="-0.0469 0 0"
+      rpy="1.5708 0 -1.5708" />
+    <parent
+      link="FL1" />
+    <child
+      link="FL2" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-3"
+      upper="3"
+      effort="${effort_limit}"
+      velocity="3" />
+  </joint>
+
+  <joint name="FL3_joint"
+    type="revolute">
+    <origin
+      xyz="0.1 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="FL2" />
+    <child
+      link="FL3" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-3"
+      upper="3"
+      effort="${effort_limit}"
+      velocity="3" />
+  </joint>
+
+  <joint name="FL4_joint"
+    type="fixed">
+    <origin
+      xyz="0.094333 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="FL3" />
+    <child
+      link="FL4" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+
+  <joint name="RR1_joint"
+    type="revolute">
+    <origin
+      xyz="-0.0954 -0.04 0"
+      rpy="1.5708 0 -1.5708" />
+    <parent
+      link="base_link" />
+    <child
+      link="RR1" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-3"
+      upper="3"
+      effort="${effort_limit}"
+      velocity="3" />
+  </joint>
+
+  <joint name="RR2_joint"
+    type="revolute">
+    <origin
+      xyz="0.0469 0 0"
+      rpy="1.5708 0 -1.5708" />
+    <parent
+      link="RR1" />
+    <child
+      link="RR2" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-3"
+      upper="3"
+      effort="${effort_limit}"
+      velocity="3" />
+  </joint>
+
+  <joint name="RR3_joint"
+    type="revolute">
+    <origin
+      xyz="0.1 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="RR2" />
+    <child
+      link="RR3" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-3"
+      upper="3"
+      effort="${effort_limit}"
+      velocity="3" />
+  </joint>
+
+  <joint name="RR4_joint"
+    type="fixed">
+    <origin
+      xyz="0.094333 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="RR3" />
+    <child
+      link="RR4" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+
+  <joint name="RL1_joint"
+    type="revolute">
+    <origin
+      xyz="-0.0954 0.04 0"
+      rpy="1.5708 0 -1.5708" />
+    <parent
+      link="base_link" />
+    <child
+      link="RL1" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-3"
+      upper="3"
+      effort="${effort_limit}"
+      velocity="3" />
+  </joint>
+
+  <joint name="RL2_joint"
+    type="revolute">
+    <origin
+      xyz="-0.0469 0 0"
+      rpy="1.5708 0 -1.5708" />
+    <parent
+      link="RL1" />
+    <child
+      link="RL2" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-3"
+      upper="3"
+      effort="${effort_limit}"
+      velocity="3" />
+  </joint>
+
+  <joint name="RL3_joint"
+    type="revolute">
+    <origin
+      xyz="0.1 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="RL2" />
+    <child
+      link="RL3" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-3"
+      upper="3"
+      effort="${effort_limit}"
+      velocity="3" />
+  </joint>
+
+  <joint name="RL4_joint"
+    type="fixed">
+    <origin
+      xyz="0.094333 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="RL3" />
+    <child
+      link="RL4" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+
+  <!-- ROS control plugin -->
+  <gazebo>
+    <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+      <robotNamespace>notspot_controller</robotNamespace>
+    </plugin>
+  </gazebo>
+
+  <!-- IMU sensor -->
+  <gazebo reference="base_link">
+    <gravity>true</gravity>
+    <sensor name="imu_sensor" type="imu">
+      <always_on>true</always_on>
+      <update_rate>100</update_rate>
+      <visualize>true</visualize>
+      <topic>__default_topic__</topic>
+      <plugin filename="libgazebo_ros_imu_sensor.so" name="imu_plugin">
+        <topicName>notspot_imu/base_link_orientation</topicName>
+        <bodyName>imu_link</bodyName>
+        <updateRateHZ>15.0</updateRateHZ>
+        <gaussianNoise>0.0</gaussianNoise>
+        <xyzOffset>0 0 0</xyzOffset>
+        <rpyOffset>0 0 0</rpyOffset>
+        <frameName>base_link</frameName>
+        <initialOrientationAsReference>false</initialOrientationAsReference>
+      </plugin>
+      <pose>0 0 0 0 0 0</pose>
+    </sensor>
+  </gazebo>
+
+  <!-- Joint state publisher plugin -->
+  <gazebo>
+    <plugin name="joint_state_publisher" filename="libgazebo_ros_joint_state_publisher.so">
+        <robotNamespace>notspot_gazebo</robotNamespace>
+        <jointName>FR1_joint, FR2_joint, FR3_joint, FL1_joint, FL2_joint,
+                   FL3_joint, RR1_joint, RR2_joint, RR3_joint, RL1_joint,
+                   RL2_joint, RL3_joint</jointName>
+        <updateRate>100</updateRate>
+    </plugin>
+  </gazebo>
+
+  <!-- Transmission -->
+  <transmission name="tran1">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="FR1_joint">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="motor1">
+    <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    <mechanicalReduction>5</mechanicalReduction>
+    </actuator>
+  </transmission>
+
+  <transmission name="tran2">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="FR2_joint">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="motor2">
+    <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    <mechanicalReduction>5</mechanicalReduction>
+    </actuator>
+  </transmission>
+
+  <transmission name="tran3">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="FR3_joint">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="motor3">
+    <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    <mechanicalReduction>5</mechanicalReduction>
+    </actuator>
+  </transmission>
+
+  <transmission name="tran4">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="FL1_joint">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="motor4">
+    <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    <mechanicalReduction>5</mechanicalReduction>
+    </actuator>
+  </transmission>
+
+  <transmission name="tran5">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="FL2_joint">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="motor5">
+    <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    <mechanicalReduction>5</mechanicalReduction>
+    </actuator>
+  </transmission>
+
+  <transmission name="tran6">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="FL3_joint">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="motor6">
+    <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    <mechanicalReduction>5</mechanicalReduction>
+    </actuator>
+  </transmission>
+
+  <transmission name="tran7">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="RR1_joint">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="motor7">
+    <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    <mechanicalReduction>5</mechanicalReduction>
+    </actuator>
+  </transmission>
+
+  <transmission name="tran8">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="RR2_joint">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="motor8">
+    <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    <mechanicalReduction>5</mechanicalReduction>
+    </actuator>
+  </transmission>
+
+  <transmission name="tran9">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="RR3_joint">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="motor9">
+    <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    <mechanicalReduction>5</mechanicalReduction>
+    </actuator>
+  </transmission>
+
+  <transmission name="tran10">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="RL1_joint">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="motor10">
+    <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    <mechanicalReduction>5</mechanicalReduction>
+    </actuator>
+  </transmission>
+
+  <transmission name="tran11">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="RL2_joint">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="motor11">
+    <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    <mechanicalReduction>5</mechanicalReduction>
+    </actuator>
+  </transmission>
+
+  <transmission name="tran12">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="RL3_joint">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="motor12">
+    <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    <mechanicalReduction>5</mechanicalReduction>
+    </actuator>
+  </transmission>
+
+  <!-- FR4 friction -->
+  <gazebo reference="FR4">
+    <mu1>1.0</mu1>
+    <mu2>1.0</mu2>
+    <minDepth>0.0002</minDepth>
+    <kp  value="1000000.0"/>
+    <kd  value="100.0"/>
+  </gazebo>
+
+  <!-- FL4 friction -->
+  <gazebo reference="FL4">
+    <mu1>1.0</mu1>
+    <mu2>1.0</mu2>
+    <minDepth>0.0002</minDepth>
+    <kp  value="1000000.0"/>
+    <kd  value="100.0"/>
+  </gazebo>
+
+  <!-- RR4 friction -->
+  <gazebo reference="RR4">
+    <mu1>1.0</mu1>
+    <mu2>1.0</mu2>
+    <minDepth>0.0002</minDepth>
+    <kp  value="1000000.0"/>
+    <kd  value="100.0"/>
+  </gazebo>
+
+  <!-- RL4 friction -->
+  <gazebo reference="RL4">
+    <mu1>1.0</mu1>
+    <mu2>1.0</mu2>
+    <minDepth>0.0002</minDepth>
+    <kp  value="1000000.0"/>
+    <kd  value="100.0"/>
+  </gazebo>
+
+</robot>

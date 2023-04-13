@@ -1,6 +1,6 @@
 dingo_hardware_interfacing/dingo_servo_interfacing
-/dingo_ws/devel/.private/dingo_servo_interfacing/cmake.lock /dingo_ws/devel/./cmake.lock
-/dingo_ws/devel/.private/dingo_servo_interfacing/lib/python3/dist-packages/dingo_servo_interfacing/__init__.py /dingo_ws/devel/lib/python3/dist-packages/dingo_servo_interfacing/__init__.py
-/dingo_ws/devel/.private/dingo_servo_interfacing/lib/pkgconfig/dingo_servo_interfacing.pc /dingo_ws/devel/lib/pkgconfig/dingo_servo_interfacing.pc
-/dingo_ws/devel/.private/dingo_servo_interfacing/share/dingo_servo_interfacing/cmake/dingo_servo_interfacingConfig-version.cmake /dingo_ws/devel/share/dingo_servo_interfacing/cmake/dingo_servo_interfacingConfig-version.cmake
-/dingo_ws/devel/.private/dingo_servo_interfacing/share/dingo_servo_interfacing/cmake/dingo_servo_interfacingConfig.cmake /dingo_ws/devel/share/dingo_servo_interfacing/cmake/dingo_servo_interfacingConfig.cmake
+/home/alex/quadruped/DingoQuadruped/dingo_ws/devel/.private/dingo_servo_interfacing/cmake.lock /home/alex/quadruped/DingoQuadruped/dingo_ws/devel/./cmake.lock
+/home/alex/quadruped/DingoQuadruped/dingo_ws/devel/.private/dingo_servo_interfacing/lib/python3/dist-packages/dingo_servo_interfacing/__init__.py /home/alex/quadruped/DingoQuadruped/dingo_ws/devel/lib/python3/dist-packages/dingo_servo_interfacing/__init__.py
+/home/alex/quadruped/DingoQuadruped/dingo_ws/devel/.private/dingo_servo_interfacing/lib/pkgconfig/dingo_servo_interfacing.pc /home/alex/quadruped/DingoQuadruped/dingo_ws/devel/lib/pkgconfig/dingo_servo_interfacing.pc
+/home/alex/quadruped/DingoQuadruped/dingo_ws/devel/.private/dingo_servo_interfacing/share/dingo_servo_interfacing/cmake/dingo_servo_interfacingConfig-version.cmake /home/alex/quadruped/DingoQuadruped/dingo_ws/devel/share/dingo_servo_interfacing/cmake/dingo_servo_interfacingConfig-version.cmake
+/home/alex/quadruped/DingoQuadruped/dingo_ws/devel/.private/dingo_servo_interfacing/share/dingo_servo_interfacing/cmake/dingo_servo_interfacingConfig.cmake /home/alex/quadruped/DingoQuadruped/dingo_ws/devel/share/dingo_servo_interfacing/cmake/dingo_servo_interfacingConfig.cmake

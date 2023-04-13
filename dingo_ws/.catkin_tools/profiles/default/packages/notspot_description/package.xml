@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>notspot_description</name>
+  <version>1.0.0</version>
+  <description>The notspot_description package</description>
+
+  <maintainer email="lnotspotl@gmail.com">lnotspotl</maintainer>
+
+  <license>MIT</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+</package>

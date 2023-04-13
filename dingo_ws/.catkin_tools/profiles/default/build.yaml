@@ -2,8 +2,7 @@ authors: []
 blacklist: []
 build_space: build
 catkin_make_args: []
-cmake_args:
-- -DCMAKE_BUILD_TYPE=Debug
+cmake_args: []
 devel_layout: linked
 devel_space: devel
 extend_path: null
