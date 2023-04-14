@@ -40,12 +40,11 @@ class HardwareInterface():
             are NOT the angles deifned in the IK, but rather locations that allow practical usage of the servo's 180 degree range of motion. 
 
             - Offsets for HIP servos allign the hip so that the leg is perfectly vertical at an input of zero degrees, direct from the IK.
-            - Offsets for UPPER leg servos map allign the servo so that it is horizontal toward the back of the robot at an input of zero degrees. 
-                Note that IK requires a transformation of:  angle_sent_to_servo = (90-angle_from_IK) degrees to map to this physcial servo location
+            - Offsets for UPPER leg servos map allign the servo so that it is horizontal toward the back of the robot at an input of zero degrees, direct from the IK. 
             - Offsets for LOWER leg servos map allign the servo so that it is vertically down at zero degrees. Note that IK requires a transformation of
                 angle_sent_to_servo = (180-angle_from_IK) + 90 degrees to map to this physcial servo location.  """
         self.physical_calibration_offsets = np.array(
-                            [[117, 78, 105, 83], 
+                            [[117, 74, 105, 83], 
                             [29, 17, 22, 9], 
                             [24, 0, 30, 5]])
 
@@ -66,14 +65,18 @@ class HardwareInterface():
         ----------
         joint_angles : 3x4 numpy array of float angles (radians)
         """
-        
-        self.joint_angles_to_servo_angles(joint_angles)
+        # Limit angles ot physical possiblity
+        possible_joint_angles = impose_physical_limits(joint_angles)
+
+        #Convert to servo angles
+        self.joint_angles_to_servo_angles(possible_joint_angles)
 
         # print('Final angles for actuation: ',self.servo_angles)
     
         for leg_index in range(4):
             for axis_index in range(3):
                 self.kit.servo[self.pins[axis_index,leg_index]].angle = self.servo_angles[axis_index,leg_index]
+                # print('NIce')
 
     ##  THis method is used only in the calibrate servos file will make something similar to command individual actuators. 
     # def set_actuator_position(self, joint_angle, axis, leg):
@@ -95,13 +98,13 @@ class HardwareInterface():
 
         for leg in range(4):
             THETA2, THETA3 = joint_angles[1:,leg]
-            THETA2 = 3*np.pi/2 - THETA2
-            THETA0 = lower_leg_angle_to_servo_angle(self.link, THETA2, THETA3)
+
+            THETA0 = lower_leg_angle_to_servo_angle(self.link, m.pi/2-THETA2, THETA3 + np.pi/2) # TODO draw a diagram to describe this transformatin from IK frame to LINK analysis frame
 
             #Adding offset from IK angle definition to servo angle definition, and conversion to degrees
-            self.servo_angles[0,leg] = m.degrees( joint_angles[0,leg] )
-            self.servo_angles[1,leg] = m.degrees( m.pi/2- THETA2      )
-            self.servo_angles[2,leg] = m.degrees( m.pi/2 + m.pi-THETA0)
+            self.servo_angles[0,leg] = m.degrees( joint_angles[0,leg] ) # servo zero is same as IK zero
+            self.servo_angles[1,leg] = m.degrees( THETA2              ) # servo zero is same as IK zero
+            self.servo_angles[2,leg] = m.degrees( m.pi/2 + m.pi-THETA0) # servo zero is different to IK zero
         # print('Uncorrected servo_angles: ',self.servo_angles)
 
         # Adding final physical offset angles from servo calibration and clipping to 180 degree max
@@ -135,7 +138,7 @@ def calculate_4_bar(th2 ,a,b,c,d):
         The remaining angles in the 4 bar linkage
     
     """
-    # print('th2: ',th2,'a: ',a,'b: ',b,'c: ',c,'d: ',d)    
+    # print('th2: ',m.degrees(th2),'a: ',a,'b: ',b,'c: ',c,'d: ',d)    
     x_b = a*np.cos(th2)
     y_b = a*np.sin(th2)
     
@@ -181,7 +184,7 @@ def lower_leg_angle_to_servo_angle(link, THETA2, THETA3):
     '''
 
     # First 4 bar linkages
-    GDE,DEF,EFG = calculate_4_bar(THETA3 ,link.i,link.h,link.f,link.g) #+ link.lower_leg_bend_angle
+    GDE,DEF,EFG = calculate_4_bar(THETA3 + link.lower_leg_bend_angle,link.i,link.h,link.f,link.g) #+ link.lower_leg_bend_angle
     # Triangle section
     CDH = 3/2*m.pi - THETA2 - GDE - link.EDC
     CDA = CDH +link.gamma #input angle
@@ -192,6 +195,54 @@ def lower_leg_angle_to_servo_angle(link, THETA2, THETA3):
 
     return THETA0
 
+def impose_physical_limits(desired_joint_angles):
+    ''' Takes desired upper and lower leg angles and clips them to be within the range of physcial possiblity. 
+    This is because osme angles are not possible for the physical linkage. Processing is done in degrees.
+        ----------
+    desired_joint_angles : numpy array 3x4 of float angles (radians)
+        Desired angles of all joints for all legs from inverse kinematics
+
+    Returns
+    -------
+    possble_joint_angles: numpy array 3x4 of float angles (radians)
+        The angles that will be attempted to be implemeneted, limited to a possible range
+    '''
+    possble_joint_angles = np.zeros((3,4))
+
+    for i in range(4):
+        hip,upper,lower = np.degrees(desired_joint_angles[:,i])
+
+        hip   = np.clip(hip,-20,20)
+        upper = np.clip(upper,0,120)
+
+        if      0    <=  upper <     10  :
+            lower = np.clip(lower, -20 , 30) 
+        elif 10    <=  upper <     20  :
+            lower = np.clip(lower, -40 , 30)
+        elif 20    <=  upper <     30  :
+            lower = np.clip(lower, -50 , 30) 
+        elif 30    <=  upper <     40  :
+            lower = np.clip(lower, -60 , 30) 
+        elif 40    <=  upper <     50  :
+            lower = np.clip(lower, -70 , 25)
+        elif 50    <=  upper <     60  :
+            lower = np.clip(lower, -70 , 20) 
+        elif 60    <=  upper <     70  :
+            lower = np.clip(lower, -70 , 0) 
+        elif 70    <=  upper <     80  :
+            lower = np.clip(lower, -70 , -10)
+        elif 80    <=  upper <     90  :
+            lower = np.clip(lower, -70 , -20) 
+        elif 90    <=  upper <     100  :
+            lower = np.clip(lower, -70 , -30) 
+        elif 100    <=  upper <     110  :
+            lower = np.clip(lower, -70 , -40)
+        elif 110    <=  upper <     120  :
+            lower = np.clip(lower, -70 , -60) 
+
+        possble_joint_angles[:,i] =  hip,upper,lower
+        
+    return np.radians(possble_joint_angles)
 
 ################################# TESING HARDWARE INTERFACING ############################
 
@@ -202,10 +253,11 @@ linkage = Leg_linkage(configuration)
 hardware_interface = HardwareInterface(linkage)
 
 
+pos = [0,50,0]
 
-hip_angle  = m.radians(0)
-upper_leg_angle = m.radians(225) #defined accoridng to IK
-lower_leg_angle = m.radians(90) #defined accoridng to IK
+hip_angle  = m.radians(pos[0])
+upper_leg_angle = m.radians(pos[1]) #defined accoridng to IK
+lower_leg_angle = m.radians(pos[2]) #defined accoridng to IK
 
 
 joint_angles = np.array([[hip_angle,     hip_angle,      hip_angle,      hip_angle      ], 
