@@ -241,32 +241,39 @@ def impose_physical_limits(desired_joint_angles):
             lower = np.clip(lower, -70 , -60) 
 
         possble_joint_angles[:,i] =  hip,upper,lower
-        
+
     return np.radians(possble_joint_angles)
 
 ################################# TESING HARDWARE INTERFACING ############################
+""" THis section can be used to test this hardware interfacing by running this script only and supplying 
+    angles for the legs in thr joint space. Uncomment and then run using the command: 
+                        rosrun dingo_servo_interfacing HardwareInterface.py  
+"""
+# from dingo_servo_interfacing.Config import Configuration,Leg_linkage
 
-from dingo_servo_interfacing.Config import Configuration,Leg_linkage
+# configuration = Configuration()
+# linkage = Leg_linkage(configuration)
+# hardware_interface = HardwareInterface(linkage)
 
-configuration = Configuration()
-linkage = Leg_linkage(configuration)
-hardware_interface = HardwareInterface(linkage)
+# ## Define a position for all legs in the joint space
+# pos = [0,50,0]
 
-
-pos = [0,50,0]
-
-hip_angle  = m.radians(pos[0])
-upper_leg_angle = m.radians(pos[1]) #defined accoridng to IK
-lower_leg_angle = m.radians(pos[2]) #defined accoridng to IK
+# hip_angle  = m.radians(pos[0])
+# upper_leg_angle = m.radians(pos[1]) #defined accoridng to IK
+# lower_leg_angle = m.radians(pos[2]) #defined accoridng to IK
 
 
-joint_angles = np.array([[hip_angle,     hip_angle,      hip_angle,      hip_angle      ], 
-                        [upper_leg_angle,upper_leg_angle,upper_leg_angle,upper_leg_angle], 
-                        [lower_leg_angle,lower_leg_angle,lower_leg_angle,lower_leg_angle]])
+# joint_angles = np.array([[hip_angle,     hip_angle,      hip_angle,      hip_angle      ], 
+#                         [upper_leg_angle,upper_leg_angle,upper_leg_angle,upper_leg_angle], 
+#                         [lower_leg_angle,lower_leg_angle,lower_leg_angle,lower_leg_angle]])
 
-hardware_interface.set_actuator_postions(joint_angles)
+# hardware_interface.set_actuator_postions(joint_angles)
 
 ##########################################################################################
+
+
+
+
 # ORIGINAL CODE BELOW
 
 # class HardwareInterface:
