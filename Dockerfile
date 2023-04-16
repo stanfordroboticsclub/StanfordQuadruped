@@ -29,9 +29,10 @@ RUN pip3 install \
     pyserial \
     pigpio \
     regex \
-    matplotlib
+    matplotlib \
     #Following are Nathan/Alex additions
-
+    #adafruit-circuitpython-pca9685 \
+    adafruit-circuitpython-servokit
 
 # Make the prompt a little nicer
 RUN echo "PS1='${debian_chroot:+($debian_chroot)}\u@:\w\$ '" >> /etc/bash.bashrc 

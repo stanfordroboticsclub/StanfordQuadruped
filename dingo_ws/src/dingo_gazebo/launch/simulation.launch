@@ -2,7 +2,7 @@
 
     <!-- Empty World -->
     <include file="$(find gazebo_ros)/launch/empty_world.launch">
-      <arg name="world_name" value="$(find notspot_gazebo)/launch/world/normal.world"/>
+      <arg name="world_name" value="$(find dingo_gazebo)/launch/world/normal.world"/>
       <arg name="use_sim_time" value="true"/>
     </include>
 

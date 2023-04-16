@@ -1,2 +1,0 @@
-dingo_description
-/home/admin/DingoQuadruped/dingo_ws/devel/.private/notspot_description/cmake.lock /home/admin/DingoQuadruped/dingo_ws/devel/./cmake.lock

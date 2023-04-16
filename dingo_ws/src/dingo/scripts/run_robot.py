@@ -2,13 +2,28 @@ import numpy as np
 import time
 import rospy
 import sys
+from std_msgs.msg import Float64
+
+
+#Fetching is_sim and is_physical from arguments
+args = rospy.myargv(argv=sys.argv)
+if len(args) != 3: #arguments have not been provided, go to defaults (not sim, is physical)
+    is_sim = 0
+    is_physical = 1
+else:
+    is_sim = int(args[1])
+    is_physical = int(args[2])
+
 from dingo_nano_interfacing.IMU import IMU
 from dingo_control.Controller import Controller
 from dingo_joystick_interfacing.JoystickInterface import JoystickInterface
 from dingo_control.State import State
-from dingo_servo_interfacing.HardwareInterface import HardwareInterface
-from dingo_servo_interfacing.Config import Configuration,Leg_linkage
 from dingo_control.Kinematics import four_legs_inverse_kinematics
+from dingo_servo_interfacing.Config import Configuration
+
+if is_physical:
+    from dingo_servo_interfacing.HardwareInterface import HardwareInterface
+    from dingo_servo_interfacing.Config import Leg_linkage
 
 def main(use_imu=False):
     """Main program
@@ -16,15 +31,6 @@ def main(use_imu=False):
     rospy.init_node("dingo")
     message_rate = 50
     rate = rospy.Rate(message_rate)
-
-    #Fetching is_sim and is_physical from arguments
-    args = rospy.myargv(argv=sys.argv)
-    if len(args) != 2: #arguments have not been provided, go to defaults (not sim, is physical)
-        is_sim = 0
-        is_physical = 1
-    else:
-        is_sim = args[0]
-        is_physical = args[1]
 
     #TODO: Create a publisher for joint states 
     if is_sim:
@@ -47,7 +53,6 @@ def main(use_imu=False):
 
     # Create config
     config = Configuration()
-
     if is_physical:
         linkage = Leg_linkage(config)
         hardware_interface = HardwareInterface(linkage)
@@ -110,8 +115,12 @@ def main(use_imu=False):
             #TODO here: publish the joint values (in state.joint_angles) to a publisher
             #If running simulator, publish joint angles to gazebo controller:
             if is_sim:
-                for i in range(len(joint_angles)):
-                    publishers[i].publish(joint_angles[i])
+                rows, cols = state.joint_angles.shape
+                print(rows)
+                print(cols)
+                for row in rows:
+                    for col in cols:
+                        publishers[rows*row+col].publish(state.joint_angles[rows*row+col])
             
             if is_physical:
                 # Update the pwm widths going to the servos

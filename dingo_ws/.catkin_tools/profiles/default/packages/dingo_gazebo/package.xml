@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>notspot_gazebo</name>
+  <name>dingo_gazebo</name>
   <version>1.0.0</version>
   <description>The notspot_gazebo package</description>
 

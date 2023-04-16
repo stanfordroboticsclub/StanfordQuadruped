@@ -30,10 +30,10 @@ class Configuration:
         self.max_stance_yaw_rate = 2.0
 
         #################### STANCE ####################
-        self.delta_x = 0.1
-        self.delta_y = 0.09
+        self.delta_x = 0.2313/2 #0.1
+        self.delta_y = 0.1083 #0.09
         self.x_shift = 0.0
-        self.default_z_ref = -0.16
+        self.default_z_ref = -0.2 #-0.16
 
         #################### SWING ######################
         self.z_coeffs = None
@@ -61,8 +61,8 @@ class Configuration:
         ######################## GEOMETRY ######################
 
         #FOLLOWING WE ACTUALLY USE
-        self.LEG_FB = 0.10  # front-back distance from center line to leg axis
-        self.LEG_LR = 0.04  # left-right distance from center line to leg plane
+        self.LEG_FB = 0.11062 #0.10   front-back distance from center line to leg axis
+        self.LEG_LR = 0.61 #0.04  # left-right distance from center line to leg plane
         self.LEG_ORIGINS = np.array( #Origins of the initial frame from the centre of the body
             [
                 [self.LEG_FB, self.LEG_FB, -self.LEG_FB, -self.LEG_FB],
@@ -72,14 +72,14 @@ class Configuration:
         )
         self.L1 = 0.04973   
         self.L2 = 0.140
-        self.L3 = 0.1621477
+        self.L3 = 0.1631477
         self.phi = 73.17
         
         
-        #Obsolete but here in case we need them/revert to old IK:
-        self.LEG_L2 = 0.115
-        self.LEG_L1 = 0.1235
-        self.ABDUCTION_OFFSET = 0.03  # distance from abduction axis to leg
+        #Obsolete 
+        self.LEG_L2 = self.L3 #0.115
+        self.LEG_L1 = self.L2 #0.1235
+        self.ABDUCTION_OFFSET = self.L1 * m.sin(self.phi) #0.03  # distance from abduction axis to leg
         self.ABDUCTION_OFFSETS = np.array(
             [
                 -self.ABDUCTION_OFFSET,
@@ -120,14 +120,14 @@ class Configuration:
         self.LEG_INERTIA = (leg_x, leg_y, leg_z)
 
     @property
-    def default_stance(self):
+    def default_stance(self): #Default stance of the robot relative to the centre frame
         return np.array(
             [
                 [
-                    self.delta_x + self.x_shift,
-                    self.delta_x + self.x_shift,
-                    -self.delta_x + self.x_shift,
-                    -self.delta_x + self.x_shift,
+                    self.delta_x + self.x_shift, #Front Right
+                    self.delta_x + self.x_shift, #Front Left
+                    -self.delta_x + self.x_shift, #Back Right
+                    -self.delta_x + self.x_shift, #Back Left
                 ],
                 [-self.delta_y, self.delta_y, -self.delta_y, self.delta_y],
                 [0, 0, 0, 0],

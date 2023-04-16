@@ -5,7 +5,7 @@
      Commit Version: 1.5.1-0-g916b5db  Build Version: 1.5.7152.31018
      For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
 
-<robot name="notspot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+<robot name="dingo" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
   <!-- Maximum torque -->
   <xacro:property name="effort_limit" value="1.4" />
@@ -32,7 +32,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://notspot_description/meshes/body_obj.obj" />
+          filename="package://dingo_description/meshes/body_obj.obj" />
       </geometry>
     </visual>
     <collision>
@@ -67,7 +67,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://notspot_description/meshes/FR1_obj.obj" />
+          filename="package://dingo_description/meshes/FR1_obj.obj" />
       </geometry>
     </visual>
   </link>
@@ -94,7 +94,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://notspot_description/meshes/R2_obj.obj" />
+          filename="package://dingo_description/meshes/R2_obj.obj" />
       </geometry>
     </visual>
     <collision>
@@ -129,7 +129,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://notspot_description/meshes/R3_obj.obj" />
+          filename="package://dingo_description/meshes/R3_obj.obj" />
       </geometry>
     </visual>
     <collision>
@@ -190,7 +190,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://notspot_description/meshes/FL1_obj.obj" />
+          filename="package://dingo_description/meshes/FL1_obj.obj" />
       </geometry>
     </visual>
   </link>
@@ -217,7 +217,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://notspot_description/meshes/L2_obj.obj" />
+          filename="package://dingo_description/meshes/L2_obj.obj" />
       </geometry>
     </visual>
     <collision>
@@ -252,7 +252,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://notspot_description/meshes/L3_obj.obj" />
+          filename="package://dingo_description/meshes/L3_obj.obj" />
       </geometry>
     </visual>
     <collision>
@@ -313,7 +313,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://notspot_description/meshes/RR1_obj.obj" />
+          filename="package://dingo_description/meshes/RR1_obj.obj" />
       </geometry>
     </visual>
   </link>
@@ -340,7 +340,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://notspot_description/meshes/R2_obj.obj" />
+          filename="package://dingo_description/meshes/R2_obj.obj" />
       </geometry>
     </visual>
     <collision>
@@ -375,7 +375,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://notspot_description/meshes/R3_obj.obj" />
+          filename="package://dingo_description/meshes/R3_obj.obj" />
       </geometry>
     </visual>
     <collision>
@@ -436,7 +436,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://notspot_description/meshes/RL1_obj.obj" />
+          filename="package://dingo_description/meshes/RL1_obj.obj" />
       </geometry>
     </visual>
   </link>
@@ -463,7 +463,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://notspot_description/meshes/L2_obj.obj" />
+          filename="package://dingo_description/meshes/L2_obj.obj" />
       </geometry>
     </visual>
     <collision>
@@ -498,7 +498,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://notspot_description/meshes/L3_obj.obj" />
+          filename="package://dingo_description/meshes/L3_obj.obj" />
       </geometry>
     </visual>
     <collision>
@@ -811,7 +811,7 @@
   <!-- ROS control plugin -->
   <gazebo>
     <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
-      <robotNamespace>notspot_controller</robotNamespace>
+      <robotNamespace>dingo_controller</robotNamespace>
     </plugin>
   </gazebo>
 
@@ -840,7 +840,7 @@
   <!-- Joint state publisher plugin -->
   <gazebo>
     <plugin name="joint_state_publisher" filename="libgazebo_ros_joint_state_publisher.so">
-        <robotNamespace>notspot_gazebo</robotNamespace>
+        <robotNamespace>dingo_gazebo</robotNamespace>
         <jointName>FR1_joint, FR2_joint, FR3_joint, FL1_joint, FL2_joint,
                    FL3_joint, RR1_joint, RR2_joint, RR3_joint, RL1_joint,
                    RL2_joint, RL3_joint</jointName>

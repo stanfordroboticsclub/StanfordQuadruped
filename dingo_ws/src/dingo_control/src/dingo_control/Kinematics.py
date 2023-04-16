@@ -73,8 +73,6 @@ def leg_explicit_inverse_kinematics(r_body_foot, leg_index, config):
     offset = np.array([0.0,L1*cos(theta_1),L1*sin(theta_1)])
     translated_frame = r_body_foot_ - offset
     
-    print(translated_frame)
-    
     if is_right: R2 = theta_1 + phi - pi/2
     else: R2 = -(pi/2 - phi + theta_1) #This line may need to be adjusted
     
@@ -84,10 +82,6 @@ def leg_explicit_inverse_kinematics(r_body_foot, leg_index, config):
     j4_2_vec_ = np.ravel(j4_2_vec_)
     # xyz in the rotated coordinate system + offset due to link_1 removed
     x_, y_, z_ = j4_2_vec_[0], j4_2_vec_[1], j4_2_vec_[2]
-    
-    print(x_)
-    print(y_)
-    print(z_)
     
     len_B = norm([x_, 0, z_]) # norm(j4-j2)
     
@@ -125,7 +119,7 @@ def leg_explicit_inverse_kinematics(r_body_foot, leg_index, config):
     # modify angles to match robot's configuration (i.e., adding offsets)
     angles = angle_corrector(angles=[theta_1, theta_2, theta_3], is_right=is_right)
     # print(degrees(angles[0]))
-    return [degrees(angles[0]), degrees(angles[1]), degrees(angles[2])]
+    return np.array(angles)
 
 
 
@@ -150,7 +144,7 @@ def four_legs_inverse_kinematics(r_body_foot, config):
         alpha[:, i] = leg_explicit_inverse_kinematics(
             r_body_foot[:, i] - body_offset, i, config
         )
-    return alpha
+    return alpha #[Front Right, Front Left, Back Right, Back Left]
 
 def angle_corrector(angles=[0,0,0], is_right=1):
     theta_1 = angles[0]
