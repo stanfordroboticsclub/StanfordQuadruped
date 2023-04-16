@@ -24,9 +24,16 @@ def leg_explicit_inverse_kinematics(r_body_foot, leg_index, config):
     numpy array (3)
         Array of corresponding joint angles.
     """
+   
+    #Determine if leg is a right or a left leg
+    if leg_index == 2 or leg_index == 4:
+        is_right = 0
+    else:
+        is_right = 1
+    
     #This inverse kinematics code has a different axis definition from pupper. Conversion to pupper frame:
     x,y,z = r_body_foot
-    y = -y
+    if is_right: y = -y
     r_body_foot = np.array([x,y,z])
     
     #Temp
@@ -35,16 +42,9 @@ def leg_explicit_inverse_kinematics(r_body_foot, leg_index, config):
     L2 = 0.140
     L3 = 0.1631477
     
-    #Determine if leg is a right or a left leg
-    if leg_index == 2 or leg_index == 4:
-        is_right = 0
-    else:
-        is_right = 1
-    
     #rotate the origin frame to be in-line with L1 for calculating theta_1 (rotation about x-axis):
-    R1 = pi/2 - phi
-    if is_right: rot_mtx = RotMatrix3D([-R1,0,0],is_radians=True)
-    else: rot_mtx = RotMatrix3D([R1,0,0],is_radians=True)
+    R1 = pi/2 - phi 
+    rot_mtx = RotMatrix3D([-R1,0,0],is_radians=True)
     r_body_foot_ = rot_mtx * (np.reshape(r_body_foot,[3,1]))
     r_body_foot_ = np.ravel(r_body_foot_)
     
@@ -122,6 +122,8 @@ def leg_explicit_inverse_kinematics(r_body_foot, leg_index, config):
     #Calculating theta_0 (angle of the servo attached to the linkage to achieve desired theta_3 and theta_2 combo)
     #theta_0 = linkage_calculation(theta_2, theta_3)
 
+    # modify angles to match robot's configuration (i.e., adding offsets)
+    angles = angle_corrector(angles=[theta_1, theta_2, theta_3], is_right=is_right)
     # print(degrees(angles[0]))
     return [degrees(angles[0]), degrees(angles[1]), degrees(angles[2])]
 
