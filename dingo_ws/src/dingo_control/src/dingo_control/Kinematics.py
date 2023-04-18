@@ -151,6 +151,9 @@ def angle_corrector(angles=[0,0,0], is_right=1):
     theta_2 = angles[1] - pi
     theta_3 = angles[2] - pi/2
 
+    for theta in angles:
+        if theta > 180:
+            angles[0] = -(360 - theta)
     #if is_right:
     #   theta_1 = angles[0] - pi
     #    theta_2 = angles[1] + 45*pi/180 # 45 degrees initial offset
