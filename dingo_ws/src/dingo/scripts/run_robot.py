@@ -3,6 +3,7 @@ import time
 import rospy
 import sys
 from std_msgs.msg import Float64
+import signal
 
 
 #Fetching is_sim and is_physical from arguments
@@ -23,7 +24,11 @@ from dingo_control.Config import Configuration
 
 if is_physical:
     from dingo_servo_interfacing.HardwareInterface import HardwareInterface
-    from dingo_servo_interfacing.Config import Leg_linkage
+    from dingo_control.Config import Leg_linkage
+
+def signal_handler(sig, frame):
+    print("\n\nshutting down\n")
+    sys.exit(0)
 
 def main(use_imu=False):
     """Main program
@@ -31,6 +36,8 @@ def main(use_imu=False):
     rospy.init_node("dingo")
     message_rate = 50
     rate = rospy.Rate(message_rate)
+
+    signal.signal(signal.SIGINT, signal_handler)
 
     #TODO: Create a publisher for joint states 
     if is_sim:
