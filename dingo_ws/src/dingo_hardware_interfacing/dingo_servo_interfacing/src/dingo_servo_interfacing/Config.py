@@ -62,7 +62,7 @@ class Configuration:
 
         #FOLLOWING WE ACTUALLY USE
         self.LEG_FB = 0.11062 #0.10   front-back distance from center line to leg axis
-        self.LEG_LR = 0.61 #0.04  # left-right distance from center line to leg plane
+        self.LEG_LR = 0.061 #0.04  # left-right distance from center line to leg plane
         self.LEG_ORIGINS = np.array( #Origins of the initial frame from the centre of the body
             [
                 [self.LEG_FB, self.LEG_FB, -self.LEG_FB, -self.LEG_FB],
