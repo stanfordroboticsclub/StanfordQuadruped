@@ -20,14 +20,14 @@ class Configuration:
         
         #################### MOVEMENT PARAMS ####################
         self.z_time_constant = 0.02
-        self.z_speed = 0.03  # maximum speed [m/s]
+        self.z_speed = 0.08  # maximum speed [m/s]
         self.pitch_deadband = 0.02
         self.pitch_time_constant = 0.25
-        self.max_pitch_rate = 0.15
-        self.roll_speed = 0.16  # maximum roll rate [rad/s]
+        self.max_pitch_rate = 0.5
+        self.roll_speed = 0.9  # maximum roll rate [rad/s]
         self.yaw_time_constant = 0.3
         self.max_stance_yaw = 1.2
-        self.max_stance_yaw_rate = 2.0
+        self.max_stance_yaw_rate = 1
 
         #################### STANCE ####################
         self.delta_x = 0.2313/2 #0.1

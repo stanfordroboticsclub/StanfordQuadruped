@@ -31,7 +31,7 @@ def leg_explicit_inverse_kinematics(r_body_foot, leg_index, config):
     else:
         is_right = 1
 
-    print("input position ", r_body_foot, "is right?", is_right)
+    # print("input position ", r_body_foot, "is right?", is_right)
     
     #This inverse kinematics code has a different axis definition from pupper. Conversion to pupper frame:
     x,y,z = r_body_foot

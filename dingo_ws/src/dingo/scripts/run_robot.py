@@ -136,10 +136,12 @@ def main(use_imu=False):
                 # Update the pwm widths going to the servos
                 hardware_interface.set_actuator_postions(state.joint_angles)
             
-            print('All angles: \n',np.round(np.degrees(state.joint_angles),2))
+            # print('All angles: \n',np.round(np.degrees(state.joint_angles),2))
             time.end = rospy.Time.now()
             #Uncomment following line if want to see how long it takes to execute a control iteration
             #print(str(time.start-time.end))
+
+            # print('State: \n',state)
             rate.sleep()
 
 main()
