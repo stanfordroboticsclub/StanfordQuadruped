@@ -19,7 +19,7 @@ from dingo_control.Controller import Controller
 from dingo_joystick_interfacing.JoystickInterface import JoystickInterface
 from dingo_control.State import State
 from dingo_control.Kinematics import four_legs_inverse_kinematics
-from dingo_servo_interfacing.Config import Configuration
+from dingo_control.Config import Configuration
 
 if is_physical:
     from dingo_servo_interfacing.HardwareInterface import HardwareInterface

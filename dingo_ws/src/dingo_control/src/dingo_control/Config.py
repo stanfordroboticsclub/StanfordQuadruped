@@ -151,7 +151,7 @@ class Configuration:
         #         [4, 3, 2, 1, 0],
         #         [0.5 ** 4, 0.5 ** 3, 0.5 ** 2, 0.5 ** 1, 0.5 ** 0],
         #     ]
-        # )
+        # )   
         # self.z_coeffs = solve(A_z, b_z)
 
     ########################### GAIT ####################
@@ -177,7 +177,7 @@ class Configuration:
     def phase_length(self):
         return 2 * self.overlap_ticks + 2 * self.swing_ticks
 
-        
+#OBSOLETE
 class SimulationConfig:
     def __init__(self):
         self.XML_IN = "pupper.xml"
