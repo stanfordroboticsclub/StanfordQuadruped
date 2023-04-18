@@ -1,0 +1,6 @@
+dingo_hardware_interfacing/dingo_input_interfacing
+/home/alex/quadruped/DingoQuadruped/dingo_ws/devel/.private/dingo_input_interfacing/cmake.lock /home/alex/quadruped/DingoQuadruped/dingo_ws/devel/./cmake.lock
+/home/alex/quadruped/DingoQuadruped/dingo_ws/devel/.private/dingo_input_interfacing/lib/python3/dist-packages/dingo_input_interfacing/__init__.py /home/alex/quadruped/DingoQuadruped/dingo_ws/devel/lib/python3/dist-packages/dingo_input_interfacing/__init__.py
+/home/alex/quadruped/DingoQuadruped/dingo_ws/devel/.private/dingo_input_interfacing/lib/pkgconfig/dingo_input_interfacing.pc /home/alex/quadruped/DingoQuadruped/dingo_ws/devel/lib/pkgconfig/dingo_input_interfacing.pc
+/home/alex/quadruped/DingoQuadruped/dingo_ws/devel/.private/dingo_input_interfacing/share/dingo_input_interfacing/cmake/dingo_input_interfacingConfig-version.cmake /home/alex/quadruped/DingoQuadruped/dingo_ws/devel/share/dingo_input_interfacing/cmake/dingo_input_interfacingConfig-version.cmake
+/home/alex/quadruped/DingoQuadruped/dingo_ws/devel/.private/dingo_input_interfacing/share/dingo_input_interfacing/cmake/dingo_input_interfacingConfig.cmake /home/alex/quadruped/DingoQuadruped/dingo_ws/devel/share/dingo_input_interfacing/cmake/dingo_input_interfacingConfig.cmake

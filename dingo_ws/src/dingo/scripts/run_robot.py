@@ -4,23 +4,26 @@ import rospy
 import sys
 from std_msgs.msg import Float64
 import signal
-
+import socket
 
 #Fetching is_sim and is_physical from arguments
 args = rospy.myargv(argv=sys.argv)
-if len(args) != 3: #arguments have not been provided, go to defaults (not sim, is physical)
+if len(args) != 4: #arguments have not been provided, go to defaults (not sim, is physical)
     is_sim = 0
-    is_physical = 1
+    is_physical = 0
+    device_ID = socket.gethostname()
 else:
     is_sim = int(args[1])
     is_physical = int(args[2])
+    device_ID = args[3]
 
 from dingo_nano_interfacing.IMU import IMU
 from dingo_control.Controller import Controller
-from dingo_joystick_interfacing.JoystickInterface import JoystickInterface
+from dingo_input_interfacing.InputInterface import InputInterface
 from dingo_control.State import State
 from dingo_control.Kinematics import four_legs_inverse_kinematics
 from dingo_control.Config import Configuration
+from dingo_input_interfacing.InputController import InputController
 
 if is_physical:
     from dingo_servo_interfacing.HardwareInterface import HardwareInterface
@@ -74,8 +77,9 @@ def main(use_imu=False):
         four_legs_inverse_kinematics,
     )
     state = State()
-    print("Creating joystick listener...")
-    joystick_interface = JoystickInterface(config)
+    print("Creating input listener...")
+    input_interface = InputInterface(config)
+    input_Controller = InputController(device_ID == "raspi" or socket.gethostname() == "raspi", device_ID) #Check raspi hostname and replace here
     print("Done.")
 
     last_loop = time.time()
@@ -90,13 +94,13 @@ def main(use_imu=False):
     while not rospy.is_shutdown():      
         print("Waiting for L1 to activate robot.")
         while True:
-            command = joystick_interface.get_command(state,message_rate)
-            #joystick_interface.set_color(config.ps4_deactivated_color)
+            command = input_interface.get_command(state,message_rate)
+            #input_interface\.set_color(config.ps4_deactivated_color)
             if command.activate_event == 1:
                 break
             rate.sleep()
         print("Robot activated.")
-        #joystick_interface.set_color(config.ps4_color)
+        #input_interface.set_color(config.ps4_color)
 
         while True:
             #now = time.time()
@@ -105,7 +109,7 @@ def main(use_imu=False):
             #last_loop = time.time()
             time.start = rospy.Time.now()
             # Parse the udp joystick commands and then update the robot controller's parameters
-            command = joystick_interface.get_command(state,message_rate)
+            command = input_interface.get_command(state,message_rate)
             if command.activate_event == 1:
                 print("Deactivating Robot")
                 break

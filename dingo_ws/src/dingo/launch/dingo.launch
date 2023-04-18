@@ -3,13 +3,8 @@
     <arg name="is_physical" default="1"/>
 
     <!-- Joystick Node -->
-    <include file="$(find dingo_joystick_interfacing)/launch/joystick.launch" />
+    <include file="$(find dingo_input_interfacing)/launch/input_interface.launch" />
     
-    <!-- Gazebo Simulation -->
-    <group if="$(arg is_sim)">
-        <include file="$(find dingo_gazebo)/launch/simulation.launch" />
-    </group>
-
     <!-- Robot run file -->
     <node pkg="dingo" type="run_robot.py"
         name="dingo" args="$(arg is_sim) $(arg is_physical)" output="screen"/>

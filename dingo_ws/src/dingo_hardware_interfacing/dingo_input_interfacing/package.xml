@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>dingo_joystick_interfacing</name>
+  <name>dingo_input_interfacing</name>
   <version>0.0.0</version>
-  <description>The dingo_joystick_interfacing package</description>
+  <description>The dingo_input_interfacing package</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->

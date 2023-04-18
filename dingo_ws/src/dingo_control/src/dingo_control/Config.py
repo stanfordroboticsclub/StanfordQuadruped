@@ -1,6 +1,6 @@
 import numpy as np
 from dingo_servo_interfacing.ServoCalibration import MICROS_PER_RAD, NEUTRAL_ANGLE_DEGREES
-from dingo_joystick_interfacing.HardwareConfig import PS4_COLOR, PS4_DEACTIVATED_COLOR
+from dingo_input_interfacing.HardwareConfig import PS4_COLOR, PS4_DEACTIVATED_COLOR
 from enum import Enum
 import math as m
 

@@ -1,11 +1,12 @@
 <launch>
 
-    <!-- Joystick node -->
     <node pkg="joy" type="joy_node" name="JOYSTICK">
         <!-- <param name="joy_node/dev" value="/dev/input/js0"/>
         <arg name="coalesce_interval" value="0.02"/>
         <arg name="autorepeat_rate" value="50"/> -->
     </node>
+
+    <!-- TO ADD: Keyboard Node start-->
 
 </launch>
 
