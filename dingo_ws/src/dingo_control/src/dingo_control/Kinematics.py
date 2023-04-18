@@ -24,12 +24,14 @@ def leg_explicit_inverse_kinematics(r_body_foot, leg_index, config):
     numpy array (3)
         Array of corresponding joint angles.
     """
-   
+
     #Determine if leg is a right or a left leg
-    if leg_index == 2 or leg_index == 4:
+    if leg_index == 1 or leg_index == 3:
         is_right = 0
     else:
         is_right = 1
+
+    print("input position ", r_body_foot, "is right?", is_right)
     
     #This inverse kinematics code has a different axis definition from pupper. Conversion to pupper frame:
     x,y,z = r_body_foot
@@ -67,7 +69,7 @@ def leg_explicit_inverse_kinematics(r_body_foot, leg_index, config):
     if is_right: theta_1 = a_1 + a_3
     else: 
         theta_1 = a_1 + a_3
-    if theta_1 >= 2*pi: theta_1 -= 2*pi
+    if theta_1 >= 2*pi: theta_1 = np.mod(theta_1,2*pi)
     
     #Translate frame to the frame of the leg
     offset = np.array([0.0,L1*cos(theta_1),L1*sin(theta_1)])
@@ -87,7 +89,7 @@ def leg_explicit_inverse_kinematics(r_body_foot, leg_index, config):
     
     # handling mathematically invalid input, i.e., point too far away to reach
     if len_B >= (L2 + L3): 
-        len_B = (L2 + L3) * 0.99999
+        len_B = (L2 + L3) * 0.8
         # self.node.get_logger().warn('target coordinate: [%f %f %f] too far away' % (x, y, z))
         print('target coordinate: [%f %f %f] too far away' % (x, y, z))
     
@@ -103,7 +105,7 @@ def leg_explicit_inverse_kinematics(r_body_foot, leg_index, config):
     theta_3 = pi - b_3
     
     # CALCULATE THE COORDINATES OF THE JOINTS FOR VISUALIZATION
-    j1 = np.array([0,0,0])
+    #j1 = np.array([0,0,0])
     
     # calculate joint 3
     #j3_ = np.reshape(np.array([L2*cos(theta_2),0, L2*sin(theta_2)]),[3,1])
@@ -118,7 +120,7 @@ def leg_explicit_inverse_kinematics(r_body_foot, leg_index, config):
 
     # modify angles to match robot's configuration (i.e., adding offsets)
     angles = angle_corrector(angles=[theta_1, theta_2, theta_3], is_right=is_right)
-    # print(degrees(angles[0]))
+    #print("theta1: ", degrees(angles[0]),", theta2: ", degrees(angles[1]),", theta2: ",degrees(angles[2]))
     return np.array(angles)
 
 
@@ -147,13 +149,14 @@ def four_legs_inverse_kinematics(r_body_foot, config):
     return alpha #[Front Right, Front Left, Back Right, Back Left]
 
 def angle_corrector(angles=[0,0,0], is_right=1):
-    theta_1 = angles[0]
-    theta_2 = angles[1] - pi
-    theta_3 = angles[2] - pi/2
+    angles[0] = angles[0]
+    angles[1] = angles[1] - pi #theta2 offset
+    angles[2] = angles[2] - pi/2 #theta3 offset
 
-    for theta in angles:
-        if theta > 180:
-            angles[0] = -(360 - theta)
+    #Adjusting for angles out of range, and making angles be between -pi,pi
+    for index, theta in enumerate(angles):
+        if theta > 2*pi: angles[index] = np.mod(theta,2*pi)
+        if theta > pi: angles[index] = -(2*pi - theta)
     #if is_right:
     #   theta_1 = angles[0] - pi
     #    theta_2 = angles[1] + 45*pi/180 # 45 degrees initial offset
@@ -165,5 +168,5 @@ def angle_corrector(angles=[0,0,0], is_right=1):
     #    theta_2 = -angles[1] - 45*pi/180
 
     #theta_3 = -angles[2] + 45*pi/180
-    return [theta_1, theta_2, theta_3]
+    return angles
 

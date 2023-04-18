@@ -30,7 +30,6 @@ if is_physical:
     from dingo_control.Config import Leg_linkage
 
 def signal_handler(sig, frame):
-    print("\n\nshutting down\n")
     sys.exit(0)
 
 def main(use_imu=False):
@@ -137,6 +136,7 @@ def main(use_imu=False):
                 # Update the pwm widths going to the servos
                 hardware_interface.set_actuator_postions(state.joint_angles)
             
+            print('All angles: \n',np.round(np.degrees(state.joint_angles),2))
             time.end = rospy.Time.now()
             #Uncomment following line if want to see how long it takes to execute a control iteration
             #print(str(time.start-time.end))

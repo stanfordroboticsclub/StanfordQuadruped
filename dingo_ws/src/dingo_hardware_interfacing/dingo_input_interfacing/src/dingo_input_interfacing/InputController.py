@@ -2,7 +2,7 @@
 import rospy
 import numpy as np
 import time
-import keyboard
+#import keyboard
 from dingo_control.State import BehaviorState, State
 from dingo_control.Command import Command
 from dingo_utilities.Utilities import deadband, clipped_first_order_filter
@@ -25,7 +25,7 @@ class InputController:
             self.active = 1
             self.joystick_messages_sub = rospy.Subscriber("joy", Joy, self.joystick_callback)
             self.joystick_message_pub = rospy.Publisher("input_joy", Joy, queue_size=10)
-            keyboard.hook(self.keyboard_callback)
+            #keyboard.hook(self.keyboard_callback)
         else:
             self.active = 0
 
@@ -58,12 +58,12 @@ class InputController:
             if self.joystick_messages_sub:
                 self.joystick_messages_sub.unregister()
                 self.joystick_message_pub.unregister()
-                keyboard.unhook(self.keyboard_callback)
+                #keyboard.unhook(self.keyboard_callback)
             self.active = 0
         elif device_ID == self.device_ID:
             self.joystick_messages_sub = rospy.Subscriber("joy", Joy, self.joystick_callback)
             self.joystick_message_pub = rospy.Publisher("input_joy", Joy, queue_size=10)
-            keyboard.hook(self.keyboard_callback)
+            #keyboard.hook(self.keyboard_callback)
             self.active = 1
         return
     

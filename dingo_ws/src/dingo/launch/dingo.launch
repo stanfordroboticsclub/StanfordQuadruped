@@ -1,12 +1,13 @@
 <launch>
     <arg name="is_sim" default="0"/>
     <arg name="is_physical" default="1"/>
+    <arg name="device_ID" default="raspi"/>
 
     <!-- Joystick Node -->
     <include file="$(find dingo_input_interfacing)/launch/input_interface.launch" />
     
     <!-- Robot run file -->
     <node pkg="dingo" type="run_robot.py"
-        name="dingo" args="$(arg is_sim) $(arg is_physical)" output="screen"/>
+        name="dingo" args="$(arg is_sim) $(arg is_physical) $(arg device_ID)" output="screen"/>
 </launch>
     
