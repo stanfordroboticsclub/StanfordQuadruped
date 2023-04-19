@@ -16,6 +16,8 @@ class InputInterface:
         self.previous_hop_toggle = 0
         self.previous_activate_toggle = 0
 
+        self.rounding_dp = 2
+
         self.hop_event = 0
         self.trot_event = 0
         self.activate_event = 0
@@ -57,15 +59,15 @@ class InputInterface:
 
         ####### Handle continuous commands ########
         x_vel = msg.axes[1] * self.config.max_x_velocity #ly
-        y_vel = msg.axes[0] * -self.config.max_y_velocity #lx
-        self.developing_command.horizontal_velocity = np.array([x_vel, y_vel])
-        self.developing_command.yaw_rate = msg.axes[3] * -self.config.max_yaw_rate #rx
+        y_vel = 0 # msg.axes[0] * -self.config.max_y_velocity #lx
+        self.developing_command.horizontal_velocity = np.round(np.array([x_vel, y_vel]),self.rounding_dp)
+        self.developing_command.yaw_rate = np.round(msg.axes[3],self.rounding_dp) * -self.config.max_yaw_rate #rx
 
         
 
-        self.developing_command.pitch = msg.axes[4] * self.config.max_pitch #ry
-        self.developing_command.height = msg.axes[7] #dpady
-        self.developing_command.roll = msg.axes[6] #dpadx
+        self.developing_command.pitch = np.round(msg.axes[4],self.rounding_dp) * self.config.max_pitch #ry
+        self.developing_command.height = np.round(msg.axes[7],self.rounding_dp) #dpady
+        self.developing_command.roll = np.round(msg.axes[6],self.rounding_dp) #dpadx
         #roll_movement = - msg["dpadx"]
         #height_movement = msg["dpady"]
         

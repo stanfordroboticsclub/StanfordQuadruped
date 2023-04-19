@@ -1,2 +1,2 @@
 dingo_description
-/home/alex/quadruped/DingoQuadruped/dingo_ws/devel/.private/dingo_description/cmake.lock /home/alex/quadruped/DingoQuadruped/dingo_ws/devel/./cmake.lock
+/home/admin/DingoQuadruped/dingo_ws/devel/.private/dingo_description/cmake.lock /home/admin/DingoQuadruped/dingo_ws/devel/./cmake.lock
