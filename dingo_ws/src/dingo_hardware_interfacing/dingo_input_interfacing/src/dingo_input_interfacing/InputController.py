@@ -20,7 +20,7 @@ class InputController:
 
         rospy.Subscriber("input_control/switch_input_control_device", String, self.switch_control_device)
 
-        self.used_keys = ['q','w','a','s','d','1','2', '7','8','9','0', 'Key.shift', 'Key.backspace', 'Key.up', 'Key.down', 'Key.left', 'Key.right']
+        self.used_keys = ['q','w','a','s','d','1','2', '7','8','9','0', keyboard.Key.shift, keyboard.Key.backspace, keyboard.Key.up, keyboard.Key.down, keyboard.Key.left, keyboard.Key.right]
         self.speed_multiplier = 1
         if activate_nodes:
             self.active = 1
@@ -44,16 +44,12 @@ class InputController:
             return
         
     def on_press(self,key):
-        try:
-            print('alphanumeric key {0} pressed'.format(
-            key.char))
-        except AttributeError:
-            print('special key {0} pressed'.format(
-            key))
-        print(key)
+        if hasattr(key, 'char'):
+            key = key.char
         if not self.check_valid_key(key): return
         if key == 'q':
             self.switch_input()
+
             return
         print("here5")
         msg = Joy()
@@ -100,7 +96,6 @@ class InputController:
     def check_valid_key(self, key):
         valid_key = 0
         for possible_key in self.used_keys:
-            print(possible_key)
             if key == possible_key:
                 valid_key = 1
                 break
@@ -108,7 +103,8 @@ class InputController:
         else: return True
         
     def on_release(self, key):
-        key = key.char
+        if hasattr(key, 'char'):
+            key = key.char
 
         #if not self.check_valid_key(key): return
 
@@ -127,6 +123,7 @@ class InputController:
             self.input_stream = 2
         else:
             self.input_stream = 0
+        print(self.input_stream)
         return
 
     def switch_control_device(self,device_ID):
@@ -140,8 +137,8 @@ class InputController:
             self.joystick_messages_sub = rospy.Subscriber("joy", Joy, self.joystick_callback)
             self.joystick_message_pub = rospy.Publisher("input_joy", Joy, queue_size=10)
             self.keyboard_listener = keyboard.Listener(
-                on_press=self.keyboard_onpress_callback,
-                on_release=self.keyboard_on_release_callback)
+                on_press=self.on_press,
+                on_release=self.on_release)
             self.keyboard_listener.start()
             self.active = 1
         return
