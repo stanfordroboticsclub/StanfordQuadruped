@@ -35,7 +35,7 @@ def signal_handler(sig, frame):
 def main(use_imu=False):
     """Main program
     """
-    rospy.init_node("dingo")
+    rospy.init_node("dingo") 
     message_rate = 50
     rate = rospy.Rate(message_rate)
 

@@ -2,7 +2,6 @@
 import rospy
 import numpy as np
 import time
-import keyboard
 from dingo_control.State import BehaviorState, State
 from dingo_control.Command import Command
 from dingo_utilities.Utilities import deadband, clipped_first_order_filter
