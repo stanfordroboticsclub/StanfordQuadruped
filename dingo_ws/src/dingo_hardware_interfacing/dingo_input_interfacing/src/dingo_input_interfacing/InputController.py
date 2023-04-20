@@ -24,7 +24,7 @@ class InputController:
         self.speed_multiplier = 1
         if activate_nodes:
             self.active = 1
-            self.joystick_message_pub = rospy.Publisher("input_joy", Joy, queue_size=10)
+            self.joystick_message_pub = rospy.Publisher("dingo_joy", Joy, queue_size=10)
             self.joystick_messages_sub = rospy.Subscriber("joy", Joy, self.joystick_callback)
             self.keyboard_listener = keyboard.Listener(
                 on_press=self.on_press,
@@ -40,57 +40,54 @@ class InputController:
 
         if self.input_stream == 0 or self.input_stream == 2:
             self.joystick_message_pub.publish(msg)
-        else:
-            return
+        return
         
     def on_press(self,key):
         if hasattr(key, 'char'):
             key = key.char
-        if not self.check_valid_key(key): return
-        if key == 'q':
+        if key == 'q' or key == 'Q':
             self.switch_input()
-
             return
-        print("here5")
-        msg = Joy()
-        msg.axes = [0.,0.,0.,0.,0.,0.,0.,0.]
-        msg.buttons = [0,0,0,0,0,0,0,0,0,0,0]
+        if self.input_stream == 1 or self.input_stream == 2:
+            msg = Joy()
+            msg.axes = [0.,0.,0.,0.,0.,0.,0.,0.]
+            msg.buttons = [0,0,0,0,0,0,0,0,0,0,0]
 
-        print("here4")
-        if key == 'Key.shift':
-            self.speed_multiplier = 2
-        elif key == 'w':
-            msg.axes[1] = 0.5*self.speed_multiplier
-        elif key == 's':
-            msg.axes[1] = -0.5*self.speed_multiplier
-        elif key == 'a':
-            msg.axes[0] = 0.5*self.speed_multiplier
-        elif key == 'd':
-            msg.axes[0] = -0.5*self.speed_multiplier
-        elif key == '1':
-            msg.buttons[5] = 1
-        elif key == '2':
-            msg.buttons[0] = 1
-        elif key == 'Key.backspace':
-            msg.buttons[4] = 1
-        elif key == 'Key.up':
-            msg.axes[4] = 0.5*self.speed_multiplier
-        elif key == 'Key.down':
-            msg.axes[4] = -0.5*self.speed_multiplier
-        elif key == 'Key.left':
-            msg.axes[3] = 0.5*self.speed_multiplier
-        elif key == 'Key.right':
-            msg.axes[3] = -0.5*self.speed_multiplier
-        elif key == '0':
-            msg.axes[7] = 1
-        elif key == '9':
-            msg.axes[7] = -1
-        elif key == '8':
-            msg.axes[6] = 1
-        elif key == '7':
-            msg.axes[6] = -1
-        print("here")
-        self.joystick_message_pub.publish(msg)
+            if key == keyboard.Key.shift:
+                self.speed_multiplier = 2
+            elif key == 'w' or key == 'W':
+                msg.axes[1] = 0.5*self.speed_multiplier
+            elif key == 's' or key == 'S':
+                msg.axes[1] = -0.5*self.speed_multiplier
+            elif key == 'a' or key == 'A':
+                msg.axes[0] = 0.5*self.speed_multiplier
+            elif key == 'd' or key == 'D':
+                msg.axes[0] = -0.5*self.speed_multiplier
+            elif key == '1':
+                msg.buttons[5] = 1
+            elif key == '2':
+                msg.buttons[0] = 1
+            elif key == keyboard.Key.backspace:
+                msg.buttons[4] = 1
+            elif key == keyboard.Key.up:
+                msg.axes[4] = 0.5*self.speed_multiplier
+            elif key == keyboard.Key.down:
+                msg.axes[4] = -0.5*self.speed_multiplier
+            elif key == keyboard.Key.left:
+                msg.axes[3] = 0.5*self.speed_multiplier
+            elif key == keyboard.Key.right:
+                msg.axes[3] = -0.5*self.speed_multiplier
+            elif key == '0':
+                msg.axes[7] = 1
+            elif key == '9':
+                msg.axes[7] = -1
+            elif key == '8':
+                msg.axes[6] = 1
+            elif key == '7':
+                msg.axes[6] = -1
+            else: return
+            print("here")
+            self.joystick_message_pub.publish(msg)
         return
     
     def check_valid_key(self, key):
@@ -103,6 +100,7 @@ class InputController:
         else: return True
         
     def on_release(self, key):
+        print("here2")
         if hasattr(key, 'char'):
             key = key.char
 
@@ -135,7 +133,7 @@ class InputController:
             self.active = 0
         elif device_ID == self.device_ID:
             self.joystick_messages_sub = rospy.Subscriber("joy", Joy, self.joystick_callback)
-            self.joystick_message_pub = rospy.Publisher("input_joy", Joy, queue_size=10)
+            self.joystick_message_pub = rospy.Publisher("dingo_joy", Joy, queue_size=10)
             self.keyboard_listener = keyboard.Listener(
                 on_press=self.on_press,
                 on_release=self.on_release)
