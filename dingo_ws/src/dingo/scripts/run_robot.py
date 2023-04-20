@@ -5,17 +5,17 @@ import sys
 from std_msgs.msg import Float64
 import signal
 import socket
+import platform
+
 
 #Fetching is_sim and is_physical from arguments
 args = rospy.myargv(argv=sys.argv)
-if len(args) != 4: #arguments have not been provided, go to defaults (not sim, is physical)
+if len(args) != 3: #arguments have not been provided, go to defaults (not sim, is physical)
     is_sim = 0
     is_physical = 0
-    device_ID = socket.gethostname()
 else:
     is_sim = int(args[1])
     is_physical = int(args[2])
-    device_ID = args[3]
 
 from dingo_nano_interfacing.IMU import IMU
 from dingo_control.Controller import Controller
@@ -35,7 +35,7 @@ def signal_handler(sig, frame):
 def main(use_imu=False):
     """Main program
     """
-    rospy.init_node("dingo")
+    rospy.init_node("dingo") 
     message_rate = 50
     rate = rospy.Rate(message_rate)
 
@@ -78,7 +78,8 @@ def main(use_imu=False):
     state = State()
     print("Creating input listener...")
     input_interface = InputInterface(config)
-    input_Controller = InputController(device_ID == "raspi" or socket.gethostname() == "raspi", device_ID) #Check raspi hostname and replace here
+    print(platform.processor())
+    input_Controller = InputController(1, platform.processor()) #Check raspi hostname and replace here
     print("Done.")
 
     last_loop = time.time()

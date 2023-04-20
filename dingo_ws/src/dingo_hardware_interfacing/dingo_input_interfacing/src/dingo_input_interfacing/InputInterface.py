@@ -2,7 +2,6 @@
 import rospy
 import numpy as np
 import time
-import keyboard
 from dingo_control.State import BehaviorState, State
 from dingo_control.Command import Command
 from dingo_utilities.Utilities import deadband, clipped_first_order_filter
@@ -26,7 +25,7 @@ class InputInterface:
         #self.udp_handle = UDPComms.Subscriber(udp_port, timeout=0.3)
         #self.udp_publisher = UDPComms.Publisher(udp_publisher_port)
 
-        self.input_messages = rospy.Subscriber("input_joy", Joy, self.input_callback) #temp
+        self.input_messages = rospy.Subscriber("dingo_joy", Joy, self.input_callback) #temp
         self.current_command = Command()
         self.new_command = Command()
         self.developing_command = Command()

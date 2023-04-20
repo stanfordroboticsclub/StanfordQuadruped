@@ -31,6 +31,7 @@ RUN pip3 install \
     regex \
     matplotlib \
     #Following are Nathan/Alex additions
+    pynput \
     #adafruit-circuitpython-pca9685 \
     adafruit-circuitpython-servokit
 

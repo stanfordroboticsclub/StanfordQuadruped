@@ -14,7 +14,8 @@
                 "gzclient",
                 "gzserver"
             ],
-            "type": "ros"
+            "type": "ros",
+            "arguments": ["is_physical:=0"]
         }
     ]
 }
