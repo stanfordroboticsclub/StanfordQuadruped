@@ -168,3 +168,4 @@ class Controller:
         state.joint_angles = controller.inverse_kinematics(
             state.foot_locations, self.config
         )
+        

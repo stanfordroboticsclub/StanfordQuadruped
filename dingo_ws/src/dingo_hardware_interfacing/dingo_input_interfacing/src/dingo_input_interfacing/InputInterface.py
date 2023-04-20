@@ -60,7 +60,7 @@ class InputInterface:
 
         ####### Handle continuous commands ########
         x_vel = msg.axes[1] * self.config.max_x_velocity #ly
-        y_vel = 0 # msg.axes[0] * -self.config.max_y_velocity #lx
+        y_vel = msg.axes[0] * -self.config.max_y_velocity #lx
         self.developing_command.horizontal_velocity = np.round(np.array([x_vel, y_vel]),self.rounding_dp)
         self.developing_command.yaw_rate = np.round(msg.axes[3],self.rounding_dp) * -self.config.max_yaw_rate #rx
 
@@ -78,10 +78,12 @@ class InputInterface:
         #        print("UDP Timed out")
         #    return Command()
         self.new_command = self.developing_command
+        print('new_command.height: ',self.new_command.height)
         
     def get_command(self, state, message_rate):
 
         self.current_command = self.new_command
+        
         self.current_command.trot_event = self.trot_event
         self.current_command.hop_event  = self.hop_event
         self.current_command.activate_event = self.activate_event
@@ -105,9 +107,8 @@ class InputInterface:
             self.config.pitch_time_constant,
         )
         self.current_command.pitch = state.pitch + message_dt * pitch_rate
-        self.current_command.height = state.height - message_dt * self.config.z_speed * self.current_command.height
+        self.current_command.height = state.height #- message_dt * self.config.z_speed * self.current_command.height
         self.current_command.roll = state.roll + message_dt * self.config.roll_speed * self.current_command.roll
-
         return self.current_command
     
     #def set_color(self, color):

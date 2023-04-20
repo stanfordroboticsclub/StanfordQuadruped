@@ -121,6 +121,7 @@ def main(use_imu=False):
 
             # Step the controller forward by dt
             controller.run(state, command)
+            # print('State.height: ', state.height)
 
             #TODO here: publish the joint values (in state.joint_angles) to a publisher
             #If running simulator, publish joint angles to gazebo controller:

@@ -33,7 +33,7 @@ class Configuration:
         self.delta_x = 0.2313/2 #0.1
         self.delta_y = 0.1083 #0.09
         self.x_shift = 0.0
-        self.default_z_ref = -0.2 #-0.16
+        self.default_z_ref = -0.25 #-0.16
 
         #################### SWING ######################
         self.z_coeffs = None

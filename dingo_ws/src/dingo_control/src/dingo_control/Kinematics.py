@@ -140,6 +140,7 @@ def four_legs_inverse_kinematics(r_body_foot, config):
     numpy array (3,4)
         Matrix of corresponding joint angles.
     """
+    # print('r_body_foot: \n',np.round(r_body_foot,3))
     alpha = np.zeros((3, 4))
     for i in range(4):
         body_offset = config.LEG_ORIGINS[:, i]
