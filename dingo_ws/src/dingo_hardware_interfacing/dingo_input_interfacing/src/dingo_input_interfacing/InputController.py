@@ -23,7 +23,7 @@ class InputController:
 
         self.display = os.getenv("DISPLAY", default=":0")
         rospy.Subscriber("input_control/switch_input_control_device", String, self.switch_control_device)
-        if self.display:
+        if self.display != "-":
             self.used_keys = ['q','w','a','s','d','1','2', '7','8','9','0', keyboard.Key.shift, keyboard.Key.backspace, keyboard.Key.up, keyboard.Key.down, keyboard.Key.left, keyboard.Key.right]
         self.speed_multiplier = 1
         if activate_nodes:
