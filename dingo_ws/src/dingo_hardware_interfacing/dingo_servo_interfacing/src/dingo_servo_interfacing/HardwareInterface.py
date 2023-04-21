@@ -81,6 +81,20 @@ class HardwareInterface():
     ##  THis method is used only in the calibrate servos file will make something similar to command individual actuators. 
     # def set_actuator_position(self, joint_angle, axis, leg):
     #     send_servo_command(self.pi, self.pwm_params, self.servo_params, joint_angle, axis, leg)
+    def relax_all_motors(self,servo_list = np.ones((3,4))):
+        """Relaxes desired servos so that they appear to be turned off. 
+
+        Parameters
+        ----------
+        servo_list : 3x4 numpy array of 1's and zeros. Row = Actuator; Column = leg.
+                    If a Given actuator is 0 is 1 it should be deactivated, if it is 0 is should be left on. 
+        """
+
+        for leg_index in range(4):
+            for axis_index in range(3):
+                if servo_list[axis_index,leg_index] == 1:
+                    self.kit.servo[self.pins[axis_index,leg_index]].angle = None
+
 
     def joint_angles_to_servo_angles(self,joint_angles):
         """Converts joint found via inverse kinematics to the angles needed at the servo using linkage analysis.
