@@ -21,7 +21,7 @@ class InputController:
         self.input_stream = input_stream #Defaults to Joystick input
         self.device_ID = device_ID
 
-        self.display = os.getenv("DISPLAY", default=":0")
+        self.display = os.getenv("DISPLY", default=":0")
         rospy.Subscriber("input_control/switch_input_control_device", String, self.switch_control_device)
         if self.display != "-":
             self.used_keys = ['q','w','a','s','d','1','2', '7','8','9','0', keyboard.Key.shift, keyboard.Key.backspace, keyboard.Key.up, keyboard.Key.down, keyboard.Key.left, keyboard.Key.right]
