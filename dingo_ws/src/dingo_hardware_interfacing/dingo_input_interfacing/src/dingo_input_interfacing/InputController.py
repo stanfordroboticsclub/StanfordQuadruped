@@ -3,7 +3,6 @@ import rospy
 import numpy as np
 import time
 import os
-print(os.getenv("DISPLY"))
 if os.getenv("DISPLY", default=":0") != "-":
     from pynput import keyboard
 from dingo_control.State import BehaviorState, State
@@ -24,8 +23,8 @@ class InputController:
 
         self.display = os.getenv("DISPLAY", default=":0")
         rospy.Subscriber("input_control/switch_input_control_device", String, self.switch_control_device)
-
-        self.used_keys = ['q','w','a','s','d','1','2', '7','8','9','0', keyboard.Key.shift, keyboard.Key.backspace, keyboard.Key.up, keyboard.Key.down, keyboard.Key.left, keyboard.Key.right]
+        if self.display:
+            self.used_keys = ['q','w','a','s','d','1','2', '7','8','9','0', keyboard.Key.shift, keyboard.Key.backspace, keyboard.Key.up, keyboard.Key.down, keyboard.Key.left, keyboard.Key.right]
         self.speed_multiplier = 1
         if activate_nodes:
             self.active = 1
