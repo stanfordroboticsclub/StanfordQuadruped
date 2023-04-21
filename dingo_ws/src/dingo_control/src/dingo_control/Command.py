@@ -12,6 +12,9 @@ class Command:
         self.pitch = 0.0
         self.roll = 0.0
         self.activation = 0
+
+        self.height_movement = 0
+        self.roll_movement = 0
         
         self.hop_event = False
         self.trot_event = False

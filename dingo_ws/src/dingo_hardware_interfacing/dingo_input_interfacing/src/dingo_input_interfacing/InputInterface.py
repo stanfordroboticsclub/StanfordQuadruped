@@ -66,8 +66,8 @@ class InputInterface:
         
 
         self.developing_command.pitch = np.round(msg.axes[4],self.rounding_dp) * self.config.max_pitch #ry
-        self.developing_command.height = np.round(msg.axes[7],self.rounding_dp) #dpady
-        self.developing_command.roll = np.round(msg.axes[6],self.rounding_dp) #dpadx
+        self.developing_command.height_movement = np.round(msg.axes[7],self.rounding_dp) #dpady
+        self.developing_command.roll_movement = np.round(msg.axes[6],self.rounding_dp) #dpadx
         #roll_movement = - msg["dpadx"]
         #height_movement = msg["dpady"]
         
@@ -106,8 +106,8 @@ class InputInterface:
             self.config.pitch_time_constant,
         )
         self.current_command.pitch = state.pitch + message_dt * pitch_rate
-        self.current_command.height = state.height #- message_dt * self.config.z_speed * self.current_command.height
-        self.current_command.roll = state.roll + message_dt * self.config.roll_speed * self.current_command.roll
+        self.current_command.height = state.height - message_dt * self.config.z_speed * self.current_command.height_movement
+        self.current_command.roll = state.roll + message_dt * self.config.roll_speed * self.current_command.roll_movement
         return self.current_command
     
     #def set_color(self, color):
