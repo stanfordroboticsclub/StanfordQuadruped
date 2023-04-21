@@ -3,7 +3,7 @@ import rospy
 import numpy as np
 import time
 import os
-print(os.getenv("DISPLY", default=":0"))
+print(os.getenv("DISPLY"))
 if os.getenv("DISPLY", default=":0") != "-":
     from pynput import keyboard
 from dingo_control.State import BehaviorState, State
