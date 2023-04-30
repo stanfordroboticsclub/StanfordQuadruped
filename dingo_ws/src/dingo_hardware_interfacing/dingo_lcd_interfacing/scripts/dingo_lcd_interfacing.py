@@ -68,7 +68,7 @@ class DingoDisplayNode:
             elif 0.20 < batt_percentage <=0.60:
                 batt_fill = "#d49b00" #yellow
             else: 
-                batt_fill = "#04de1a" #green
+                batt_fill = "#09ab00" #green
 
             batt_draw.rounded_rectangle([(42,92),(42+(153*batt_percentage) ,170)],8,fill = batt_fill)
             batt_draw.text((65, 95),str(int(batt_percentage*100))+"%", fill = "WHITE",font = Font1_large)
