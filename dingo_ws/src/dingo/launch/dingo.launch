@@ -4,6 +4,7 @@
 
     <!-- Joystick Node -->
     <include file="$(find dingo_input_interfacing)/launch/input_interface.launch" />
+    <include file="$(find dingo_lcd_interfacing)/launch/LCD_service.launch" />
     
     <!-- Robot run file -->
     <node pkg="dingo" type="run_robot.py"
