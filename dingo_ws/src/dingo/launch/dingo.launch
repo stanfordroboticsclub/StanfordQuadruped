@@ -1,12 +1,25 @@
 <launch>
-    <arg name="is_sim" default="0"/>
+    <arg name="launch_sim_environment" default="0"/>
+    <arg name="is_sim" default="1"/>
     <arg name="is_physical" default="1"/>
+    <arg name="serial_port" default="/dev/ttyAMA0"/>
 
     <!-- Joystick Node -->
     <include file="$(find dingo_input_interfacing)/launch/input_interface.launch" />
+
+    <!-- Communication Node between Arduino and Pi -->
+    <group if="$(arg is_physical)">
+        <node pkg="rosserial_python" type="serial_node.py"
+        name="dingo" args="$(arg serial_port)" output="screen"/>
+    </group>
+
+    <!-- Gazebo simulator -->
+    <group if="$(arg launch_sim_environment)">
+        <include file="$(find dingo)/launch/dingo_simulator.launch" />
+    </group>
     
-    <!-- Robot run file -->
-    <node pkg="dingo" type="run_robot.py"
+    <!-- Dingo Driver -->
+    <node pkg="dingo" type="dingo_driver.py"
         name="dingo" args="$(arg is_sim) $(arg is_physical)" output="screen"/>
 </launch>
     

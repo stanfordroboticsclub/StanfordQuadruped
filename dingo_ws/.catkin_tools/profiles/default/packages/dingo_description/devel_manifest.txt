@@ -1,2 +1,5 @@
 dingo_description
 /home/alex/quadruped/DingoQuadruped/dingo_ws/devel/.private/dingo_description/cmake.lock /home/alex/quadruped/DingoQuadruped/dingo_ws/devel/./cmake.lock
+/home/alex/quadruped/DingoQuadruped/dingo_ws/devel/.private/dingo_description/lib/pkgconfig/dingo_description.pc /home/alex/quadruped/DingoQuadruped/dingo_ws/devel/lib/pkgconfig/dingo_description.pc
+/home/alex/quadruped/DingoQuadruped/dingo_ws/devel/.private/dingo_description/share/dingo_description/cmake/dingo_descriptionConfig.cmake /home/alex/quadruped/DingoQuadruped/dingo_ws/devel/share/dingo_description/cmake/dingo_descriptionConfig.cmake
+/home/alex/quadruped/DingoQuadruped/dingo_ws/devel/.private/dingo_description/share/dingo_description/cmake/dingo_descriptionConfig-version.cmake /home/alex/quadruped/DingoQuadruped/dingo_ws/devel/share/dingo_description/cmake/dingo_descriptionConfig-version.cmake
