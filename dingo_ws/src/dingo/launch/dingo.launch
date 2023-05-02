@@ -17,6 +17,8 @@
     <group if="$(arg launch_sim_environment)">
         <include file="$(find dingo)/launch/dingo_simulator.launch" />
     </group>
+
+    <include file="$(find dingo_lcd_interfacing)/launch/LCD_service.launch" />
     
     <!-- Dingo Driver -->
     <node pkg="dingo" type="dingo_driver.py"
