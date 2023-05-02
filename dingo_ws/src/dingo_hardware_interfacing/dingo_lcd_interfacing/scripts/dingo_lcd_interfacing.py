@@ -14,7 +14,7 @@ rospack.get_path('dingo_lcd_interfacing') + "/lib/emptybatterystatus_white.png"
 class DingoDisplayNode:
     def __init__(self):
         rospy.init_node('dingo_display_node')
-        self.rate = rospy.Rate(10)  # 10 Hz
+        self.rate = rospy.Rate(50)  # 10 Hz
         self.logger = logging.getLogger('dingo_display_node')
         self.logger.setLevel(logging.DEBUG)
         # Raspberry Pi pin configuration:
@@ -56,7 +56,7 @@ class DingoDisplayNode:
             ## Battery indication bar
             black= Image.new("RGB", (320, 172), "black")
 
-            batt_percentage = 1 # Number between 0 and 1
+            batt_percentage = 0.7 # Number between 0 and 1
 
             batt_status = Image.open(rospack.get_path('dingo_lcd_interfacing') + "/lib/emptybatterystatus_white.png")
 
@@ -71,7 +71,7 @@ class DingoDisplayNode:
                 batt_fill = "#09ab00" #green
 
             batt_draw.rounded_rectangle([(42,92),(42+(153*batt_percentage) ,170)],8,fill = batt_fill)
-            batt_draw.text((65, 95),str(int(batt_percentage*100))+"%", fill = "WHITE",font = Font1_large)
+            batt_draw.text((68, 95),str(int(batt_percentage*100))+"%", fill = "WHITE",font = Font1_large)
             batt_scale_factor=0.8
             resized_batt_status = batt_status.resize((int(batt_status.size[0]*batt_scale_factor),int(batt_status.size[1]*batt_scale_factor)))
             image1.paste(resized_batt_status,(62, -40),resized_batt_status.convert('RGBA'))
