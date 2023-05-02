@@ -7,17 +7,17 @@
     </include>
 
     <!-- Robot -->
-    <arg name="robot" default="$(find dingo_description)/urdf/dingo.urdf"/>
+    <arg name="robot" default="$(find dingo_description)/urdf/notspot.urdf"/>
     <param name="robot_description" command="$(find xacro)/xacro --inorder $(arg robot)" />
-    <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-param robot_description -urdf -z 0.5 -model dingo_gazebo"/>
+    <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-param robot_description -urdf -z 0.5 -model notspot_gazebo"/>
 
     <!-- Controllers -->
     <rosparam file="$(find dingo_gazebo)/config/controllers.yaml" command="load"/>
     <node name="controller_spawner" pkg="controller_manager" type="spawner" output="screen" ns="dingo_controller"
-          args="FR_theta1 FR_theta2 FR_theta3
-                FL_theta1 FL_theta2 FL_theta3
-                RR_theta1 RR_theta2 RR_theta3
-                RL_theta1 RL_theta2 RL_theta3"/>
+          args="FR1_joint FR2_joint FR3_joint
+                FL1_joint FL2_joint FL3_joint
+                RR1_joint RR2_joint RR3_joint
+                RL1_joint RL2_joint RL3_joint"/>
 
     <!-- Robot State Publisher -->
     <node pkg="robot_state_publisher" type="robot_state_publisher"  name="robot_state_publisher" respawn="false" output="screen">

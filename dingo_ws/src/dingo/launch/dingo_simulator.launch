@@ -1,4 +1,0 @@
-<launch>
-    <include file="$(find dingo_gazebo)/launch/simulation.launch" />
-</launch>
-    

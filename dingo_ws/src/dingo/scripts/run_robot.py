@@ -6,7 +6,6 @@ from std_msgs.msg import Float64
 import signal
 import socket
 import platform
-from dingo_nano_interfacing.msg import ElectricalMeasurements
 
 #Module for i2c testing
 import subprocess

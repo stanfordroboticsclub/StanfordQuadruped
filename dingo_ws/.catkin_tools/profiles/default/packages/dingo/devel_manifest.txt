@@ -1,9 +1,8 @@
 dingo
-/home/alex/quadruped/DingoQuadruped/dingo_ws/devel/.private/dingo/cmake.lock /home/alex/quadruped/DingoQuadruped/dingo_ws/devel/./cmake.lock
-/home/alex/quadruped/DingoQuadruped/dingo_ws/devel/.private/dingo/lib/python3/dist-packages/dingo/__init__.py /home/alex/quadruped/DingoQuadruped/dingo_ws/devel/lib/python3/dist-packages/dingo/__init__.py
-/home/alex/quadruped/DingoQuadruped/dingo_ws/devel/.private/dingo/lib/pkgconfig/dingo.pc /home/alex/quadruped/DingoQuadruped/dingo_ws/devel/lib/pkgconfig/dingo.pc
-/home/alex/quadruped/DingoQuadruped/dingo_ws/devel/.private/dingo/lib/dingo/run_robot.py /home/alex/quadruped/DingoQuadruped/dingo_ws/devel/lib/dingo/run_robot.py
-/home/alex/quadruped/DingoQuadruped/dingo_ws/devel/.private/dingo/lib/dingo/cmake.lock /home/alex/quadruped/DingoQuadruped/dingo_ws/devel/lib/dingo/cmake.lock
-/home/alex/quadruped/DingoQuadruped/dingo_ws/devel/.private/dingo/lib/dingo/dingo_driver.py /home/alex/quadruped/DingoQuadruped/dingo_ws/devel/lib/dingo/dingo_driver.py
-/home/alex/quadruped/DingoQuadruped/dingo_ws/devel/.private/dingo/share/dingo/cmake/dingoConfig.cmake /home/alex/quadruped/DingoQuadruped/dingo_ws/devel/share/dingo/cmake/dingoConfig.cmake
-/home/alex/quadruped/DingoQuadruped/dingo_ws/devel/.private/dingo/share/dingo/cmake/dingoConfig-version.cmake /home/alex/quadruped/DingoQuadruped/dingo_ws/devel/share/dingo/cmake/dingoConfig-version.cmake
+/home/admin/DingoQuadruped/dingo_ws/devel/.private/dingo/cmake.lock /home/admin/DingoQuadruped/dingo_ws/devel/./cmake.lock
+/home/admin/DingoQuadruped/dingo_ws/devel/.private/dingo/lib/pkgconfig/dingo.pc /home/admin/DingoQuadruped/dingo_ws/devel/lib/pkgconfig/dingo.pc
+/home/admin/DingoQuadruped/dingo_ws/devel/.private/dingo/lib/dingo/cmake.lock /home/admin/DingoQuadruped/dingo_ws/devel/lib/dingo/cmake.lock
+/home/admin/DingoQuadruped/dingo_ws/devel/.private/dingo/lib/dingo/run_robot.py /home/admin/DingoQuadruped/dingo_ws/devel/lib/dingo/run_robot.py
+/home/admin/DingoQuadruped/dingo_ws/devel/.private/dingo/lib/python3/dist-packages/dingo/__init__.py /home/admin/DingoQuadruped/dingo_ws/devel/lib/python3/dist-packages/dingo/__init__.py
+/home/admin/DingoQuadruped/dingo_ws/devel/.private/dingo/share/dingo/cmake/dingoConfig-version.cmake /home/admin/DingoQuadruped/dingo_ws/devel/share/dingo/cmake/dingoConfig-version.cmake
+/home/admin/DingoQuadruped/dingo_ws/devel/.private/dingo/share/dingo/cmake/dingoConfig.cmake /home/admin/DingoQuadruped/dingo_ws/devel/share/dingo/cmake/dingoConfig.cmake
