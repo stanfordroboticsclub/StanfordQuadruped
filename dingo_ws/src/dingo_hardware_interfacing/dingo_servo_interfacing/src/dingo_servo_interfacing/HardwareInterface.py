@@ -21,9 +21,9 @@ class HardwareInterface():
                 #  2  [front_right_lower, front_left_lower, back_right_lower, back_left_lower]] 
 
            'pins' define the physical pin of the servos on the servoboard """
-        self.pins = np.array([[14,10,2,6], 
-                              [13,9,1,5], 
-                              [12,8,0,4]])
+        self.pins = np.array([[15,10,2,6], 
+                              [14,9,1,5], 
+                              [13,8,0,4]])
 
         """ 'servo_multipliers' and 'complementary_angle' both work to flip some angles, x, to (180-x) so that movement on each leg is consistent despite
             physical motor oritentation changes """
@@ -44,9 +44,10 @@ class HardwareInterface():
             - Offsets for LOWER leg servos map allign the servo so that it is vertically down at zero degrees. Note that IK requires a transformation of
                 angle_sent_to_servo = (180-angle_from_IK) + 90 degrees to map to this physcial servo location.  """
         self.physical_calibration_offsets = np.array(
-                                                [[83, 108, 108, 64], 
-                                                [28, 13, 32, 22], 
-                                                [22, 13, 24, 7]])
+                            [[113, 74, 105, 83], 
+                            [29, 17, 22, 9], 
+                            [24, 0, 30, 5]])
+
         #applying calibration values to all servos
         self.create()
 
@@ -70,13 +71,11 @@ class HardwareInterface():
         #Convert to servo angles
         self.joint_angles_to_servo_angles(possible_joint_angles)
 
-        # print('Final angles for actuation: ',self.servo_angles)    
+        # print('Final angles for actuation: ',self.servo_angles)
+    
         for leg_index in range(4):
             for axis_index in range(3):
-                try:
-                    self.kit.servo[self.pins[axis_index,leg_index]].angle = self.servo_angles[axis_index,leg_index]
-                except:
-                    print("Warning - IO error")
+                self.kit.servo[self.pins[axis_index,leg_index]].angle = self.servo_angles[axis_index,leg_index]
                 # print('NIce')
 
     ##  THis method is used only in the calibrate servos file will make something similar to command individual actuators. 
@@ -90,6 +89,7 @@ class HardwareInterface():
         servo_list : 3x4 numpy array of 1's and zeros. Row = Actuator; Column = leg.
                     If a Given actuator is 0 is 1 it should be deactivated, if it is 0 is should be left on. 
         """
+
         for leg_index in range(4):
             for axis_index in range(3):
                 if servo_list[axis_index,leg_index] == 1:
@@ -221,7 +221,7 @@ def impose_physical_limits(desired_joint_angles):
     possble_joint_angles: numpy array 3x4 of float angles (radians)
         The angles that will be attempted to be implemeneted, limited to a possible range
     '''
-    possible_joint_angles = np.zeros((3,4))
+    possble_joint_angles = np.zeros((3,4))
 
     for i in range(4):
         hip,upper,lower = np.degrees(desired_joint_angles[:,i])
@@ -230,11 +230,11 @@ def impose_physical_limits(desired_joint_angles):
         upper = np.clip(upper,0,120)
 
         if      0    <=  upper <     10  :
-            lower = np.clip(lower, -20 , 40) 
+            lower = np.clip(lower, -20 , 30) 
         elif 10    <=  upper <     20  :
-            lower = np.clip(lower, -40 , 40)
+            lower = np.clip(lower, -40 , 30)
         elif 20    <=  upper <     30  :
-            lower = np.clip(lower, -50 , 40) 
+            lower = np.clip(lower, -50 , 30) 
         elif 30    <=  upper <     40  :
             lower = np.clip(lower, -60 , 30) 
         elif 40    <=  upper <     50  :
@@ -254,37 +254,34 @@ def impose_physical_limits(desired_joint_angles):
         elif 110    <=  upper <     120  :
             lower = np.clip(lower, -70 , -60) 
 
-        possible_joint_angles[:,i] =  hip,upper,lower
+        possble_joint_angles[:,i] =  hip,upper,lower
 
-    return np.radians(possible_joint_angles)
+    return np.radians(possble_joint_angles)
 
 ################################# TESING HARDWARE INTERFACING ############################
 """ THis section can be used to test this hardware interfacing by running this script only and supplying 
     angles for the legs in thr joint space. Uncomment and then run using the command: 
                         rosrun dingo_servo_interfacing HardwareInterface.py  
 """
-# from dingo_control.Config import Configuration,Leg_linkage
+from dingo_control.Config import Configuration,Leg_linkage
 
-# configuration = Configuration()
-# linkage = Leg_linkage(configuration)
-# hardware_interface = HardwareInterface(linkage)
+configuration = Configuration()
+linkage = Leg_linkage(configuration)
+hardware_interface = HardwareInterface(linkage)
 
-# ## Define a position for all legs in the joint space
-# low = [0,30,20]
-# mid = [0,50,-10]
-# high = [0,60,-40]
-# pos = mid #[0,50,0] [low 30,20]
+## Define a position for all legs in the joint space
+pos = [0,40,10] #[0,50,-40] [low 30,20]
 
-# hip_angle  = m.radians(pos[0])
-# upper_leg_angle = m.radians(pos[1]) #defined accoridng to IK
-# lower_leg_angle = m.radians(pos[2]) #defined accoridng to IK
+hip_angle  = m.radians(pos[0])
+upper_leg_angle = m.radians(pos[1]) #defined accoridng to IK
+lower_leg_angle = m.radians(pos[2]) #defined accoridng to IK
 
 
-# joint_angles = np.array([[hip_angle,     hip_angle,      hip_angle,      hip_angle      ], 
-#                         [upper_leg_angle,upper_leg_angle,upper_leg_angle,upper_leg_angle], 
-#                         [lower_leg_angle,lower_leg_angle,lower_leg_angle,lower_leg_angle]])
+joint_angles = np.array([[hip_angle,     hip_angle,      hip_angle,      hip_angle      ], 
+                        [upper_leg_angle,upper_leg_angle,upper_leg_angle,upper_leg_angle], 
+                        [lower_leg_angle,lower_leg_angle,lower_leg_angle,lower_leg_angle]])
 
-# hardware_interface.set_actuator_postions(joint_angles)
+hardware_interface.set_actuator_postions(joint_angles)
 
 ##########################################################################################
 

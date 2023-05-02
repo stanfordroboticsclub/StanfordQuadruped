@@ -1,0 +1,18 @@
+<launch>
+
+    <arg name="robot" default="$(find dingo_description)/urdf/dingo.urdf"/>
+    <param name="robot_description"
+         command="$(find xacro)/xacro --inorder $(arg robot)" />
+
+    <node pkg="joint_state_publisher_gui"
+         type="joint_state_publisher_gui" name="joint_state_publisher_gui"/>
+
+    <node pkg="robot_state_publisher"
+         type="robot_state_publisher" name="robot_state_publisher">
+        <param name="publish_frequency" type="double" value="1000.0"/>
+    </node>
+
+    <node pkg="rviz" type="rviz" name="rviz" respawn="false" output="screen"
+          args="-d $(find dingo_description)/launch/dingo_rviz.rviz"/>
+
+</launch>
