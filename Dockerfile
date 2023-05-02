@@ -19,8 +19,6 @@ RUN apt-get update && \
     libvlccore-dev \
     libvlc-dev \
     ros-noetic-joy \
-    ros-noetic-rosserial \
-    ros-noetic-rosserial-arduino \
     git 
 
 RUN pip3 install \
