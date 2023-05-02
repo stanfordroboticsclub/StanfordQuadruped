@@ -6,6 +6,7 @@ from std_msgs.msg import Float64
 import signal
 import socket
 import platform
+from dingo_nano_interfacing.msg import ElectricalMeasurements
 
 
 #Fetching is_sim and is_physical from arguments
