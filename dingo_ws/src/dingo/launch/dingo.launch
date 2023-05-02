@@ -1,8 +1,7 @@
 <launch>
     <arg name="is_sim" default="0"/>
     <arg name="is_physical" default="1"/>
-    
-    <arg name="serial_port" default="/dev/ttyUSB0"/>   <!-- /dev/ttyAMA0 -->
+    <arg name="serial_port" default="/dev/ttyAMA0"/>
 
     <!-- Joystick Node -->
     <include file="$(find dingo_input_interfacing)/launch/input_interface.launch" />
