@@ -6,9 +6,8 @@ from std_msgs.msg import Float64
 import signal
 import socket
 import platform
+from dingo_nano_interfacing.msg import ElectricalMeasurements
 
-#Module for i2c testing
-import subprocess
 
 #Fetching is_sim and is_physical from arguments
 args = rospy.myargv(argv=sys.argv)
@@ -93,20 +92,15 @@ def main(use_imu=False):
     print("x shift: ", config.x_shift)
 
     # Wait until the activate button has been pressed
-
-    loop = 0
     while not rospy.is_shutdown():      
         print("Waiting for L1 to activate robot.")
-        
         while True:
             command = input_interface.get_command(state,message_rate)
-            # hardware_interface.relax_all_motors()
             #input_interface\.set_color(config.ps4_deactivated_color)
             if command.activate_event == 1:
                 break
             rate.sleep()
         print("Robot activated.")
-        
         #input_interface.set_color(config.ps4_color)
 
         while True:
@@ -143,15 +137,13 @@ def main(use_imu=False):
             
             if is_physical:
                 # Update the pwm widths going to the servos
-                
                 hardware_interface.set_actuator_postions(state.joint_angles)
             
             # print('All angles: \n',np.round(np.degrees(state.joint_angles),2))
             time.end = rospy.Time.now()
             #Uncomment following line if want to see how long it takes to execute a control iteration
             #print(str(time.start-time.end))
-            loop +=1
-            # print('Iteration: ',loop)
+
             # print('State: \n',state)
             rate.sleep()
 

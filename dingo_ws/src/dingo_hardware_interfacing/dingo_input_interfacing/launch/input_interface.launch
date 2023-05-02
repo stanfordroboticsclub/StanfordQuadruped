@@ -1,7 +1,7 @@
 <launch>
 
     <node pkg="joy" type="joy_node" name="JOYSTICK">
-        <arg name="autorepeat_rate" value="30"/>
+        <param name="autorepeat_rate" value="30"/>
         <!-- <param name="joy_node/dev" value="/dev/input/js0"/>
         <arg name="coalesce_interval" value="0.02"/>
          -->

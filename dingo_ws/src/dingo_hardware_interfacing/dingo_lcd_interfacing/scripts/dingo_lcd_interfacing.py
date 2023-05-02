@@ -5,11 +5,8 @@ import LCD_1inch47
 from PIL import Image, ImageDraw, ImageFont
 import logging
 import os
-import rospkg
 import socket
 import time
-rospack = rospkg.RosPack()
-rospack.get_path('dingo_lcd_interfacing') + "/lib/emptybatterystatus_white.png"
 
 class DingoDisplayNode:
     def __init__(self):
@@ -43,11 +40,10 @@ class DingoDisplayNode:
             self.logger.info("Importing fonts...")
             Font1 = ImageFont.truetype("/usr/share/fonts/truetype/Font02.ttf", 25)
             Font1_small = ImageFont.truetype("/usr/share/fonts/truetype/Font02.ttf", 20)
-            Font1_large = ImageFont.truetype("/usr/share/fonts/truetype/Font02.ttf", 60)
             Font2 = ImageFont.truetype("/usr/share/fonts/truetype/Font01.ttf", 35)
             Font3 = ImageFont.truetype("/usr/share/fonts/truetype/Font02.ttf", 120)
 
-            # draw.text((60, -15), 'Dingo', fill="RED", font=Font3)
+            draw.text((60, -15), 'Dingo', fill="RED", font=Font3)
             draw.text((20, 110), f'SSID: {self.ssid}', fill="WHITE", font=Font1)
             draw.text((20, 135), f'IP: {self.ipAddress}', fill="WHITE", font=Font1)
             current_time = time.strftime("%I:%M:%S%p")
@@ -81,9 +77,6 @@ class DingoDisplayNode:
             image1 = image1.rotate(0)
             image1 = image1.transpose(Image.ROTATE_270)
             self.disp.ShowImage(image1)
-
-            
-
 
             ## SSID and IP are calcultated after displaying so that they can run on the second loop
             self.logger.info("Connecting to Wi-Fi...")

@@ -20,18 +20,18 @@ class Configuration:
         
         #################### MOVEMENT PARAMS ####################
         self.z_time_constant = 0.02
-        self.z_speed = 0.06  # maximum speed [m/s]
-        self.pitch_deadband = 0.05
+        self.z_speed = 0.08  # maximum speed [m/s]
+        self.pitch_deadband = 0.02
         self.pitch_time_constant = 0.25
-        self.max_pitch_rate = 0.3
-        self.roll_speed = 0.1  # maximum roll rate [rad/s]
+        self.max_pitch_rate = 0.5
+        self.roll_speed = 0.9  # maximum roll rate [rad/s]
         self.yaw_time_constant = 0.3
         self.max_stance_yaw = 1.2
         self.max_stance_yaw_rate = 1
 
         #################### STANCE ####################
-        self.delta_x = 0.117 #11565
-        self.delta_y = 0.1 #0.1083
+        self.delta_x = 0.2313/2 #0.1
+        self.delta_y = 0.1083 #0.09
         self.x_shift = 0.0
         self.default_z_ref = -0.25 #-0.16
 
@@ -52,27 +52,27 @@ class Configuration:
             [[1, 1, 1, 0], [1, 0, 1, 1], [1, 0, 1, 1], [1, 1, 1, 0]]
         )
         self.overlap_time = (
-            0.04  # duration of the phase where all four feet are on the ground
+            0.10  # duration of the phase where all four feet are on the ground
         )
         self.swing_time = (
-            0.07  # duration of the phase when only two feet are on the ground
+            0.15  # duration of the phase when only two feet are on the ground
         )
 
         ######################## GEOMETRY ######################
 
         #FOLLOWING WE ACTUALLY USE
-        self.LEG_FB = 0.11062 #   front-back distance from center line to leg axis
-        self.LEG_LR = 0.061 #0.061  # left-right distance from center line to leg plane
+        self.LEG_FB = 0.11062 #0.10   front-back distance from center line to leg axis
+        self.LEG_LR = 0.061 #0.04  # left-right distance from center line to leg plane
         self.LEG_ORIGINS = np.array( #Origins of the initial frame from the centre of the body
             [
-                [self.LEG_FB, self.LEG_FB, -self.LEG_FB+0.02, -self.LEG_FB+0.02],
+                [self.LEG_FB, self.LEG_FB, -self.LEG_FB, -self.LEG_FB],
                 [-self.LEG_LR, self.LEG_LR, -self.LEG_LR, self.LEG_LR],
                 [0, 0, 0, 0],
             ]
         )
         self.L1 = 0.04973   
-        self.L2 = 0.130
-        self.L3 = 0.135
+        self.L2 = 0.140
+        self.L3 = 0.1631477
         self.phi = 73.17
         
         
@@ -221,12 +221,12 @@ class Leg_linkage:
         self.c = 45 #mm
         self.d = 35.23  #mm
         self.e = 67.1 #mm
-        self.f = 130 #mm  #new will be 130.0
+        self.f = 142.2 #mm  #new will be 130.2
         self.g = 37 #mm
         self.h = 45 #mm
         self.upper_leg_length = configuration.L2*1000
         self.lower_leg_length = configuration.L3*1000
-        self.lower_leg_bend_angle = m.radians(0) # degrees found on CAD
+        self.lower_leg_bend_angle = m.radians(6.73) # degrees found on CAD
         self.i = self.upper_leg_length
         self.hip_width = configuration.L1 * 1000
         self.gamma = m.atan(28.80/20.20)
