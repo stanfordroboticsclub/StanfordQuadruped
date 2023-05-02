@@ -15,6 +15,7 @@ class State:
         self.ticks = 0
         self.foot_locations = np.zeros((3, 4))
         self.joint_angles = np.zeros((3, 4))
+        self.speed_factor = 1
 
 
 
