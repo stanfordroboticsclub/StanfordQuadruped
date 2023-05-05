@@ -96,7 +96,6 @@ class DingoDisplayNode:
             self.logger.info(f"SSID: {self.ssid}")
             self.logger.info("Getting IP address...")
             try:
-                s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
                 s.connect(('google.com', 0))
                 self.ipAddress = s.getsockname()[0]
             except rospy.ROSInterruptException as e:

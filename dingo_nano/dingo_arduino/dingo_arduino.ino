@@ -4,7 +4,7 @@
 #include <dingo_nano_interfacing/ElectricalMeasurements.h>
 #include <avr/sleep.h>
 
-ros::NodeHandle_<ArduinoHardware, 5, 5, 256, 256> arduino_nano_node; //(max) 5 publishers, 2 subscribers, 64 byte input buffer, 256 byte output buffer. Default is 25,25,512,512
+ros::NodeHandle_<ArduinoHardware, 5, 5, 128, 256> arduino_nano_node; //(max) 5 publishers, 2 subscribers, 64 byte input buffer, 256 byte output buffer. Default is 25,25,512,512
 
 //Declare global message variables for storing data to publish
 std_msgs::Bool emergency_stop_msg;
@@ -31,7 +31,11 @@ bool currently_estopped = 0;
 void setup()
 {
   //This function is required by arduino standards, and is run once on startup to initialise ros, publishers, subscribers and array initial values
-
+  Serial.begin(57600);
+  while (!Serial.available()) {
+    delay(1000); // Wait 1 second before checking again
+  }
+  arduino_nano_node.getHardware()->setBaud(57600);
   //initialise ros node, and advertise publishers
   arduino_nano_node.initNode();
   arduino_nano_node.advertise(emergency_stop_status_publisher);
@@ -49,8 +53,15 @@ void setup()
   for (int i = 0; i < number_stored_battery_voltage_measurements; i++)
   {
     battery_voltage_array[i] = 0.0;
-    servo_buck_voltage_array[i] = 0.0;
+    
   }
+
+  for (int i = 0; i < number_stored_buck_voltage_measurements; i++)
+  {
+    servo_buck_voltage_array[i] = 0.0;
+    
+  }
+  
 }
 
 void shutdown()
@@ -87,26 +98,30 @@ void checkBatteryVoltageLevel()
 
   current_voltage = current_voltage * 0.93;
 
-  //Arduino will read a NaN when the voltage is zero, so account for this
-  if (isnan(current_voltage))
-  {
-    current_voltage = 0.0;
-  }
   battery_voltage_array[battery_voltage_array_index] = current_voltage;
 
   //using the array of the most recent voltage readings, calculate the current average voltage of the battery
-  float average_voltage = 0;
+  float sum_of_voltages = 0;
   int numberOfVoltagesUsed = 0;
   for (int j = 0; j < number_stored_battery_voltage_measurements; j++)
   {
     if (battery_voltage_array[j] > 2.0)
     {
-      average_voltage = average_voltage + battery_voltage_array[j];
+      sum_of_voltages = sum_of_voltages + battery_voltage_array[j];
       numberOfVoltagesUsed = numberOfVoltagesUsed + 1;
     }
       
   } 
-  float current_battery_voltage = average_voltage/numberOfVoltagesUsed;
+  //note: if the sum of voltages is zero, set current_battery_voltage to zero to avoid NaN from 0/x
+  float current_battery_voltage;
+  if (sum_of_voltages != 0.0)
+  {
+    current_battery_voltage = sum_of_voltages/numberOfVoltagesUsed;
+  }
+  else
+  {
+    current_battery_voltage = 0.0;
+  }
 
   //write the current average voltage to the publisher message
   electrical_measurement_msg.battery_voltage_level = current_voltage;
@@ -153,36 +168,38 @@ void checkBuckVoltageLevel()
   
   //Get the voltage at the analogue port of the arduino
   int sensorValue = analogRead(A1);
-  if (!(sensorValue == sensorValue))
-  {
-    sensorValue = 0.0;
-  }
-  
+
   //convert this voltage into the actual buck converter output voltage and store into an array of voltage readings
   float current_voltage = sensorValue * (5.0 / 1023.0) * ((buck_R1+buck_R2)/buck_R2);
 
   current_voltage = current_voltage * 0.91;
 
   //Arduino will read a NaN when the voltage is zero, so account for this
-  if (isnan(current_voltage))
-  {
-    current_voltage = 0.0;
-  }
+
   servo_buck_voltage_array[buck_voltage_array_index] = current_voltage;
 
   //using the array of the most recent voltage readings, calculate the current average voltage of the buck converter output
-  float average_voltage = 0;
+  float sum_of_voltages = 0;
   int numberOfVoltagesUsed = 0;
   for (int j = 0; j < number_stored_buck_voltage_measurements; j++)
   {
     if (servo_buck_voltage_array[j] > 2.0)
     {
-      average_voltage = average_voltage + servo_buck_voltage_array[j];
+      sum_of_voltages = sum_of_voltages + servo_buck_voltage_array[j];
       numberOfVoltagesUsed = numberOfVoltagesUsed + 1;
     }
       
   } 
-  float current_buck_voltage = average_voltage/numberOfVoltagesUsed;
+  //note: if the sum of voltages is zero, set current_buck_voltage to zero to avoid NaN from 0/x
+  float current_buck_voltage;
+  if (sum_of_voltages != 0.0)
+  {
+    current_buck_voltage = sum_of_voltages/numberOfVoltagesUsed;
+  }
+  else
+  {
+    current_buck_voltage = 0.0;
+  }
 
   //write the current average voltage to the publisher message
   electrical_measurement_msg.servo_buck_voltage_level = current_buck_voltage;
@@ -243,6 +260,6 @@ void loop()
   arduino_nano_node.spinOnce();
 
   //Runs every 100ms at the moment.
-  delay(50); //NOTE: ros-serial does not have an equivalent ros sleep function, so need to use native delay. Not a major issue for us.
+  delay(100); //NOTE: ros-serial does not have an equivalent ros sleep function, so need to use native delay. Not a major issue for us.
   
 }
