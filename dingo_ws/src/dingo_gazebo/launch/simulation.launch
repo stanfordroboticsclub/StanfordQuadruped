@@ -9,7 +9,21 @@
     <!-- Robot -->
     <arg name="robot" default="$(find dingo_description)/urdf/dingo.urdf"/>
     <param name="robot_description" command="$(find xacro)/xacro --inorder $(arg robot)" />
-    <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-param robot_description -urdf -z 0.5 -model dingo_gazebo"/>
+    <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-param robot_description -urdf 
+    -z 0.25
+    -J FR_theta2 0.72646626
+    -J FL_theta2 0.72646626
+    -J RR_theta2 0.72646626
+    -J RL_theta2 0.72646626
+    -J FR_theta1 0.0
+    -J FL_theta1 0.0
+    -J RR_theta1 0.0
+    -J RL_theta1 0.0
+    -J FR_theta3 0.0
+    -J FL_theta3 0.0
+    -J RR_theta3 0.0
+    -J RL_theta3 0.0
+    -model dingo_gazebo"/>
 
     <!-- Controllers -->
     <rosparam file="$(find dingo_gazebo)/config/controllers.yaml" command="load"/>

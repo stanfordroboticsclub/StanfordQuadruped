@@ -34,6 +34,7 @@ RUN pip3 install \
     matplotlib \
     #Following are Nathan/Alex additions
     pynput \
+    spidev \
     #adafruit-circuitpython-pca9685 \
     adafruit-circuitpython-servokit
 

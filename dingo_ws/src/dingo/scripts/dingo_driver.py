@@ -77,6 +77,19 @@ def main(use_imu=False):
         four_legs_inverse_kinematics,
     )
     state = State()
+    default_position = [[-0.04319515, -0.04319515, -0.04319515, -0.04319515], [0.72646626,  0.72232315,  0.58123994,  0.57653635], [0.02207615,  0.02943969,  0.0077316,   0.01509318]]
+    state.joint_angles = np.array(default_position)
+    if is_physical:
+        hardware_interface.set_actuator_postions(state.joint_angles)
+    if is_sim:
+        print("here")
+        rows, cols = state.joint_angles.shape
+        i = 0
+        for col in range(cols):
+            for row in range(rows):
+                publishers[i].publish(state.joint_angles[row,col])
+                i = i + 1
+
     print("Creating input listener...")
     input_interface = InputInterface(config)
     print(platform.processor())
@@ -123,18 +136,19 @@ def main(use_imu=False):
 
             # Step the controller forward by dt
             controller.run(state, command)
+
+            #print(state.joint_angles)
             # print('State.height: ', state.height)
 
             #TODO here: publish the joint values (in state.joint_angles) to a publisher
             #If running simulator, publish joint angles to gazebo controller:
             if is_sim:
                 rows, cols = state.joint_angles.shape
-                for row in range(rows):
-                    for col in range(cols):
-                        print("row: ", row)
-                        print("col: ", col)
-                        print("rows*row+col: ", rows*row+col)
-                        publishers[rows*row+col].publish(state.joint_angles[row,col])
+                i = 0
+                for col in range(cols):
+                    for row in range(rows):
+                        publishers[i].publish(state.joint_angles[row,col])
+                        i = i + 1
             
             if is_physical:
                 # Update the pwm widths going to the servos

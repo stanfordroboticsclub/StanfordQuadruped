@@ -61,43 +61,25 @@ class Configuration:
         ######################## GEOMETRY ######################
 
         #FOLLOWING WE ACTUALLY USE
-        self.LEG_FB = 0.11062 #   front-back distance from center line to leg axis
+        self.LEG_FB = 0.11165 #   front-back distance from center line to leg axis
         self.LEG_LR = 0.061 #0.061  # left-right distance from center line to leg plane
         self.LEG_ORIGINS = np.array( #Origins of the initial frame from the centre of the body
             [
-                [self.LEG_FB, self.LEG_FB, -self.LEG_FB+0.02, -self.LEG_FB+0.02],
+                [self.LEG_FB, self.LEG_FB, -self.LEG_FB, -self.LEG_FB],
                 [-self.LEG_LR, self.LEG_LR, -self.LEG_LR, self.LEG_LR],
                 [0, 0, 0, 0],
             ]
         )
-        self.L1 = 0.04973   
+        self.L1 = 0.0518655 
         self.L2 = 0.130
-        self.L3 = 0.135
-        self.phi = 73.17
+        self.L3 = 0.1381366
+        self.phi = m.radians(73.88)
         
-        
-        #Obsolete 
-        self.LEG_L2 = self.L3 #0.115
-        self.LEG_L1 = self.L2 #0.1235
-        self.ABDUCTION_OFFSET = self.L1 * m.sin(self.phi) #0.03  # distance from abduction axis to leg
-        self.ABDUCTION_OFFSETS = np.array(
-            [
-                -self.ABDUCTION_OFFSET,
-                self.ABDUCTION_OFFSET,
-                -self.ABDUCTION_OFFSET,
-                self.ABDUCTION_OFFSET,
-            ]
-        )
-        
-        #Think the following can be removed entirely, not referenced anywhere else but here:
-        self.HIP_L = 0.0394
-        self.FOOT_RADIUS = 0.01
-        self.HIP_W = 0.0744
-        self.HIP_T = 0.0214
-        self.HIP_OFFSET = 0.0132
-        self.L = 0.276
-        self.W = 0.100
-        self.T = 0.050
+        # Currently working values
+        #self.phi = m.radians(73.17)
+        #self.L1 = 0.04973
+        #self.L2 = 0.140
+        #self.L3 = 0.1631477
 
         ################### INERTIAL ####################
         self.FRAME_MASS = 0.560  # kg
@@ -115,7 +97,7 @@ class Configuration:
 
         leg_z = 1e-6
         leg_mass = 0.010
-        leg_x = 1 / 12 * self.LEG_L1 ** 2 * leg_mass
+        leg_x = 1 / 12 * self.L2 ** 2 * leg_mass
         leg_y = leg_x
         self.LEG_INERTIA = (leg_x, leg_y, leg_z)
 

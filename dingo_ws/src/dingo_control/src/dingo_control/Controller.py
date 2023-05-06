@@ -3,11 +3,16 @@ from dingo_control.StanceController import StanceController
 from dingo_control.SwingLegController import SwingController
 from dingo_utilities.Utilities import clipped_first_order_filter
 from dingo_control.State import BehaviorState, State
+from dingo_control.msg import TaskSpace, JointSpace, Angle
 
 import numpy as np
 from transforms3d.euler import euler2mat, quat2euler
 from transforms3d.quaternions import qconjugate, quat2axangle
 from transforms3d.axangles import axangle2mat
+import rospy
+from geometry_msgs.msg import Point
+from std_msgs.msg import Header
+from math import degrees
 
 
 class Controller:
@@ -20,6 +25,10 @@ class Controller:
         inverse_kinematics,
     ):
         self.config = config
+
+                ################# ROS PUBLISHER FOR TASK SPACE GOALS ##############
+        self.task_space_pub = rospy.Publisher('task_space_goals', TaskSpace, queue_size=10)
+        self.joint_space_pub = rospy.Publisher('joint_space_goals', JointSpace, queue_size=10)
 
         self.smoothed_yaw = 0.0  # for REST mode only
         self.inverse_kinematics = inverse_kinematics
@@ -62,6 +71,27 @@ class Controller:
             new_foot_locations[:, leg_index] = new_location
         return new_foot_locations, contact_modes
 
+
+    def publish_task_space_command(self, rotated_foot_locations):
+
+        task_space_message = TaskSpace()
+        task_space_message.FR_foot = Point(rotated_foot_locations[0, 0] - self.config.LEG_ORIGINS[0, 0], rotated_foot_locations[1, 0] - self.config.LEG_ORIGINS[1, 0], rotated_foot_locations[2, 0] - self.config.LEG_ORIGINS[2, 0])
+        task_space_message.FL_foot = Point(rotated_foot_locations[0, 1] - self.config.LEG_ORIGINS[0, 1], rotated_foot_locations[1, 1] - self.config.LEG_ORIGINS[1, 1], rotated_foot_locations[2, 1] - self.config.LEG_ORIGINS[2, 1])
+        task_space_message.RR_foot = Point(rotated_foot_locations[0, 2] - self.config.LEG_ORIGINS[0, 2], rotated_foot_locations[1, 2] - self.config.LEG_ORIGINS[1, 2], rotated_foot_locations[2, 2] - self.config.LEG_ORIGINS[2, 2])
+        task_space_message.RL_foot = Point(rotated_foot_locations[0, 3] - self.config.LEG_ORIGINS[0, 3], rotated_foot_locations[1, 3] - self.config.LEG_ORIGINS[1, 3], rotated_foot_locations[2, 3] - self.config.LEG_ORIGINS[2, 3])
+        task_space_message.header = Header(stamp = rospy.Time.now())
+        self.task_space_pub.publish(task_space_message)
+
+    def publish_joint_space_command(self, angle_matrix):
+
+        joint_space_message = JointSpace()
+        joint_space_message.FR_foot = Angle(degrees(angle_matrix[0, 0] - self.config.LEG_ORIGINS[0, 0]), degrees(angle_matrix[1, 0] - self.config.LEG_ORIGINS[1, 0]), degrees(angle_matrix[2, 0] - self.config.LEG_ORIGINS[2, 0]))
+        joint_space_message.FL_foot = Angle(degrees(angle_matrix[0, 1] - self.config.LEG_ORIGINS[0, 1]), degrees(angle_matrix[1, 1] - self.config.LEG_ORIGINS[1, 1]), degrees(angle_matrix[2, 1] - self.config.LEG_ORIGINS[2, 1]))
+        joint_space_message.RR_foot = Angle(degrees(angle_matrix[0, 2] - self.config.LEG_ORIGINS[0, 2]), degrees(angle_matrix[1, 2] - self.config.LEG_ORIGINS[1, 2]), degrees(angle_matrix[2, 2] - self.config.LEG_ORIGINS[2, 2]))
+        joint_space_message.RL_foot = Angle(degrees(angle_matrix[0, 3] - self.config.LEG_ORIGINS[0, 3]), degrees(angle_matrix[1, 3] - self.config.LEG_ORIGINS[1, 3]), degrees(angle_matrix[2, 3] - self.config.LEG_ORIGINS[2, 3]))
+        joint_space_message.header = Header(stamp = rospy.Time.now())
+        self.joint_space_pub.publish(joint_space_message)
+    
 
     def run(self, state, command):
         """Steps the controller forward one timestep
@@ -107,6 +137,9 @@ class Controller:
             state.joint_angles = self.inverse_kinematics(
                 rotated_foot_locations, self.config
             )
+            self.publish_joint_space_command(state.joint_angles)
+            self.publish_task_space_command(rotated_foot_locations)
+        
 
         elif state.behavior_state == BehaviorState.HOP:
             state.foot_locations = (
@@ -116,6 +149,8 @@ class Controller:
             state.joint_angles = self.inverse_kinematics(
                 state.foot_locations, self.config
             )
+            self.publish_joint_space_command(state.joint_angles)
+            self.publish_task_space_command(rotated_foot_locations)
 
         elif state.behavior_state == BehaviorState.FINISHHOP:
             state.foot_locations = (
@@ -125,6 +160,8 @@ class Controller:
             state.joint_angles = self.inverse_kinematics(
                 state.foot_locations, self.config
             )
+            self.publish_joint_space_command(state.joint_angles)
+            self.publish_task_space_command(rotated_foot_locations)
 
         elif state.behavior_state == BehaviorState.REST:
             yaw_proportion = command.yaw_rate / self.config.max_yaw_rate
@@ -154,6 +191,8 @@ class Controller:
             state.joint_angles = self.inverse_kinematics(
                 rotated_foot_locations, self.config
             )
+            self.publish_joint_space_command(state.joint_angles)
+            self.publish_task_space_command(rotated_foot_locations)
 
         state.ticks += 1
         state.pitch = command.pitch
@@ -165,7 +204,7 @@ class Controller:
             self.config.default_stance
             + np.array([0, 0, self.config.default_z_ref])[:, np.newaxis]
         )
-        state.joint_angles = controller.inverse_kinematics(
+        state.joint_angles = self.inverse_kinematics(
             state.foot_locations, self.config
         )
-        
+            

@@ -4,15 +4,16 @@
     <arg name="is_physical" default="1"/>
     <arg name="serial_port" default="/dev/ttyS0"/> <!-- /dev/ttyS0 -->
 
-    <node pkg = "dingo_lcd_interfacing" type = "dingo_lcd_interfacing.py" name = "dingo_LCD_node" output="screen"></node>
-
     <!-- Joystick Node -->
     <include file="$(find dingo_input_interfacing)/launch/input_interface.launch" />
 
-    <!-- Communication Node between Arduino and Pi -->
-    <group if="1">
+    <group if="$(arg is_physical)">
+        <!-- Communication Node between Arduino and Pi -->
         <node pkg="rosserial_python" type="serial_node.py"
         name="dingo_rosserial" args="$(arg serial_port)" output="screen"/>
+
+        <!-- LCD Screen -->
+        <node pkg = "dingo_lcd_interfacing" type = "dingo_lcd_interfacing.py" name = "dingo_LCD_node" output="screen"></node>
     </group>
 
     <!-- Gazebo simulator -->
