@@ -7,7 +7,8 @@ import logging
 import os
 import rospkg
 import socket
-import time 
+import time
+from std_msgs.msg import Float64
 
 rospack = rospkg.RosPack()
 rospack.get_path('dingo_lcd_interfacing') + "/lib/emptybatterystatus_white.png"
@@ -15,7 +16,7 @@ rospack.get_path('dingo_lcd_interfacing') + "/lib/emptybatterystatus_white.png"
 class DingoDisplayNode:
     def __init__(self):
         rospy.init_node('dingo_display_node')
-        self.rate = rospy.Rate(50)  # 10 Hz
+        self.rate = rospy.Rate(50)  # 50 Hz
         # Raspberry Pi pin configuration:
         self.RST = 27
         self.DC = 25
@@ -29,6 +30,13 @@ class DingoDisplayNode:
         self.disp.Init()
         # Clear display.
         self.disp.clear()
+
+        self.battery_percentage_subscriber = rospy.Subscriber("/battery_percentage", Float64, self.update_battery_percentage)
+
+        self.battery_percentage = 0.7  # Number between 0 and 1
+    
+    def update_battery_percentage(self, message):
+        self.battery_percentage = message
 
     def run(self):
         try:
@@ -55,22 +63,20 @@ class DingoDisplayNode:
             ## Battery indication bar
             black= Image.new("RGB", (320, 172), "black")
 
-            batt_percentage = 0.7 # Number between 0 and 1
-
             batt_status = Image.open(rospack.get_path('dingo_lcd_interfacing') + "/lib/emptybatterystatus_white.png")
 
             # batt_status = batt_status.rotate(180)
             batt_draw = ImageDraw.Draw(batt_status)
 
-            if batt_percentage <=0.20:
+            if self.battery_percentage <=0.20:
                 batt_fill = "RED"
-            elif 0.20 < batt_percentage <=0.60:
+            elif 0.20 < self.battery_percentagecentage <=0.60:
                 batt_fill = "#d49b00" #yellow
             else: 
                 batt_fill = "#09ab00" #green
 
-            batt_draw.rounded_rectangle([(42,92),(42+(153*batt_percentage) ,170)],8,fill = batt_fill)
-            batt_draw.text((68, 95),str(int(batt_percentage*100))+"%", fill = "WHITE",font = Font1_large)
+            batt_draw.rounded_rectangle([(42,92),(42+(153*self.battery_percentagecentage) ,170)],8,fill = batt_fill)
+            batt_draw.text((68, 95),str(int(self.battery_percentagecentage*100))+"%", fill = "WHITE",font = Font1_large)
             batt_scale_factor=0.8
             resized_batt_status = batt_status.resize((int(batt_status.size[0]*batt_scale_factor),int(batt_status.size[1]*batt_scale_factor)))
             image1.paste(resized_batt_status,(62, -40),resized_batt_status.convert('RGBA'))
