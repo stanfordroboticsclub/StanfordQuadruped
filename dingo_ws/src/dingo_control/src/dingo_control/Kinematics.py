@@ -28,12 +28,12 @@ def leg_explicit_inverse_kinematics(r_body_foot, leg_index, config):
     #Determine if leg is a right or a left leg
     if leg_index == 1 or leg_index == 3:
         is_right = 0
-        print("\n\n\n\nLEFT LEG:")
+        #print("\n\n\n\nLEFT LEG:")
     else:
         is_right = 1
-        print("\n\n\n\nRIGHT LEG:")
+        #print("\n\n\n\nRIGHT LEG:")
 
-    print("input position ", r_body_foot, "is right?", is_right)
+    #print("input position ", r_body_foot, "is right?", is_right)
     
     #This inverse kinematics code has a different axis definition from pupper. Conversion to pupper frame:
     x,y,z = r_body_foot
@@ -54,20 +54,20 @@ def leg_explicit_inverse_kinematics(r_body_foot, leg_index, config):
 
     # length of vector projected on the YZ plane. equiv. to len_A = sqrt(y**2 + z**2)
     len_A = norm([0,y,z])   
-    print("len_A: ", len_A)
+    #print("len_A: ", len_A)
     # a_1 : angle from the positive y-axis to the end-effector (0 <= a_1 < 2pi)
     # a_2 : angle bewtween len_A and leg's projection line on YZ plane
     # a_3 : angle between link1 and length len_A
     a_1 = point_to_rad(y,z)                     
     a_2 = asin(sin(config.phi)*config.L1/len_A)
     a_3 = pi - a_2 - config.phi               
-    print("a_1: ", a_1, "a_2: ", a_2, "a_3: ", a_3)
+    #print("a_1: ", a_1, "a_2: ", a_2, "a_3: ", a_3)
     # angle of link1 about the x-axis 
     if is_right: theta_1 = a_1 + a_3
     else: 
         theta_1 = a_1 + a_3
     if theta_1 >= 2*pi: theta_1 = np.mod(theta_1,2*pi)
-    print("theta_1: ", degrees(theta_1))
+    #print("theta_1: ", degrees(theta_1))
     
     #Translate frame to the frame of the leg
     offset = np.array([0.0,config.L1*cos(theta_1),config.L1*sin(theta_1)])
@@ -84,10 +84,10 @@ def leg_explicit_inverse_kinematics(r_body_foot, leg_index, config):
     
     # xyz in the rotated coordinate system + offset due to link_1 removed
     x_, y_, z_ = j4_2_vec_[0], j4_2_vec_[1], j4_2_vec_[2]
-    print("x_ ", x_, "y_", y_, "z_ ", z_)
+    #print("x_ ", x_, "y_", y_, "z_ ", z_)
     
     len_B = norm([x_, 0, z_]) # norm(j4-j2)
-    print("len_B ", len_B)
+    #print("len_B ", len_B)
     
     # handling mathematically invalid input, i.e., point too far away to reach
     if len_B >= (config.L2 + config.L3): 
@@ -102,12 +102,12 @@ def leg_explicit_inverse_kinematics(r_body_foot, leg_index, config):
     b_2 = acos((config.L2**2 + len_B**2 - config.L3**2) / (2 * config.L2 * len_B)) 
     b_3 = acos((config.L2**2 + config.L3**2 - len_B**2) / (2 * config.L2 * config.L3))  
     
-    print("b_1 ", b_1, "b_2 ", b_2, "b_3 ", b_3)
+    #print("b_1 ", b_1, "b_2 ", b_2, "b_3 ", b_3)
     # assuming theta_2 = 0 when the leg is pointing down (i.e., 270 degrees offset from the +ve x-axis)
     theta_2 = b_1 - b_2
     theta_3 = pi - b_3
-    print("theta_2: ", degrees(theta_2))
-    print("theta_3: ", degrees(theta_3))
+    #print("theta_2: ", degrees(theta_2))
+    #print("theta_3: ", degrees(theta_3))
     
     # CALCULATE THE COORDINATES OF THE JOINTS FOR VISUALIZATION
     #j1 = np.array([0,0,0])
@@ -126,7 +126,7 @@ def leg_explicit_inverse_kinematics(r_body_foot, leg_index, config):
     # modify angles to match robot's configuration (i.e., adding offsets)
     angles = angle_corrector(angles=[theta_1, theta_2, theta_3], is_right=is_right)
     #print("theta1: ", degrees(angles[0]),", theta2: ", degrees(angles[1]),", theta2: ",degrees(angles[2]))
-    print("theta_1 ", degrees(angles[0]), "theta_2 ", degrees(angles[1]), "theta_3 ", degrees(angles[2]))
+    #print("theta_1 ", degrees(angles[0]), "theta_2 ", degrees(angles[1]), "theta_3 ", degrees(angles[2]))
     return np.array(angles)
 
 

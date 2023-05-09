@@ -33,9 +33,11 @@ def main():
     GPIO.setup(battery_pin2_number, GPIO.IN)
     GPIO.setup(battery_pin3_number, GPIO.IN)
 
-    battery_percentage_publisher = rospy.Publisher(rospy.Publisher("/battery_percentage", Float64, queue_size = 10))
-    estop_publisher = rospy.Publisher(rospy.Publisher("/emergency_stop_status", Bool, queue_size = 10))
+    battery_percentage_publisher = rospy.Publisher("/battery_percentage", Float64, queue_size = 10)
+    estop_publisher = rospy.Publisher("/emergency_stop_status", Bool, queue_size = 10)
     current_estop_bit = 0
+
+    number_of_low_battery_detections = 0
 
     
     while not rospy.is_shutdown(): 
@@ -44,6 +46,10 @@ def main():
         battery_bit1 = GPIO.input(battery_pin1_number)
         battery_bit2 = GPIO.input(battery_pin2_number)
         battery_bit3 = GPIO.input(battery_pin3_number)
+        print("estop: ", battery_bit1)
+        print("bit1: ", battery_bit1)
+        print("bit2: ", battery_bit2)
+        print("bit3: ", battery_bit3)
 
         battery_bits = [battery_bit1, battery_bit2, battery_bit3]
 
@@ -63,7 +69,6 @@ def main():
         # Check which scenario has occurred
         if num == 0:
             value = 0.0
-            shutdown()
         elif num == 1:
             value = 0.125
         elif num == 2:
@@ -77,10 +82,20 @@ def main():
         elif num == 6:
             value = 0.75
         elif num == 7:
-            value = 0.875
-        else:
             value = 1
+
         battery_percentage_publisher.publish(value)
+
+        if value == 0.0:
+            number_of_low_battery_detections = number_of_low_battery_detections+1
+            if (number_of_low_battery_detections > 30):
+                #shutdown()
+                print("Would shut down if activated")
+        else:
+            if (number_of_low_battery_detections > 0):
+                number_of_low_battery_detections = number_of_low_battery_detections-1
+
+
         rate.sleep()
 
 main()

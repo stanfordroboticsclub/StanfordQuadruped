@@ -70,13 +70,13 @@ class DingoDisplayNode:
 
             if self.battery_percentage <=0.20:
                 batt_fill = "RED"
-            elif 0.20 < self.battery_percentagecentage <=0.60:
+            elif 0.20 < self.battery_percentage <=0.60:
                 batt_fill = "#d49b00" #yellow
             else: 
                 batt_fill = "#09ab00" #green
 
-            batt_draw.rounded_rectangle([(42,92),(42+(153*self.battery_percentagecentage) ,170)],8,fill = batt_fill)
-            batt_draw.text((68, 95),str(int(self.battery_percentagecentage*100))+"%", fill = "WHITE",font = Font1_large)
+            batt_draw.rounded_rectangle([(42,92),(42+(153*self.battery_percentage) ,170)],8,fill = batt_fill)
+            batt_draw.text((68, 95),str(int(self.battery_percentage*100))+"%", fill = "WHITE",font = Font1_large)
             batt_scale_factor=0.8
             resized_batt_status = batt_status.resize((int(batt_status.size[0]*batt_scale_factor),int(batt_status.size[1]*batt_scale_factor)))
             image1.paste(resized_batt_status,(62, -40),resized_batt_status.convert('RGBA'))
