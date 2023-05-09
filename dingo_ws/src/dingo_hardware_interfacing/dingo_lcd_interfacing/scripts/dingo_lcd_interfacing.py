@@ -36,7 +36,7 @@ class DingoDisplayNode:
         self.battery_percentage = 0.7  # Number between 0 and 1
     
     def update_battery_percentage(self, message):
-        self.battery_percentage = message
+        self.battery_percentage = message.data
 
     def run(self):
         try:
@@ -101,10 +101,12 @@ class DingoDisplayNode:
             #rospy.loginfo("SSID: " + str(self.ssid))
             #rospy.loginfo("Getting IP address...")
             try:
-                s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-                s.connect(('google.com', 0))
-                self.ipAddress = s.getsockname()[0]
-                s.close()
+                #s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+                #s.connect(('google.com', 0))
+                #self.ipAddress = s.getsockname()[0]
+                #s.close()
+                hostname=socket.gethostname()   
+                self.ipAddress=socket.gethostbyname(hostname) 
             except rospy.ROSInterruptException as e:
                 rospy.logerr(str(e))
                 self.ipAddress = '-:-:-:-'

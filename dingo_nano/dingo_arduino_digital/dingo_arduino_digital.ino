@@ -1,7 +1,7 @@
 #include <avr/sleep.h>
 
 //Declare global variables
-const int number_stored_battery_voltage_measurements = 30; //number of electrical measurements (e.g. voltage values) to keep at any one time
+const int number_stored_battery_voltage_measurements = 100; //number of electrical measurements (e.g. voltage values) to keep at any one time
 const int number_stored_buck_voltage_measurements = 3;
 float battery_voltage_array[number_stored_battery_voltage_measurements];
 float servo_buck_voltage_array[number_stored_buck_voltage_measurements];
@@ -16,11 +16,11 @@ const int battPercentPin1 = 3;
 const int battPercentPin2 = 4;
 const int battPercentPin3 = 5;
 
-int voltage_ceiling = 1.0;
+float voltage_ceiling = 1.0;
 
 void setup()
 {
-
+  delay(60000);
   pinMode(eStopStatusPin, OUTPUT);
   pinMode(battPercentPin1, OUTPUT);
   pinMode(battPercentPin2, OUTPUT);
@@ -31,7 +31,7 @@ void setup()
   digitalWrite(battPercentPin2, 0);
   digitalWrite(battPercentPin3, 0);
 
-  delay(1000);
+
   //go through arrays of measurements and set all values to initially be zero
   for (int i = 0; i < number_stored_battery_voltage_measurements; i++)
   {
@@ -78,7 +78,7 @@ void checkBatteryVoltageLevel()
   float pin_voltage = sensorValue * (5.0 / 1023.0);
   float current_voltage = pin_voltage * ((battery_R1+battery_R2)/battery_R2) + diode_drop;
 
-  current_voltage = current_voltage * 0.93;
+  current_voltage = current_voltage;
 
   battery_voltage_array[battery_voltage_array_index] = current_voltage;
 
@@ -109,6 +109,7 @@ void checkBatteryVoltageLevel()
   float max_amount_batt_volt_above_min = maximum_battery_voltage - minimum_battery_voltage;
 
   float battery_percentage = amount_batt_volt_above_min/max_amount_batt_volt_above_min;
+
   if (battery_percentage > voltage_ceiling + 0.0625)
   {
     voltage_ceiling+=0.125;
@@ -118,6 +119,7 @@ void checkBatteryVoltageLevel()
   {
     battery_percentage = 0.0;
   }
+
 
   int bit1 = 0;
   int bit2 = 0;
@@ -162,7 +164,6 @@ void checkBatteryVoltageLevel()
     bit2 = 1;
     bit3 = 1;
   }
-
   // Write the battery level as a percentage to the LED pins
   digitalWrite(battPercentPin1, bit1);   // write HIGH or LOW based on the percentage
   digitalWrite(battPercentPin2, bit2);
@@ -173,7 +174,7 @@ void checkBatteryVoltageLevel()
   {
     if (number_of_low_battery_detections > 30)
     {
-      shutdown();
+      //shutdown();
     }
     else
     {
@@ -214,7 +215,7 @@ void checkBuckVoltageLevel()
   //convert this voltage into the actual buck converter output voltage and store into an array of voltage readings
   float current_voltage = sensorValue * (5.0 / 1023.0) * ((buck_R1+buck_R2)/buck_R2);
 
-  current_voltage = current_voltage * 0.91;
+  current_voltage = current_voltage;
 
   //Arduino will read a NaN when the voltage is zero, so account for this
 
@@ -244,6 +245,8 @@ void checkBuckVoltageLevel()
   }
 
   //check whether the buck converter voltage has dropped to 0 (or near 0). If it has, send message that the e-stop has been pressed
+
+
   if (current_buck_voltage < minimum_buck_voltage)
   {
     if (number_of_low_buck_voltage_detections < 3)
