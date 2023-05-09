@@ -113,8 +113,8 @@ def main(use_imu=False):
             if command.activate_event == 1:
                 break
             rate.sleep()
+        
         print("Robot activated.")
-        #input_interface.set_color(config.ps4_color)
 
         while True:
             #now = time.time()
@@ -162,4 +162,5 @@ def main(use_imu=False):
             # print('State: \n',state)
             rate.sleep()
 
+        #input_interface.set_color(config.ps4_color)
 main()

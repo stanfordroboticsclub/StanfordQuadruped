@@ -85,10 +85,10 @@ class Controller:
     def publish_joint_space_command(self, angle_matrix):
 
         joint_space_message = JointSpace()
-        joint_space_message.FR_foot = Angle(degrees(angle_matrix[0, 0] - self.config.LEG_ORIGINS[0, 0]), degrees(angle_matrix[1, 0] - self.config.LEG_ORIGINS[1, 0]), degrees(angle_matrix[2, 0] - self.config.LEG_ORIGINS[2, 0]))
-        joint_space_message.FL_foot = Angle(degrees(angle_matrix[0, 1] - self.config.LEG_ORIGINS[0, 1]), degrees(angle_matrix[1, 1] - self.config.LEG_ORIGINS[1, 1]), degrees(angle_matrix[2, 1] - self.config.LEG_ORIGINS[2, 1]))
-        joint_space_message.RR_foot = Angle(degrees(angle_matrix[0, 2] - self.config.LEG_ORIGINS[0, 2]), degrees(angle_matrix[1, 2] - self.config.LEG_ORIGINS[1, 2]), degrees(angle_matrix[2, 2] - self.config.LEG_ORIGINS[2, 2]))
-        joint_space_message.RL_foot = Angle(degrees(angle_matrix[0, 3] - self.config.LEG_ORIGINS[0, 3]), degrees(angle_matrix[1, 3] - self.config.LEG_ORIGINS[1, 3]), degrees(angle_matrix[2, 3] - self.config.LEG_ORIGINS[2, 3]))
+        joint_space_message.FR_foot = Angle(degrees(angle_matrix[0, 0]), degrees(angle_matrix[1, 0]), degrees(angle_matrix[2, 0]))
+        joint_space_message.FL_foot = Angle(degrees(angle_matrix[0, 1]), degrees(angle_matrix[1, 1]), degrees(angle_matrix[2, 1]))
+        joint_space_message.RR_foot = Angle(degrees(angle_matrix[0, 2]), degrees(angle_matrix[1, 2]), degrees(angle_matrix[2, 2]))
+        joint_space_message.RL_foot = Angle(degrees(angle_matrix[0, 3]), degrees(angle_matrix[1, 3]), degrees(angle_matrix[2, 3]))
         joint_space_message.header = Header(stamp = rospy.Time.now())
         self.joint_space_pub.publish(joint_space_message)
     

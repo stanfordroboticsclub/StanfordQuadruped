@@ -4,13 +4,14 @@
     <include file="$(find gazebo_ros)/launch/empty_world.launch">
       <arg name="world_name" value="$(find dingo_gazebo)/launch/world/normal.world"/>
       <arg name="use_sim_time" value="true"/>
+      <!--<arg name="paused" value="true"/>-->
     </include>
 
     <!-- Robot -->
     <arg name="robot" default="$(find dingo_description)/urdf/dingo.urdf"/>
     <param name="robot_description" command="$(find xacro)/xacro --inorder $(arg robot)" />
     <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-param robot_description -urdf 
-    -z 0.25
+    -z 0.5
     -J FR_theta2 0.72646626
     -J FL_theta2 0.72646626
     -J RR_theta2 0.72646626

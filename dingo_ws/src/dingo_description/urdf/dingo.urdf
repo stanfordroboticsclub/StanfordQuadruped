@@ -5,25 +5,33 @@
 <robot name="dingo" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
   <!-- Maximum torque -->
-  <xacro:property name="effort_limit" value="100" />
+  <xacro:property name="effort_limit" value="10" />
 
   <!-- base_link -->
   <link
     name="base_link">
+
+    <!-- <inertial>
+      <origin xyz="0.0 0.0 0.0"/>
+      <mass value="2.50000000"/>
+      <inertia ixx="0.00664756" ixy="0.00002187" ixz="0.00015428" iyy="0.02996945" iyz="-0.00000064" izz="0.03274274"/>
+    </inertial>-->
+
+    
     <inertial>
-      <origin xyz="-0.03799959 0.00126483 -0.00622132"/>
+      <origin xyz="0.02799959 0.00126483 -0.00622132"/>
       <mass value="2.50000000"/>
       <inertia ixx="0.00664756" ixy="0.00002187" ixz="0.00015428" iyy="0.02996945" iyz="-0.00000064" izz="0.03274274"/>
     </inertial>
 
-
-
-    <!-- <inertial>
+    
+    <!-- 
+    <inertial>
       <origin xyz="-0.02679290 -0.00012097 0.00457177"/>
-      <mass value="2.50000000"/>
+      <mass value="5.0000000"/>
       <inertia ixx="0.00732760" ixy="-0.00000000" ixz="0.00021940" iyy="0.02995798" iyz="-0.00000002" izz="0.03298004"/>
-    </inertial>-->
-
+    </inertial>
+    -->
     <visual>
       <origin
         xyz="0 0 0"
@@ -598,7 +606,7 @@
   
   <joint
     name="FL_theta1"
-    type="continuous">
+    type="revolute">
     <origin
       xyz="0.11165 0.061 -0.0144"
       rpy="1.5708 0 1.5708" />
@@ -616,7 +624,7 @@
   </joint>
   <joint
     name="FL_theta2"
-    type="continuous">
+    type="revolute">
     <origin
       xyz="0.0496000007984339 0.014400000013256 0"
       rpy="1.57079634307336 1.57079568414183 -1.57079631051644" />
@@ -634,7 +642,7 @@
   </joint>
   <joint
     name="FL_theta3"
-    type="continuous">
+    type="revolute">
     <origin
       xyz="0.129999999999897 0 0"
       rpy="0 0 1.57079594774422" />
@@ -668,7 +676,7 @@
 
   <joint
     name="FR_theta1"
-    type="continuous">
+    type="revolute">
     <origin
       xyz="0.111650000000002 -0.0609999999999988 -0.0144000000000242"
       rpy="1.57079632679492 0 1.5707963267949" />
@@ -686,7 +694,7 @@
   </joint>
   <joint
     name="FR_theta2"
-    type="continuous">
+    type="revolute">
     <origin
       xyz="-0.0495999992169121 0.0144000000000242 0"
       rpy="1.57079632309575 1.57079572077363 -1.57079633049404" />
@@ -704,7 +712,7 @@
   </joint>
   <joint
     name="FR_theta3"
-    type="continuous">
+    type="revolute">
     <origin
       xyz="0.13000000353672 0 0"
       rpy="0 0 1.57079598438978" />
@@ -739,7 +747,7 @@
 
   <joint
     name="RL_theta1"
-    type="continuous">
+    type="revolute">
     <origin
       xyz="-0.11165 0.061 -0.0144"
       rpy="1.5708 0 1.5708" />
@@ -757,7 +765,7 @@
   </joint>
   <joint
     name="RL_theta2"
-    type="continuous">
+    type="revolute">
     <origin
       xyz="0.0496000007984574 0.014399999996394 0"
       rpy="1.5707963301177 1.57079568414183 -1.57079632347209" />
@@ -775,7 +783,7 @@
   </joint>
   <joint
     name="RL_theta3"
-    type="continuous">
+    type="revolute">
     <origin
       xyz="0.129999999994849 0 0"
       rpy="0 0 1.57079594787326" />
@@ -809,7 +817,7 @@
 
   <joint
     name="RR_theta1"
-    type="continuous">
+    type="revolute">
     <origin
       xyz="-0.111650000000003 -0.0609999999999995 -0.0144000000000178"
       rpy="1.57079632679492 0 1.5707963267949" />
@@ -827,7 +835,7 @@
   </joint>
   <joint
     name="RR_theta2"
-    type="continuous">
+    type="revolute">
     <origin
       xyz="-0.0495999992169147 0.0144000000000178 0"
       rpy="1.57079631992506 1.57079572077363 -1.57079633366473" />
@@ -845,7 +853,7 @@
   </joint>
   <joint
     name="RR_theta3"
-    type="continuous">
+    type="revolute">
     <origin
       xyz="0.13000000353672 0 0"
       rpy="0 0 1.57079598438978" />

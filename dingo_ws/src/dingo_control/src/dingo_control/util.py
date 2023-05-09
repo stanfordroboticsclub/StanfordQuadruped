@@ -1,8 +1,10 @@
-from math import atan, pi, radians, cos, sin
+from math import atan2, pi, radians, cos, sin
 import numpy as np
 
 def point_to_rad(p1, p2): # converts 2D cartesian points to polar angles in range 0 - 2pi
-        
+    theta = atan2(p2, p1)
+    theta = (theta + 2*pi) % (2*pi)
+    return theta
     if (p1 > 0 and p2 >= 0): return atan(p2/(p1))
     elif (p1 == 0 and p2 >= 0): return pi/2
     elif (p1 < 0 and p2 >= 0): return -abs(atan(p2/p1)) + pi
