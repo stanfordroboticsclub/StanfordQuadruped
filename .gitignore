@@ -4,3 +4,4 @@
 dingo_ws/build/*
 dingo_ws/devel/*
 dingo_ws/logs/*
+dingo_ws/src/dingo_hardware_interfacing/dingo_lcd_interfacing/scripts/dingo_lcd_interfacing.py

@@ -101,12 +101,13 @@ class DingoDisplayNode:
             #rospy.loginfo("SSID: " + str(self.ssid))
             #rospy.loginfo("Getting IP address...")
             try:
+                s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
                 s.connect(('google.com', 0))
                 self.ipAddress = s.getsockname()[0]
+                s.close()
             except rospy.ROSInterruptException as e:
                 rospy.logerr(str(e))
                 self.ipAddress = '-:-:-:-'
-            s.close()
             #rospy.loginfo("IP: {self.ipAddress}")
 
         except rospy.ROSInterruptException as e:
@@ -128,3 +129,4 @@ if __name__ == '__main__':
     node = DingoDisplayNode()
     rospy.loginfo("Display node started, ouputting to display")
     node.loop()
+
