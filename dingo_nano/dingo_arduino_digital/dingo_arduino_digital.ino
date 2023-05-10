@@ -1,7 +1,7 @@
 #include <avr/sleep.h>
 
 //Declare global variables
-const int number_stored_battery_voltage_measurements = 100; //number of electrical measurements (e.g. voltage values) to keep at any one time
+const int number_stored_battery_voltage_measurements = 40; //number of electrical measurements (e.g. voltage values) to keep at any one time
 const int number_stored_buck_voltage_measurements = 3;
 float battery_voltage_array[number_stored_battery_voltage_measurements];
 float servo_buck_voltage_array[number_stored_buck_voltage_measurements];
@@ -21,6 +21,7 @@ float voltage_ceiling = 1.0;
 void setup()
 {
   delay(60000);
+  Serial.begin(9600);
   pinMode(eStopStatusPin, OUTPUT);
   pinMode(battPercentPin1, OUTPUT);
   pinMode(battPercentPin2, OUTPUT);
@@ -80,6 +81,9 @@ void checkBatteryVoltageLevel()
 
   current_voltage = current_voltage;
 
+  Serial.print(current_voltage);
+  Serial.print("\n");
+
   battery_voltage_array[battery_voltage_array_index] = current_voltage;
 
   //using the array of the most recent voltage readings, calculate the current average voltage of the battery
@@ -110,59 +114,73 @@ void checkBatteryVoltageLevel()
 
   float battery_percentage = amount_batt_volt_above_min/max_amount_batt_volt_above_min;
 
-  if (battery_percentage > voltage_ceiling + 0.0625)
-  {
-    voltage_ceiling+=0.125;
-  }
+  Serial.print(battery_percentage);
+  Serial.print("\n");
+
+  //if (battery_percentage > voltage_ceiling + 0.0625)
+  //{
+  //  voltage_ceiling+=0.125;
+  //}
 
   if (battery_percentage <= 0.0)
   {
     battery_percentage = 0.0;
   }
 
+  
+
+
 
   int bit1 = 0;
   int bit2 = 0;
   int bit3 = 0;
-  if (battery_percentage <= 0.0 || voltage_ceiling == 0.0){
+  if (battery_percentage <= 0.0){
     bit1 = 0;
     bit2 = 0;
     bit3 = 0;
+    Serial.print("\nhere1");
     voltage_ceiling = 0.0;
-  } else if (battery_percentage <= 0.125 && voltage_ceiling > 0.0) {
+  } else if (battery_percentage <= 0.125) {
     bit1 = 1;
     bit2 = 0;
     bit3 = 0;
+    Serial.print("\nhere2");
     voltage_ceiling = 0.125;
-  } else if (battery_percentage <= 0.25 && voltage_ceiling > 0.125) {
+  } else if (battery_percentage <= 0.25) {
     bit1 = 0;
     bit2 = 1;
     bit3 = 0;
+    Serial.print("\nhere3");
     voltage_ceiling = 0.25;
-  } else if (battery_percentage <= 0.375 && voltage_ceiling > 0.25) {
+  } else if (battery_percentage <= 0.375) {
     bit1 = 1;
     bit2 = 1;
     bit3 = 0;
+    Serial.print("\nhere4");
     voltage_ceiling = 0.375;
-  } else if (battery_percentage <= 0.5 && voltage_ceiling > 0.375) {
+  } else if (battery_percentage <= 0.5) {
     bit1 = 0;
     bit2 = 0;
     bit3 = 1;
+    Serial.print("\nhere5");
     voltage_ceiling = 0.5;
-  } else if (battery_percentage <= 0.625 && voltage_ceiling > 0.5) {
+  } else if (battery_percentage <= 0.625) {
     bit1 = 1;
     bit2 = 0;
     bit3 = 1;
+    Serial.print("\nhere6");
     voltage_ceiling = 0.625;
-  } else if (battery_percentage <= 0.75 && voltage_ceiling > 0.625) {
+  } else if (battery_percentage <= 0.75) {
     bit1 = 0;
     bit2 = 1;
     bit3 = 1;
+    Serial.print("\nhere7");
     voltage_ceiling = 0.75;
   } else {
     bit1 = 1;
     bit2 = 1;
     bit3 = 1;
+    Serial.print("\nhere8");
   }
   // Write the battery level as a percentage to the LED pins
   digitalWrite(battPercentPin1, bit1);   // write HIGH or LOW based on the percentage
