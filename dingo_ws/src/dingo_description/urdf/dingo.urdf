@@ -17,13 +17,28 @@
       <inertia ixx="0.00664756" ixy="0.00002187" ixz="0.00015428" iyy="0.02996945" iyz="-0.00000064" izz="0.03274274"/>
     </inertial>-->
 
-    
+    <!--
     <inertial>
-      <origin xyz="0.02799959 0.00126483 -0.00622132"/>
-      <mass value="2.50000000"/>
+      <origin xyz="0.0 0.00126483 -0.00622132"/>
+      <mass value="2.5000000"/>
       <inertia ixx="0.00664756" ixy="0.00002187" ixz="0.00015428" iyy="0.02996945" iyz="-0.00000064" izz="0.03274274"/>
     </inertial>
-
+    -->
+  
+    <inertial>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <mass
+        value="0.81776" />
+      <inertia
+        ixx="0.00058474"
+        ixy="-1.0045E-06"
+        ixz="1.0886E-08"
+        iyy="0.00029699"
+        iyz="3.2027E-08"
+        izz="0.00063853" />
+    </inertial>
     
     <!-- 
     <inertial>
@@ -61,7 +76,7 @@
   <link
     name="FL_link1">
     <inertial>
-      <origin xyz="0.00850000 0.00000000 0.01010000"/>
+      <origin xyz="0 0 0"/>
       <mass value="0.30000000"/>
       <inertia ixx="0.00019300" ixy="0.00000000" ixz="0.00000000" iyy="0.00014890" iyz="0.00000000" izz="0.00012410"/>
     </inertial>
@@ -94,7 +109,7 @@
   <link
     name="FL_link2">
     <inertial>
-      <origin xyz="0.02419443 -0.00009202 0.00488160"/>
+      <origin xyz="0 0 0"/>
       <mass value="0.10000000"/>
       <inertia ixx="0.00000700" ixy="0.00000000" ixz="0.00000444" iyy="0.00017260" iyz="0.00000000" izz="0.00017568"/>
     </inertial>
@@ -128,9 +143,9 @@
   <link
     name="FL_link3">
     <inertial>
-      <origin xyz="0.04940056 0.00297708 0.00084676"/>
+      <origin xyz="0 0 0"/>
       <mass value="0.10000000"/>
-      <inertia ixx="0.00000936" ixy="-0.00001360" ixz="0.00000319" iyy="0.00019748" iyz="0.00000027" izz="0.00019702"/>
+      <inertia ixx="0.00000936" ixy="-0.00001360" ixz="-0.00000319" iyy="0.00019747" iyz="-0.00000027" izz="0.00019702"/>
     </inertial>
 
     <visual>
@@ -162,7 +177,7 @@
   <link
     name="FL_link4">
     <inertial>
-      <origin xyz="-0.00197351 0.00181134 -0.00000260"/>
+      <origin xyz="0 0 0"/>
       <mass value="0.02000000"/>
       <inertia ixx="0.00000060" ixy="-0.00000013" ixz="0.00000000" iyy="0.00000058" iyz="0.00000000" izz="0.00000045"/>
     </inertial>
@@ -196,9 +211,9 @@
   <link
     name="FR_link1">
     <inertial>
-      <origin xyz="-0.00850000 0.00000000 0.01010000"/>
+      <origin xyz="0 0 0"/>
       <mass value="0.30000000"/>
-      <inertia ixx="0.00019300" ixy="-0.00000000" ixz="0.00000000" iyy="0.00014890" iyz="0.00000000" izz="0.00012410"/>
+      <inertia ixx="0.00019300" ixy="0.00000000" ixz="0.00000000" iyy="0.00014890" iyz="0.00000000" izz="0.00012410"/>
     </inertial>
 
     <visual>
@@ -230,9 +245,9 @@
   <link
     name="FR_link2">
     <inertial>
-      <origin xyz="0.02612097 0.00009934 -0.00492318"/>
+      <origin xyz="0 0 0"/>
       <mass value="0.10000000"/>
-      <inertia ixx="0.00000700" ixy="-0.00000000" ixz="-0.00000444" iyy="0.00017260" iyz="-0.00000000" izz="0.00017568"/>
+      <inertia ixx="0.00000700" ixy="0.00000000" ixz="0.00000444" iyy="0.00017260" iyz="0.00000000" izz="0.00017568"/>
     </inertial>
 
     <visual>
@@ -264,7 +279,7 @@
   <link
     name="FR_link3">
     <inertial>
-      <origin xyz="0.04941139 0.00291184 -0.00089053"/>
+      <origin xyz="0 0 0"/>
       <mass value="0.10000000"/>
       <inertia ixx="0.00000936" ixy="-0.00001360" ixz="-0.00000319" iyy="0.00019747" iyz="-0.00000027" izz="0.00019702"/>
     </inertial>
@@ -298,7 +313,7 @@
   <link
     name="FR_link4">
     <inertial>
-      <origin xyz="-0.00197351 0.00181134 -0.00000260"/>
+      <origin xyz="0 0 0"/>
       <mass value="0.02000000"/>
       <inertia ixx="0.00000060" ixy="-0.00000013" ixz="0.00000000" iyy="0.00000058" iyz="0.00000000" izz="0.00000045"/>
     </inertial>
@@ -332,7 +347,7 @@
   <link
     name="RL_link1">
     <inertial>
-      <origin xyz="0.00850000 0.00000000 0.01010000"/>
+      <origin xyz="0 0 0"/>
       <mass value="0.30000000"/>
       <inertia ixx="0.00019300" ixy="0.00000000" ixz="0.00000000" iyy="0.00014890" iyz="0.00000000" izz="0.00012410"/>
     </inertial>
@@ -366,7 +381,7 @@
   <link
     name="RL_link2">
     <inertial>
-      <origin xyz="0.02419443 -0.00009202 0.00488160"/>
+      <origin xyz="0 0 0"/>
       <mass value="0.10000000"/>
       <inertia ixx="0.00000700" ixy="0.00000000" ixz="0.00000444" iyy="0.00017260" iyz="0.00000000" izz="0.00017568"/>
     </inertial>
@@ -400,9 +415,9 @@
   <link
     name="RL_link3">
     <inertial>
-      <origin xyz="0.04940056 0.00297708 0.00084676"/>
+      <origin xyz="0 0 0"/>
       <mass value="0.10000000"/>
-      <inertia ixx="0.00000936" ixy="-0.00001360" ixz="0.00000319" iyy="0.00019748" iyz="0.00000027" izz="0.00019702"/>
+      <inertia ixx="0.00000936" ixy="-0.00001360" ixz="-0.00000319" iyy="0.00019747" iyz="-0.00000027" izz="0.00019702"/>
     </inertial>
 
     <visual>
@@ -434,7 +449,7 @@
   <link
     name="RL_link4">
     <inertial>
-      <origin xyz="-0.00197351 0.00181134 -0.00000260"/>
+      <origin xyz="0 0 0"/>
       <mass value="0.02000000"/>
       <inertia ixx="0.00000060" ixy="-0.00000013" ixz="0.00000000" iyy="0.00000058" iyz="0.00000000" izz="0.00000045"/>
     </inertial>
@@ -468,9 +483,9 @@
   <link
     name="RR_link1">
     <inertial>
-      <origin xyz="-0.00850000 0.00000000 0.01010000"/>
+      <origin xyz="0 0 0"/>
       <mass value="0.30000000"/>
-      <inertia ixx="0.00019300" ixy="-0.00000000" ixz="0.00000000" iyy="0.00014890" iyz="0.00000000" izz="0.00012410"/>
+      <inertia ixx="0.00019300" ixy="0.00000000" ixz="0.00000000" iyy="0.00014890" iyz="0.00000000" izz="0.00012410"/>
     </inertial>
 
     <visual>
@@ -502,9 +517,9 @@
   <link
     name="RR_link2">
     <inertial>
-      <origin xyz="0.02612097 0.00009934 -0.00492318"/>
+      <origin xyz="0 0 0"/>
       <mass value="0.10000000"/>
-      <inertia ixx="0.00000700" ixy="-0.00000000" ixz="-0.00000444" iyy="0.00017260" iyz="-0.00000000" izz="0.00017568"/>
+      <inertia ixx="0.00000700" ixy="0.00000000" ixz="0.00000444" iyy="0.00017260" iyz="0.00000000" izz="0.00017568"/>
     </inertial>
 
     <visual>
@@ -536,7 +551,7 @@
   <link
     name="RR_link3">
     <inertial>
-      <origin xyz="0.04941139 0.00291184 -0.00089053"/>
+      <origin xyz="0 0 0"/>
       <mass value="0.10000000"/>
       <inertia ixx="0.00000936" ixy="-0.00001360" ixz="-0.00000319" iyy="0.00019747" iyz="-0.00000027" izz="0.00019702"/>
     </inertial>
@@ -570,7 +585,7 @@
   <link
     name="RR_link4">
     <inertial>
-      <origin xyz="-0.00197351 0.00181134 -0.00000260"/>
+      <origin xyz="0 0 0"/>
       <mass value="0.02000000"/>
       <inertia ixx="0.00000060" ixy="-0.00000013" ixz="0.00000000" iyy="0.00000058" iyz="0.00000000" izz="0.00000045"/>
     </inertial>
@@ -621,6 +636,7 @@
       upper="0.785398"
       effort="${effort_limit}"
       velocity="3" />
+    <joint_properties damping="1000.0" friction="1000.0"/>
   </joint>
   <joint
     name="FL_theta2"
@@ -639,6 +655,7 @@
       upper="3"
       effort="${effort_limit}"
       velocity="3" />
+    <joint_properties damping="1000.0" friction="1000.0"/>
   </joint>
   <joint
     name="FL_theta3"
@@ -657,6 +674,7 @@
       upper="3"
       effort="${effort_limit}"
       velocity="3" />
+    <joint_properties damping="1000.0" friction="1000.0"/>
   </joint>
   <joint
     name="FL_foot"
@@ -691,6 +709,7 @@
       upper="0.785398"
       effort="${effort_limit}"
       velocity="3" />
+    <joint_properties damping="1000.0" friction="1000.0"/>
   </joint>
   <joint
     name="FR_theta2"
@@ -709,6 +728,7 @@
       upper="3"
       effort="${effort_limit}"
       velocity="3" />
+    <joint_properties damping="1000.0" friction="1000.0"/>
   </joint>
   <joint
     name="FR_theta3"
@@ -727,6 +747,7 @@
       upper="3"
       effort="${effort_limit}"
       velocity="3" />
+    <joint_properties damping="1000.0" friction="1000.0"/>
   </joint>
   <joint
     name="FR_foot"
@@ -762,6 +783,7 @@
       upper="0.785398"
       effort="${effort_limit}"
       velocity="3" />
+    <joint_properties damping="1000.0" friction="1000.0"/>
   </joint>
   <joint
     name="RL_theta2"
@@ -780,6 +802,7 @@
       upper="3"
       effort="${effort_limit}"
       velocity="3" />
+    <joint_properties damping="1000.0" friction="1000.0"/>
   </joint>
   <joint
     name="RL_theta3"
@@ -798,6 +821,7 @@
       upper="3"
       effort="${effort_limit}"
       velocity="3" />
+    <joint_properties damping="1000.0" friction="1000.0"/>
   </joint>
   <joint
     name="RL_foot"
@@ -832,6 +856,7 @@
       upper="0.785398"
       effort="${effort_limit}"
       velocity="3" />
+    <joint_properties damping="1000.0" friction="1000.0"/>
   </joint>
   <joint
     name="RR_theta2"
@@ -850,6 +875,7 @@
       upper="3"
       effort="${effort_limit}"
       velocity="3" />
+    <joint_properties damping="1000.0" friction="1000.0"/>
   </joint>
   <joint
     name="RR_theta3"
@@ -868,6 +894,7 @@
       upper="3"
       effort="${effort_limit}"
       velocity="3" />
+    <joint_properties damping="1000.0" friction="1000.0"/>
   </joint>
   <joint
     name="RR_foot"

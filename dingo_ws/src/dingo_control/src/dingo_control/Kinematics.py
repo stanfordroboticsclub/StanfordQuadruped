@@ -38,6 +38,7 @@ def leg_explicit_inverse_kinematics(r_body_foot, leg_index, config):
     #This inverse kinematics code has a different axis definition from pupper. Conversion to pupper frame:
     x,y,z = r_body_foot
     if is_right: y = -y
+
     r_body_foot = np.array([x,y,z])
     
     #rotate the origin frame to be in-line with config.L1 for calculating theta_1 (rotation about x-axis):
