@@ -148,6 +148,7 @@ def main(use_imu=False):
                 hardware_interface.set_actuator_postions(state.joint_angles)
             
             # print('All angles: \n',np.round(np.degrees(state.joint_angles),2))
+            # print('All angles: \n',np.round(np.degrees(state.joint_angles[:,0] - state.joint_angles[:,3]),2))
             time.end = rospy.Time.now()
             #Uncomment following line if want to see how long it takes to execute a control iteration
             #print(str(time.start-time.end))

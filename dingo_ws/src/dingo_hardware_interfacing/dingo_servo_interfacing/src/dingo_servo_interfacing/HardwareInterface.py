@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 from adafruit_servokit import ServoKit
 import numpy as np
 import math as m
@@ -21,9 +21,9 @@ class HardwareInterface():
                 #  2  [front_right_lower, front_left_lower, back_right_lower, back_left_lower]] 
 
            'pins' define the physical pin of the servos on the servoboard """
-        self.pins = np.array([[14,10,2,6], 
-                              [13,9,1,5], 
-                              [12,8,0,4]])
+        self.pins = np.array([[14,6,2,10], 
+                              [13,5,1,9], 
+                              [12,4,0,8]])
 
         """ 'servo_multipliers' and 'complementary_angle' both work to flip some angles, x, to (180-x) so that movement on each leg is consistent despite
             physical motor oritentation changes """
@@ -44,9 +44,9 @@ class HardwareInterface():
             - Offsets for LOWER leg servos map allign the servo so that it is vertically down at zero degrees. Note that IK requires a transformation of
                 angle_sent_to_servo = (180-angle_from_IK) + 90 degrees to map to this physcial servo location.  """
         self.physical_calibration_offsets = np.array(
-                                                [[83, 108, 108, 64], 
-                                                [28, 13, 32, 22], 
-                                                [22, 13, 24, 7]])
+                                                [[83, 79, 108, 79], 
+                                                [28, 13, 28, 19], 
+                                                [22, 16, 24, 6]])
         #applying calibration values to all servos
         self.create()
 
@@ -66,7 +66,7 @@ class HardwareInterface():
         """
         # Limit angles ot physical possiblity
         possible_joint_angles = impose_physical_limits(joint_angles)
-
+        
         #Convert to servo angles
         self.joint_angles_to_servo_angles(possible_joint_angles)
 

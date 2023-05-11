@@ -22,7 +22,7 @@
     </group>
     
     <!-- Dingo Driver -->
-    <node pkg="dingo" type="dingo_driver.py"
+    <node pkg="dingo" type="run_robot.py"
         name="dingo" args="$(arg is_sim) $(arg is_physical)" output="screen"/>
 </launch>
     

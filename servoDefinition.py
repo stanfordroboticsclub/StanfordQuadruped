@@ -12,9 +12,9 @@ class motor_config():
         
         #DefinING servo indices
         ## FRONT LEFT
-        self.front_left_hip   = 10
-        self.front_left_upper = 9
-        self.front_left_lower = 8
+        self.front_left_hip   = 6
+        self.front_left_upper = 5
+        self.front_left_lower = 4
 
         ## FRONT RIGHT
         self.front_right_hip   = 14
@@ -22,18 +22,26 @@ class motor_config():
         self.front_right_lower = 12
 
         ## BACK LEFT
-        self.back_left_hip   = 6
-        self.back_left_upper = 5
-        self.back_left_lower = 4
+        self.back_left_hip   = 10
+        self.back_left_upper = 9
+        self.back_left_lower = 8
 
         ## BACK RIGHT
         self.back_right_hip   = 2
         self.back_right_upper = 1
         self.back_right_lower = 0
+        """ SERVO INDICES, CALIBRATION MULTIPLIERS AND OFFSETS
+            #   ROW:    which joint of leg to control 0:hip, 1: upper leg, 2: lower leg
+            #   COLUMN: which leg to control. 0: front-right, 1: front-left, 2: back-right, 3: back-left.
 
-        self.pins = np.array([[14,10,2,6], 
-                              [13,9,1,5], 
-                              [12,8,0,4]])
+                #               0                  1                2               3
+                #  0 [[front_right_hip  , front_left_hip  , back_right_hip  , back_left_hip  ]
+                #  1  [front_right_upper, front_left_upper, back_right_upper, back_left_upper]
+                #  2  [front_right_lower, front_left_lower, back_right_lower, back_left_lower]] """
+
+        self.pins = np.array([[14,6,2,10], 
+                              [13,5,1,9], 
+                              [12,4,0,8]])
 
         self.right_leg_servo_list = [self.front_right_upper,self.front_right_lower,self.back_right_upper,self.back_right_lower]
         self.left_leg_servos_list = [ self.front_left_upper, self.front_left_lower,self.back_left_upper,self.back_left_lower]

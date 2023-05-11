@@ -137,8 +137,8 @@ class Controller:
             state.joint_angles = self.inverse_kinematics(
                 rotated_foot_locations, self.config
             )
-            self.publish_joint_space_command(state.joint_angles)
-            self.publish_task_space_command(rotated_foot_locations)
+            # self.publish_joint_space_command(state.joint_angles)
+            # self.publish_task_space_command(rotated_foot_locations)
             
         
 

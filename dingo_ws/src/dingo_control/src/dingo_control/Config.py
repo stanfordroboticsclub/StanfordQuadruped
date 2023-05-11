@@ -30,7 +30,7 @@ class Configuration:
         self.max_stance_yaw_rate = 1
 
         #################### STANCE ####################
-        self.delta_x = 0.117 - 0.00535 #115650.00535
+        self.delta_x = 0.117 #- 0.00535 #115650.00535
         self.delta_y = 0.1 #0.1083
         self.x_shift = 0.0
         self.default_z_ref = -0.25 #-0.16
