@@ -139,6 +139,7 @@ class Controller:
             )
             self.publish_joint_space_command(state.joint_angles)
             self.publish_task_space_command(rotated_foot_locations)
+            
         
 
         elif state.behavior_state == BehaviorState.HOP:
