@@ -55,8 +55,8 @@ class DingoDisplayNode:
             Font3 = ImageFont.truetype("/usr/share/fonts/truetype/Font02.ttf", 120)
 
             # draw.text((60, -15), 'Dingo', fill="RED", font=Font3)
-            draw.text((20, 110), 'SSID: {self.ssid}', fill="WHITE", font=Font1)
-            draw.text((20, 135), 'IP: {self.ipAddress}', fill="WHITE", font=Font1)
+            draw.text((20, 110), 'SSID: '+ {self.ssid}, fill="WHITE", font=Font1)
+            draw.text((20, 135), 'IP: ' + {self.ipAddress}, fill="WHITE", font=Font1)
             current_time = time.strftime("%I:%M:%S%p")
             draw.text((220, 0), current_time, fill="WHITE", font=Font1_small)
 
