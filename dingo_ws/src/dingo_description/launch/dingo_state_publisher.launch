@@ -1,0 +1,8 @@
+  <launch>
+    <!-- Load the urdf into the parameter server. -->
+    <arg name="robot" default="$(find dingo_description)/urdf/dingo.urdf"/>
+    <param name="robot_description" command="$(find xacro)/xacro --inorder $(arg robot)" />
+    <node pkg="robot_state_publisher" type="robot_state_publisher" name="rob_st_pub" >
+      <remap from="joint_states" to="joint_space_joint_states" />
+    </node>
+  </launch>
