@@ -31,9 +31,13 @@ class Configuration:
 
         #################### STANCE ####################
         self.delta_x = 0.117 #- 0.00535 #115650.00535
-        self.rear_leg_shift_x = 0.04
+
+        #These x_shift variables will move the default foot positions of the robot 
+        #Handy if the centre of mass shifts as can move the feet to compensate
+        self.rear_leg_x_shift = -0.04 #In default config, the robots mass is slightly biased to the back feet, so the back feet are shifted back slightly
+        self.front_leg_x_shift = 0.00
+
         self.delta_y = 0.1 #0.1083
-        self.x_shift = 0.0
         self.default_z_ref = -0.25 #-0.16
 
         #################### SWING ######################
@@ -107,10 +111,10 @@ class Configuration:
         return np.array(
             [
                 [
-                    self.delta_x + self.x_shift, #Front Right
-                    self.delta_x + self.x_shift, #Front Left
-                    -self.delta_x + self.x_shift - self.rear_leg_shift_x, #Back Right
-                    -self.delta_x + self.x_shift - self.rear_leg_shift_x, #Back Left
+                    self.delta_x + self.front_leg_x_shift, #Front Right
+                    self.delta_x + self.front_leg_x_shift, #Front Left
+                    -self.delta_x + self.rear_leg_x_shift, #Back Right
+                    -self.delta_x + self.rear_leg_x_shift, #Back Left
                 ],
                 [-self.delta_y, self.delta_y, -self.delta_y, self.delta_y],
                 [0, 0, 0, 0],
