@@ -11,7 +11,7 @@ class State:
         self.roll = 0.0
         self.activation = 0
         self.behavior_state = BehaviorState.REST
-
+        self.euler_orientation = [0,0,0]
         self.ticks = 0
         self.foot_locations = np.zeros((3, 4))
         self.joint_angles = np.zeros((3, 4))
