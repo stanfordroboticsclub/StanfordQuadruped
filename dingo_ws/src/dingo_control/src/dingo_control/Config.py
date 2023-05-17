@@ -14,7 +14,7 @@ class Configuration:
 
         #################### COMMANDS ####################
         self.max_x_velocity = 1.2
-        self.max_y_velocity = 0.3
+        self.max_y_velocity = 0.5
         self.max_yaw_rate = 2.0
         self.max_pitch = 30.0 * np.pi / 180.0
         
@@ -30,7 +30,8 @@ class Configuration:
         self.max_stance_yaw_rate = 1
 
         #################### STANCE ####################
-        self.delta_x = 0.117 - 0.00535 #115650.00535
+        self.delta_x = 0.117 #- 0.00535 #115650.00535
+        self.rear_leg_shift_x = 0.04
         self.delta_y = 0.1 #0.1083
         self.x_shift = 0.0
         self.default_z_ref = -0.25 #-0.16
@@ -108,8 +109,8 @@ class Configuration:
                 [
                     self.delta_x + self.x_shift, #Front Right
                     self.delta_x + self.x_shift, #Front Left
-                    -self.delta_x + self.x_shift, #Back Right
-                    -self.delta_x + self.x_shift, #Back Left
+                    -self.delta_x + self.x_shift - self.rear_leg_shift_x, #Back Right
+                    -self.delta_x + self.x_shift - self.rear_leg_shift_x, #Back Left
                 ],
                 [-self.delta_y, self.delta_y, -self.delta_y, self.delta_y],
                 [0, 0, 0, 0],

@@ -125,7 +125,8 @@ class Controller:
             )
 
             # Construct foot rotation matrix to compensate for body tilt
-            (roll, pitch, yaw) = quat2euler(state.quat_orientation)
+            yaw,pitch,roll = state.euler_orientation
+            print('Yaw: ',np.round(yaw),'Pitch: ',np.round(pitch),'Roll: ',np.round(roll))
             correction_factor = 0.8
             max_tilt = 0.4
             roll_compensation = correction_factor * np.clip(roll, -max_tilt, max_tilt)
@@ -137,8 +138,9 @@ class Controller:
             state.joint_angles = self.inverse_kinematics(
                 rotated_foot_locations, self.config
             )
-            self.publish_joint_space_command(state.joint_angles)
-            self.publish_task_space_command(rotated_foot_locations)
+            # self.publish_joint_space_command(state.joint_angles)
+            # self.publish_task_space_command(rotated_foot_locations)
+            
         
 
         elif state.behavior_state == BehaviorState.HOP:

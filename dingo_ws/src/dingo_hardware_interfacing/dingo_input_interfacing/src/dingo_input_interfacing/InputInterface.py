@@ -58,8 +58,8 @@ class InputInterface:
         self.previous_activate_toggle = activate_toggle
 
         ####### Handle continuous commands ########
-        x_vel = (msg.axes[1] + 0.15) * self.config.max_x_velocity #ly
-        y_vel =  msg.axes[0] * self.config.max_y_velocity #lx
+        x_vel = (msg.axes[1] ) * self.config.max_x_velocity #ly
+        y_vel = 0 #msg.axes[0] * self.config.max_y_velocity #lx
         self.developing_command.horizontal_velocity =  np.round(np.array([x_vel, y_vel]),self.rounding_dp)
         self.developing_command.yaw_rate = np.round(msg.axes[3],self.rounding_dp) * self.config.max_yaw_rate #rx
 
@@ -107,7 +107,7 @@ class InputInterface:
         self.current_command.pitch  = np.clip(state.pitch + message_dt * pitch_rate, -0.35,0.35)
         self.current_command.height = np.clip(state.height - message_dt * self.config.z_speed * self.current_command.height_movement,-0.27,-0.08)
         self.current_command.roll   = np.clip(state.roll + message_dt * self.config.roll_speed * self.current_command.roll_movement, -0.3,0.3)
-        # print('current_command.roll: ',self.current_command.roll,  'current_command.height: ', self.current_command.height,'current_command.pitch: ',self.current_command.pitch)
+        # print('current_command.pitch: ',self.current_command.pitch)
         return self.current_command
     
     #def set_color(self, color):

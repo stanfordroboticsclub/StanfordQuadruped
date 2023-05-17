@@ -25,10 +25,21 @@ mid = [0,42,120]
 high = [0,50,110] #hip, upper leg, lower leg [0,42,125]    #[29, 17, 22, 9],
 pos = mid
 
+""" SERVO INDICES, CALIBRATION MULTIPLIERS AND OFFSETS
+            #   ROW:    which joint of leg to control 0:hip, 1: upper leg, 2: lower leg
+            #   COLUMN: which leg to control. 0: front-right, 1: front-left, 2: back-right, 3: back-left.
+
+                #               0                  1                2               3
+                #  0 [[front_right_hip  , front_left_hip  , back_right_hip  , back_left_hip  ]
+                #  1  [front_right_upper, front_left_upper, back_right_upper, back_left_upper]
+                #  2  [front_right_lower, front_left_lower, back_right_lower, back_left_lower]] """
+
 offsets = np.array(
-                    [[83, 108, 108, 64], 
-                    [28, 13, 28, 22], 
-                    [22, 16, 24, 9]])
+                    [[83, 79, 108, 79], 
+                    [28, 13, 28, 19], 
+                    [22, 16, 24, 6]])
+
+                    
 
                     # [[83, 108, 108, 64], 
                     # [35, 14, 29, 21], 

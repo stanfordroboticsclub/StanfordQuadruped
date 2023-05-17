@@ -28,12 +28,13 @@ from dingo_input_interfacing.InputController import InputController
 
 if is_physical:
     from dingo_servo_interfacing.HardwareInterface import HardwareInterface
+    from dingo_nano_interfacing.IMU import IMU
     from dingo_control.Config import Leg_linkage
 
 def signal_handler(sig, frame):
     sys.exit(0)
 
-def main(use_imu=False):
+def main(use_imu=True):
     """Main program
     """
     rospy.init_node("dingo_driver") 
@@ -65,11 +66,10 @@ def main(use_imu=False):
     config = Configuration()
     if is_physical:
         linkage = Leg_linkage(config)
-        hardware_interface = HardwareInterface(linkage)
+        # hardware_interface = HardwareInterface(linkage)
         # Create imu handle
         if use_imu:
-            imu = IMU(port="/dev/ttyACM0")
-            imu.flush_buffer()
+            imu = IMU()
 
     # Create controller and user input handles
     controller = Controller(
@@ -79,8 +79,8 @@ def main(use_imu=False):
     state = State()
     default_position = [[-0.04319515, -0.04319515, -0.04319515, -0.04319515], [0.72646626,  0.72232315,  0.58123994,  0.57653635], [0.02207615,  0.02943969,  0.0077316,   0.01509318]]
     state.joint_angles = np.array(default_position)
-    if is_physical:
-        hardware_interface.set_actuator_postions(state.joint_angles)
+    # if is_physical:
+    #     hardware_interface.set_actuator_postions(state.joint_angles)
     if is_sim:
         print("here")
         rows, cols = state.joint_angles.shape
@@ -105,12 +105,12 @@ def main(use_imu=False):
     print("x shift: ", config.x_shift)
 
     # Wait until the activate button has been pressed
-    while not rospy.is_shutdown():      
+    while not rospy.is_shutdown():
         print("Waiting for L1 to activate robot.")
         while True:
             command = input_interface.get_command(state,message_rate)
             #input_interface\.set_color(config.ps4_deactivated_color)
-            if command.activate_event == 1:
+            if command.activate_event == 0:
                 break
             rate.sleep()
         
@@ -129,11 +129,12 @@ def main(use_imu=False):
                 break
 
             # Read imu data. Orientation will be None if no data was available
-            quat_orientation = (
-                imu.read_orientation() if use_imu else np.array([1, 0, 0, 0])
+            # print(imu.read_orientation())
+            state.euler_orientation = (
+                imu.read_orientation() if use_imu else np.array([0, 0, 0])
             )
-            state.quat_orientation = quat_orientation
-
+            [yaw,pitch,roll] = state.euler_orientation
+            print('Yaw: ',np.round(yaw,2),'Pitch: ',np.round(pitch,2),'Roll: ',np.round(roll,2))
             # Step the controller forward by dt
             controller.run(state, command)
 
@@ -150,9 +151,9 @@ def main(use_imu=False):
                         publishers[i].publish(state.joint_angles[row,col])
                         i = i + 1
             
-            if is_physical:
-                # Update the pwm widths going to the servos
-                hardware_interface.set_actuator_postions(state.joint_angles)
+            # if is_physical:
+            #     # Update the pwm widths going to the servos
+            #     hardware_interface.set_actuator_postions(state.joint_angles)
             
             # print('All angles: \n',np.round(np.degrees(state.joint_angles),2))
             time.end = rospy.Time.now()
