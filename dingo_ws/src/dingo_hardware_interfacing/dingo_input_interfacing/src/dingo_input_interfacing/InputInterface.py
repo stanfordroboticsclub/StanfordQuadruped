@@ -25,8 +25,6 @@ class InputInterface:
         self.new_command = Command()
         self.developing_command = Command()
 
-        self.input_stream = 0 #Defaults to joystick, 1 for keyboard, 2 for both
-
     def input_callback(self, msg):
         self.developing_command = Command()
         ####### Handle discrete commands ########
@@ -72,11 +70,7 @@ class InputInterface:
         self.trot_event = 0
         self.joystick_control_event = 0
 
-        #self.current_call_time = rospy.Time.now()
-        #time_difference = self.current_call_time- self.previous_call_time
-        #message_dt = (time_difference.to_nsec())/1e-6
         message_dt = 1.0 / message_rate
-        #self.previous_call_time = self.current_call_time
 
         deadbanded_pitch = deadband(
             self.current_command.pitch, self.config.pitch_deadband
@@ -90,9 +84,6 @@ class InputInterface:
         self.current_command.pitch  = np.clip(state.pitch + message_dt * pitch_rate, -0.35,0.35)
         self.current_command.height = np.clip(state.height - message_dt * self.config.z_speed * self.current_command.height_movement,-0.27,-0.08)
         self.current_command.roll   = np.clip(state.roll + message_dt * self.config.roll_speed * self.current_command.roll_movement, -0.3,0.3)
-        # print('current_command.pitch: ',self.current_command.pitch)
+
         return self.current_command
     
-    #def set_color(self, color):
-    #    joystick_msg = {"ps4_color": color}
-    #    self.udp_publisher.send(joystick_msg)
