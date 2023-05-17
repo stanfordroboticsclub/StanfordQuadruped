@@ -11,7 +11,7 @@ import time
 from std_msgs.msg import Float64
 
 rospack = rospkg.RosPack()
-rospack.get_path('dingo_lcd_interfacing') + "/lib/emptybatterystatus_white.png"
+rospack.get_path('dingo_peripheral_interfacing') + "/lib/emptybatterystatus_white.png"
 
 class DingoDisplayNode:
     def __init__(self):
@@ -63,7 +63,7 @@ class DingoDisplayNode:
             ## Battery indication bar
             black= Image.new("RGB", (320, 172), "black")
 
-            batt_status = Image.open(rospack.get_path('dingo_lcd_interfacing') + "/lib/emptybatterystatus_white.png")
+            batt_status = Image.open(rospack.get_path('dingo_peripheral_interfacing') + "/lib/emptybatterystatus_white.png")
 
             # batt_status = batt_status.rotate(180)
             batt_draw = ImageDraw.Draw(batt_status)

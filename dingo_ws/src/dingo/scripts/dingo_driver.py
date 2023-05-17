@@ -6,35 +6,35 @@ from std_msgs.msg import Float64
 import signal
 import socket
 import platform
-from dingo_nano_interfacing.msg import ElectricalMeasurements
+from dingo_peripheral_interfacing.msg import ElectricalMeasurements
 
 
 #Fetching is_sim and is_physical from arguments
 args = rospy.myargv(argv=sys.argv)
-if len(args) != 3: #arguments have not been provided, go to defaults (not sim, is physical)
+if len(args) != 4: #arguments have not been provided, go to defaults (not sim, is physical)
     is_sim = 0
-    is_physical = 0
+    is_physical = 1
+    use_imu = 1
 else:
     is_sim = int(args[1])
     is_physical = int(args[2])
+    use_imu = int(args[3])
 
-from dingo_nano_interfacing.IMU import IMU
 from dingo_control.Controller import Controller
 from dingo_input_interfacing.InputInterface import InputInterface
 from dingo_control.State import State
 from dingo_control.Kinematics import four_legs_inverse_kinematics
 from dingo_control.Config import Configuration
-from dingo_input_interfacing.InputController import InputController
 
 if is_physical:
     from dingo_servo_interfacing.HardwareInterface import HardwareInterface
-    from dingo_nano_interfacing.IMU import IMU
+    from dingo_peripheral_interfacing.IMU import IMU
     from dingo_control.Config import Leg_linkage
 
 def signal_handler(sig, frame):
     sys.exit(0)
 
-def main(use_imu=True):
+def main():
     """Main program
     """
     rospy.init_node("dingo_driver") 
@@ -68,53 +68,39 @@ def main(use_imu=True):
         linkage = Leg_linkage(config)
         # hardware_interface = HardwareInterface(linkage)
         # Create imu handle
-        if use_imu:
-            imu = IMU()
+    if use_imu:
+        imu = IMU()
 
     # Create controller and user input handles
     controller = Controller(
         config,
         four_legs_inverse_kinematics,
     )
-    state = State()
-    default_position = [[-0.04319515, -0.04319515, -0.04319515, -0.04319515], [0.72646626,  0.72232315,  0.58123994,  0.57653635], [0.02207615,  0.02943969,  0.0077316,   0.01509318]]
-    state.joint_angles = np.array(default_position)
-    # if is_physical:
-    #     hardware_interface.set_actuator_postions(state.joint_angles)
-    if is_sim:
-        print("here")
-        rows, cols = state.joint_angles.shape
-        i = 0
-        for col in range(cols):
-            for row in range(rows):
-                publishers[i].publish(state.joint_angles[row,col])
-                i = i + 1
 
-    print("Creating input listener...")
+    state = State()
+    rospy.loginfo("Creating input listener...")
     input_interface = InputInterface(config)
-    print(platform.processor())
-    input_Controller = InputController(1, platform.processor()) #Check raspi hostname and replace here
-    print("Done.")
+    rospy.loginfo("Input listener successfully initialised... Robot will now receive commands via Joy messages")
 
     last_loop = time.time()
 
-    print("Summary of gait parameters:")
-    print("overlap time: ", config.overlap_time)
-    print("swing time: ", config.swing_time)
-    print("z clearance: ", config.z_clearance)
-    print("x shift: ", config.x_shift)
+    rospy.loginfo("Summary of current gait parameters:")
+    rospy.loginfo("overlap time: %.2f", config.overlap_time)
+    rospy.loginfo("swing time: %.2f", config.swing_time)
+    rospy.loginfo("z clearance: %.2f", config.z_clearance)
+    rospy.loginfo("x shift: %.2f", config.x_shift)
 
     # Wait until the activate button has been pressed
     while not rospy.is_shutdown():
-        print("Waiting for L1 to activate robot.")
+        rospy.loginfo("Waiting for L1 to activate robot.")
         while True:
             command = input_interface.get_command(state,message_rate)
             #input_interface\.set_color(config.ps4_deactivated_color)
-            if command.activate_event == 0:
+            if command.joystick_control_event == 0:
                 break
             rate.sleep()
         
-        print("Robot activated.")
+        rospy.loginfo("Robot activated.")
 
         while True:
             #now = time.time()
@@ -124,22 +110,22 @@ def main(use_imu=True):
             time.start = rospy.Time.now()
             # Parse the udp joystick commands and then update the robot controller's parameters
             command = input_interface.get_command(state,message_rate)
-            if command.activate_event == 1:
-                print("Deactivating Robot")
+            if command.joystick_control_event == 1:
+                rospy.loginfo("Deactivating Robot")
                 break
 
             # Read imu data. Orientation will be None if no data was available
-            # print(imu.read_orientation())
+            # rospy.loginfo(imu.read_orientation())
             state.euler_orientation = (
                 imu.read_orientation() if use_imu else np.array([0, 0, 0])
             )
             [yaw,pitch,roll] = state.euler_orientation
-            print('Yaw: ',np.round(yaw,2),'Pitch: ',np.round(pitch,2),'Roll: ',np.round(roll,2))
+            #print('Yaw: ',np.round(yaw,2),'Pitch: ',np.round(pitch,2),'Roll: ',np.round(roll,2))
             # Step the controller forward by dt
             controller.run(state, command)
 
-            #print(state.joint_angles)
-            # print('State.height: ', state.height)
+            #rospy.loginfo(state.joint_angles)
+            # rospy.loginfo('State.height: ', state.height)
 
             #TODO here: publish the joint values (in state.joint_angles) to a publisher
             #If running simulator, publish joint angles to gazebo controller:
@@ -155,12 +141,12 @@ def main(use_imu=True):
             #     # Update the pwm widths going to the servos
             #     hardware_interface.set_actuator_postions(state.joint_angles)
             
-            # print('All angles: \n',np.round(np.degrees(state.joint_angles),2))
+            # rospy.loginfo('All angles: \n',np.round(np.degrees(state.joint_angles),2))
             time.end = rospy.Time.now()
             #Uncomment following line if want to see how long it takes to execute a control iteration
-            #print(str(time.start-time.end))
+            #rospy.loginfo(str(time.start-time.end))
 
-            # print('State: \n',state)
+            # rospy.loginfo('State: \n',state)
             rate.sleep()
 
         #input_interface.set_color(config.ps4_color)

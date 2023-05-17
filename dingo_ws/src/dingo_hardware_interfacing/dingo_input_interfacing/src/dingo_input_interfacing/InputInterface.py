@@ -20,12 +20,12 @@ class InputInterface:
 
         self.hop_event = 0
         self.trot_event = 0
-        self.activate_event = 0
+        self.joystick_control_event = 0
 
         #self.udp_handle = UDPComms.Subscriber(udp_port, timeout=0.3)
         #self.udp_publisher = UDPComms.Publisher(udp_publisher_port)
 
-        self.input_messages = rospy.Subscriber("dingo_joy", Joy, self.input_callback) #temp
+        self.input_messages = rospy.Subscriber("joy", Joy, self.input_callback) #temp
         self.current_command = Command()
         self.new_command = Command()
         self.developing_command = Command()
@@ -49,8 +49,8 @@ class InputInterface:
             self.hop_event = (hop_toggle == 1 and self.previous_hop_toggle == 0)            
         
         activate_toggle = msg.buttons[4] #L1
-        if self.activate_event != 1:
-            self.activate_event = (activate_toggle == 1 and self.previous_activate_toggle == 0)
+        if self.joystick_control_event != 1:
+            self.joystick_control_event = (activate_toggle == 1 and self.previous_activate_toggle == 0)
 
         # Update previous values for toggles and state
         self.previous_gait_toggle = gait_toggle
@@ -84,10 +84,10 @@ class InputInterface:
         
         self.current_command.trot_event = self.trot_event
         self.current_command.hop_event  = self.hop_event
-        self.current_command.activate_event = self.activate_event
+        self.current_command.joystick_control_event = self.joystick_control_event
         self.hop_event = 0
         self.trot_event = 0
-        self.activate_event = 0
+        self.joystick_control_event = 0
 
         #self.current_call_time = rospy.Time.now()
         #time_difference = self.current_call_time- self.previous_call_time
