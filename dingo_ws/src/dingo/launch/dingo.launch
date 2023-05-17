@@ -29,7 +29,7 @@
     </group>
 
     <group if="$(arg use_keyboard)">
-        <node pkg = "dingo_input_interfacing" type = "Keyboard.py" name = "keyboard_input_node" output="screen"></node>
+        <node pkg = "dingo_input_interfacing" type = "Keyboard.py" name = "keyboard_input_listener" output="screen"></node>
     </group>
 
     <!-- Gazebo simulator -->

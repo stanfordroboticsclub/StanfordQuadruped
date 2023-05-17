@@ -96,7 +96,7 @@ def main():
         while True:
             command = input_interface.get_command(state,message_rate)
             #input_interface\.set_color(config.ps4_deactivated_color)
-            if command.joystick_control_event == 0:
+            if command.joystick_control_event == 1:
                 break
             rate.sleep()
         
