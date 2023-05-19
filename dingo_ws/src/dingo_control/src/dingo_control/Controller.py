@@ -138,8 +138,7 @@ class Controller:
             state.joint_angles = self.inverse_kinematics(
                 rotated_foot_locations, self.config
             )
-            self.publish_joint_space_command(state.joint_angles)
-            self.publish_task_space_command(rotated_foot_locations)
+            state.rotated_foot_locations = rotated_foot_locations
 
         elif state.behavior_state == BehaviorState.REST:
             yaw_proportion = command.yaw_rate / self.config.max_yaw_rate
@@ -169,20 +168,22 @@ class Controller:
             state.joint_angles = self.inverse_kinematics(
                 rotated_foot_locations, self.config
             )
-            self.publish_joint_space_command(state.joint_angles)
-            self.publish_task_space_command(rotated_foot_locations)
+            state.rotated_foot_locations = rotated_foot_locations
 
         state.ticks += 1
         state.pitch = command.pitch
         state.roll = command.roll
         state.height = command.height
 
-    def set_pose_to_default(self):
+    def set_pose_to_default(self, state):
         state.foot_locations = (
             self.config.default_stance
             + np.array([0, 0, self.config.default_z_ref])[:, np.newaxis]
         )
+        print(state.foot_locations)
         state.joint_angles = self.inverse_kinematics(
             state.foot_locations, self.config
         )
+        print(state.joint_angles)
+        return state.joint_angles
             

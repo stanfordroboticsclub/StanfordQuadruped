@@ -14,9 +14,11 @@ class State:
         self.euler_orientation = [0,0,0]
         self.ticks = 0
         self.foot_locations = np.zeros((3, 4))
+        self.rotated_foot_locations = np.zeros((3, 4))
         self.joint_angles = np.zeros((3, 4))
         self.speed_factor = 1
 
+        self.currently_estopped = 0
 
 
 

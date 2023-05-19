@@ -37,7 +37,7 @@ class Configuration:
         self.rear_leg_x_shift = -0.04 #In default config, the robots mass is slightly biased to the back feet, so the back feet are shifted back slightly
         self.front_leg_x_shift = 0.00
 
-        self.delta_y = 0.1 #0.1083
+        self.delta_y = 0.1106 #0.1083
         self.default_z_ref = -0.25 #-0.16
 
         #################### SWING ######################
@@ -64,10 +64,8 @@ class Configuration:
         )
 
         ######################## GEOMETRY ######################
-
-        #FOLLOWING WE ACTUALLY USE
         self.LEG_FB = 0.11165 #   front-back distance from center line to leg axis
-        self.LEG_LR = 0.061 #0.061  # left-right distance from center line to leg plane
+        self.LEG_LR = 0.061  # left-right distance from center line to leg plane
         self.LEG_ORIGINS = np.array( #Origins of the initial frame from the centre of the body
             [
                 [self.LEG_FB, self.LEG_FB, -self.LEG_FB, -self.LEG_FB],
@@ -75,17 +73,13 @@ class Configuration:
                 [0, 0, 0, 0],
             ]
         )
-        self.L1 = 0.0518655 
-        self.L2 = 0.130
-        self.L3 = 0.1381366
-        self.phi = m.radians(73.88)
-        
-        # Currently working values
-        #self.phi = m.radians(73.17)
-        #self.L1 = 0.04973
-        #self.L2 = 0.140
-        #self.L3 = 0.1631477
 
+        #Leg lengths
+        self.L1 = 0.05162024721
+        self.L2 = 0.130
+        self.L3 = 0.13813664159
+        self.phi = m.radians(73.91738698)
+        
         ################### INERTIAL ####################
         self.FRAME_MASS = 0.560  # kg
         self.MODULE_MASS = 0.080  # kg

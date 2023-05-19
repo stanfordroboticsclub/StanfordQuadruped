@@ -62,7 +62,7 @@ class InputInterface:
     def get_command(self, state, message_rate):
 
         self.current_command = self.new_command
-        
+
         self.current_command.trot_event = self.trot_event
         self.current_command.hop_event  = self.hop_event
         self.current_command.joystick_control_event = self.joystick_control_event

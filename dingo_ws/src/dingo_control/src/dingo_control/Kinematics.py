@@ -29,12 +29,8 @@ def leg_explicit_inverse_kinematics(r_body_foot, leg_index, config):
     #Determine if leg is a right or a left leg
     if leg_index == 1 or leg_index == 3:
         is_right = 0
-        print("\n\n\n\nLEFT LEG:")
     else:
         is_right = 1
-        print("\n\n\n\nRIGHT LEG:")
-
-    print("input position ", r_body_foot)
     
     #This inverse kinematics code has a different axis definition from pupper. Conversion to pupper frame:
     x,y,z = r_body_foot[0], r_body_foot[1], r_body_foot[2]
@@ -52,7 +48,6 @@ def leg_explicit_inverse_kinematics(r_body_foot, leg_index, config):
     x = r_body_foot_[0]
     y = r_body_foot_[1]
     z = r_body_foot_[2]
-    #print("x: ", x , "y: ", y, "z: ", z)
 
     # length of vector projected on the YZ plane. equiv. to len_A = sqrt(y**2 + z**2)
     len_A = norm([0,y,z])   
@@ -63,13 +58,12 @@ def leg_explicit_inverse_kinematics(r_body_foot, leg_index, config):
     a_1 = point_to_rad(y,z)                     
     a_2 = asin(sin(config.phi)*config.L1/len_A)
     a_3 = pi - a_2 - config.phi               
-    #print("a_1: ", a_1, "a_2: ", a_2, "a_3: ", a_3)
+
     # angle of link1 about the x-axis 
     if is_right: theta_1 = a_1 + a_3
     else: 
         theta_1 = a_1 + a_3
     if theta_1 >= 2*pi: theta_1 = np.mod(theta_1,2*pi)
-    #print("theta_1: ", degrees(theta_1))
     
     #Translate frame to the frame of the leg
     offset = np.array([0.0,config.L1*cos(theta_1),config.L1*sin(theta_1)])
@@ -155,16 +149,5 @@ def angle_corrector(angles=[0,0,0]):
     for index, theta in enumerate(angles):
         if theta > 2*pi: angles[index] = np.mod(theta,2*pi)
         if theta > pi: angles[index] = -(2*pi - theta)
-    #if is_right:
-    #   theta_1 = angles[0] - pi
-    #    theta_2 = angles[1] + 45*pi/180 # 45 degrees initial offset
-    #else: 
-    #    if angles[0] > pi:  
-    #        theta_1 = angles[0] - 2*pi
-    #    else: theta_1 = angles[0]
-    #    
-    #    theta_2 = -angles[1] - 45*pi/180
-
-    #theta_3 = -angles[2] + 45*pi/180
     return angles
 
