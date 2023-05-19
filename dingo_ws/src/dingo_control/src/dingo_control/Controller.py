@@ -126,7 +126,7 @@ class Controller:
 
             # Construct foot rotation matrix to compensate for body tilt
             yaw,pitch,roll = state.euler_orientation
-            print('Yaw: ',np.round(yaw),'Pitch: ',np.round(pitch),'Roll: ',np.round(roll))
+            #print('Yaw: ',np.round(yaw),'Pitch: ',np.round(pitch),'Roll: ',np.round(roll))
             correction_factor = 0.8
             max_tilt = 0.4
             roll_compensation = correction_factor * np.clip(roll, -max_tilt, max_tilt)
@@ -137,30 +137,6 @@ class Controller:
 
             state.joint_angles = self.inverse_kinematics(
                 rotated_foot_locations, self.config
-            )
-            # self.publish_joint_space_command(state.joint_angles)
-            # self.publish_task_space_command(rotated_foot_locations)
-            
-        
-
-        elif state.behavior_state == BehaviorState.HOP:
-            state.foot_locations = (
-                self.config.default_stance
-                + np.array([0, 0, -0.09])[:, np.newaxis]
-            )
-            state.joint_angles = self.inverse_kinematics(
-                state.foot_locations, self.config
-            )
-            self.publish_joint_space_command(state.joint_angles)
-            self.publish_task_space_command(rotated_foot_locations)
-
-        elif state.behavior_state == BehaviorState.FINISHHOP:
-            state.foot_locations = (
-                self.config.default_stance
-                + np.array([0, 0, -0.22])[:, np.newaxis]
-            )
-            state.joint_angles = self.inverse_kinematics(
-                state.foot_locations, self.config
             )
             self.publish_joint_space_command(state.joint_angles)
             self.publish_task_space_command(rotated_foot_locations)

@@ -22,9 +22,11 @@ else:
 
 from dingo_control.Controller import Controller
 from dingo_input_interfacing.InputInterface import InputInterface
-from dingo_control.State import State
+from dingo_control.State import State, BehaviorState
 from dingo_control.Kinematics import four_legs_inverse_kinematics
 from dingo_control.Config import Configuration
+from dingo_control.msg import TaskSpace, JointSpace, Angle
+from std_msgs.msg import Bool
 
 if is_physical:
     from dingo_servo_interfacing.HardwareInterface import HardwareInterface
@@ -40,7 +42,11 @@ class DingoDriver:
         self.is_physical = is_physical
         self.use_imu = use_imu
 
-        #TODO: Create a publisher for joint states 
+        self.joint_command_sub = rospy.Subscriber("/joint_space_cmd", JointSpace, self.run_joint_space_command)
+        self.task_command_sub = rospy.Subscriber("/task_space_cmd", TaskSpace, self.run_task_space_command)
+        self.estop_status_sub = rospy.Subscriber("/emergency_stop_status", Bool, self.update_emergency_stop_status)
+        self.external_commands_enabled = 0
+
         if self.is_sim:
             self.sim_command_topics = ["/dingo_controller/FR_theta1/command",
                     "/dingo_controller/FR_theta2/command",
@@ -91,27 +97,24 @@ class DingoDriver:
     def run(self):
         # Wait until the activate button has been pressed
         while not rospy.is_shutdown():
-            rospy.loginfo("Waiting for L1 to activate robot.")
+            rospy.loginfo("Manual robot control active. Currently not accepting external commands")
+            self.state.behavior_state = BehaviorState.REST
             while True:
-                command = self.input_interface.get_command(self.state,self.message_rate)
-                #input_interface\.set_color(config.ps4_deactivated_color)
-                if command.joystick_control_event == 1:
-                    break
-                self.rate.sleep()
-            
-            rospy.loginfo("Robot activated.")
+                #Always start Manual control with the robot standing still
 
-            while True:
                 #now = time.time()
                 #if now - last_loop < config.dt:
                 #    continue
                 #last_loop = time.time()
                 time.start = rospy.Time.now()
-                # Parse the udp joystick commands and then update the robot controller's parameters
+                #Update the robot controller's parameters
                 command = self.input_interface.get_command(self.state,self.message_rate)
                 if command.joystick_control_event == 1:
-                    rospy.loginfo("Deactivating Robot")
-                    break
+                    if self.currently_estopped == 0:
+                        self.external_commands_enabled = 1
+                        break
+                    else:
+                        rospy.logerr("Received Request to enable external control, but e-stop is pressed so the request has been ignored. Please release e-stop and try again")
 
                 # Read imu data. Orientation will be None if no data was available
                 # rospy.loginfo(imu.read_orientation())
@@ -126,19 +129,12 @@ class DingoDriver:
                 #rospy.loginfo(state.joint_angles)
                 # rospy.loginfo('State.height: ', state.height)
 
-                #TODO here: publish the joint values (in state.joint_angles) to a publisher
                 #If running simulator, publish joint angles to gazebo controller:
                 if is_sim:
-                    rows, cols = self.state.joint_angles.shape
-                    i = 0
-                    for col in range(cols):
-                        for row in range(rows):
-                            self.sim_publisher_array[i].publish(self.state.joint_angles[row,col])
-                            i = i + 1
-                
+                    self.publish_joints_to_sim(self.state.joint_angles)
                 # if is_physical:
                 #     # Update the pwm widths going to the servos
-                #     hardware_interface.set_actuator_postions(state.joint_angles)
+                #     self.hardware_interface.set_actuator_postions(state.joint_angles)
                 
                 # rospy.loginfo('All angles: \n',np.round(np.degrees(state.joint_angles),2))
                 time.end = rospy.Time.now()
@@ -148,10 +144,68 @@ class DingoDriver:
                 # rospy.loginfo('State: \n',state)
                 self.rate.sleep()
 
-            #input_interface.set_color(config.ps4_color)
+            rospy.loginfo("Manual Control deactivated. Now accepting external commands")
+            while self.currently_estopped == 0:
+                command = self.input_interface.get_command(self.state,self.message_rate)
+                if command.joystick_control_event == 1:
+                    self.external_commands_enabled = 0
+                    break
+                self.rate.sleep()
+    
+    def update_emergency_stop_status(self, msg):
+        if msg == 1:
+            self.currently_estopped = 1
+        if msg == 0:
+            self.currently_estopped = 0
+        return
 
-        
+    def run_task_space_command(self, msg):
+        if self.external_commands_enabled == 1 and self.currently_estopped == 0:
+            foot_locations = np.zeros((3,4))
+            j = 0
+            for i in 3:
+                foot_locations[i] = [msg.FR_foot[j], msg.FL_foot[j], msg.RR_foot[j], msg.RL_foot[j]]
+                j = j+1
+            print(foot_locations)
+            joint_angles = self.controller.inverse_kinematics(foot_locations, self.config)
+            if self.is_sim:
+                self.publish_joints_to_sim(self, joint_angles)
+            
+            if self.is_physical:
+                self.hardware_interface.set_actuator_postions(joint_angles)
+            
+        elif self.external_commands_enabled == 0:
+            rospy.logerr("ERROR: Robot not accepting commands. Please deactivate manual control before sending control commands")
+        elif self.currently_estopped == 1:
+            rospy.logerr("ERROR: Robot currently estopped. Please release before trying to send commands")
 
+    def run_joint_space_command(self, msg):
+        if self.external_commands_enabled == 1 and self.currently_estopped == 0:
+            joint_angles = np.zeros((3,4))
+            j = 0
+            for i in 3:
+                joint_angles[i] = [msg.FR_foot[j], msg.FL_foot[j], msg.RR_foot[j], msg.RL_foot[j]]
+                j = j+1
+            print(joint_angles)
+
+            if self.is_sim:
+                self.publish_joints_to_sim(self, joint_angles)
+            
+            if self.is_physical:
+                self.hardware_interface.set_actuator_postions(joint_angles)
+            
+        elif self.external_commands_enabled == 0:
+            rospy.logerr("ERROR: Robot not accepting commands. Please deactivate manual control before sending control commands")
+        elif self.currently_estopped == 1:
+            rospy.logerr("ERROR: Robot currently estopped. Please release before trying to send commands")
+    
+    def publish_joints_to_sim(self, joint_angles):
+        rows, cols = joint_angles.shape
+        i = 0
+        for col in range(cols):
+            for row in range(rows):
+                self.sim_publisher_array[i].publish(joint_angles[row,col])
+                i = i + 1
 
 
 
