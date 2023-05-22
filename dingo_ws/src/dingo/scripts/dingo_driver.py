@@ -66,7 +66,7 @@ def main(use_imu=True):
     config = Configuration()
     if is_physical:
         linkage = Leg_linkage(config)
-        # hardware_interface = HardwareInterface(linkage)
+        hardware_interface = HardwareInterface(linkage)
         # Create imu handle
         if use_imu:
             imu = IMU()
@@ -133,8 +133,8 @@ def main(use_imu=True):
             state.euler_orientation = (
                 imu.read_orientation() if use_imu else np.array([0, 0, 0])
             )
-            [yaw,pitch,roll] = state.euler_orientation
-            print('Yaw: ',np.round(yaw,2),'Pitch: ',np.round(pitch,2),'Roll: ',np.round(roll,2))
+            [yaw,pitch,roll] = np.degrees(state.euler_orientation)
+            # print('Yaw: ',np.round(yaw),'Pitch: ',np.round(pitch),'Roll: ',np.round(roll))
             # Step the controller forward by dt
             controller.run(state, command)
 
@@ -151,9 +151,9 @@ def main(use_imu=True):
                         publishers[i].publish(state.joint_angles[row,col])
                         i = i + 1
             
-            # if is_physical:
-            #     # Update the pwm widths going to the servos
-            #     hardware_interface.set_actuator_postions(state.joint_angles)
+            if is_physical:
+                # Update the pwm widths going to the servos
+                hardware_interface.set_actuator_postions(state.joint_angles)
             
             # print('All angles: \n',np.round(np.degrees(state.joint_angles),2))
             time.end = rospy.Time.now()

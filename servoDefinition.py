@@ -6,15 +6,15 @@ import math as m
 
 class motor_config():
     def __init__(self):
-        self.pwm_max = 2310
-        self.pwm_min = 350
+        self.pwm_max = 2400
+        self.pwm_min = 370
         self.kit = ServoKit(channels=16) #Defininng a new set of servos uising the Adafruit ServoKit LIbrary
         
         #DefinING servo indices
         ## FRONT LEFT
-        self.front_left_hip   = 6
-        self.front_left_upper = 5
-        self.front_left_lower = 4
+        self.front_left_hip   = 10
+        self.front_left_upper = 9
+        self.front_left_lower = 8
 
         ## FRONT RIGHT
         self.front_right_hip   = 14
@@ -22,9 +22,9 @@ class motor_config():
         self.front_right_lower = 12
 
         ## BACK LEFT
-        self.back_left_hip   = 10
-        self.back_left_upper = 9
-        self.back_left_lower = 8
+        self.back_left_hip   = 6
+        self.back_left_upper = 5
+        self.back_left_lower = 4
 
         ## BACK RIGHT
         self.back_right_hip   = 2
@@ -39,9 +39,9 @@ class motor_config():
                 #  1  [front_right_upper, front_left_upper, back_right_upper, back_left_upper]
                 #  2  [front_right_lower, front_left_lower, back_right_lower, back_left_lower]] """
 
-        self.pins = np.array([[14,6,2,10], 
-                              [13,5,1,9], 
-                              [12,4,0,8]])
+        self.pins = np.array([[14,10,2,6], 
+                              [13,9,1,5], 
+                              [12,8,0,4]])
 
         self.right_leg_servo_list = [self.front_right_upper,self.front_right_lower,self.back_right_upper,self.back_right_lower]
         self.left_leg_servos_list = [ self.front_left_upper, self.front_left_lower,self.back_left_upper,self.back_left_lower]

@@ -28,7 +28,7 @@ class IMU:
         """
         try: 
             [yaw,pitch,roll] = self.sensor.euler
-            yaw = m.radians(360-yaw)
+            yaw = m.radians(360-yaw) 
             pitch = m.radians(-pitch)
             roll = m.radians(roll - 30) # fixed offset to account for the IMU being off by 30 degrees
             self.last_euler = [yaw,pitch,roll]

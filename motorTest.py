@@ -19,7 +19,7 @@ Dingo.relax_all_motors()
 
 #-------- MOVING CALIBRATED LEGS TO THE HOME POSITOIN -------- #
 # ## HOme positoin values: 
-home = [0,0,0]
+home = [0,0,90]
 low = [0,25,140]
 mid = [0,42,120]
 high = [0,50,110] #hip, upper leg, lower leg [0,42,125]    #[29, 17, 22, 9],
@@ -35,15 +35,15 @@ pos = mid
                 #  2  [front_right_lower, front_left_lower, back_right_lower, back_left_lower]] """
 
 offsets = np.array(
-                    [[83, 79, 108, 79], 
-                    [28, 13, 28, 19], 
-                    [22, 16, 24, 6]])
+                    [[77, 81, 115, 76], 
+                    [29, 8, 33, 13], 
+                    [26, 13, 30, 4]])
 
                     
 
-                    # [[83, 108, 108, 64], 
-                    # [35, 14, 29, 21], 
-                    # [24, 7, 30, 9]])
+                    # [[83, 79, 108, 79], 
+                    # [28, 13, 28, 19], 
+                    # [22, 16, 24, 6]])
 
 Dingo.moveAbsAngle(Dingo.front_right_hip  ,offsets[0,0]+pos[0])
 Dingo.moveAbsAngle(Dingo.front_right_upper,offsets[1,0]+pos[1])
