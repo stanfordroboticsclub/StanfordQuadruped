@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>dingo_lcd_interfacing</name>
+  <name>dingo_peripheral_interfacing</name>
   <version>0.0.0</version>
-  <description>The dingo_lcd_interfacing package</description>
+  <description>The dingo_peripheral_interfacing package</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->
@@ -19,7 +19,7 @@
   <!-- Url tags are optional, but multiple are allowed, one per tag -->
   <!-- Optional attribute type can be: website, bugtracker, or repository -->
   <!-- Example: -->
-  <!-- <url type="website">http://wiki.ros.org/dingo_lcd_interfacing</url> -->
+  <!-- <url type="website">http://wiki.ros.org/dingo_nano_interfacing</url> -->
 
 
   <!-- Author tags are optional, multiple are allowed, one per tag -->
@@ -50,9 +50,13 @@
   <!--   <doc_depend>doxygen</doc_depend> -->
   <buildtool_depend>catkin</buildtool_depend>
   <build_depend>rospy</build_depend>
+  <build_depend>std_msgs</build_depend>
+  <build_depend>message_generation</build_depend>
   <build_export_depend>rospy</build_export_depend>
   <exec_depend>rospy</exec_depend>
-
+  <exec_depend>message_runtime</exec_depend>
+  <depend>numpy</depend>
+  <depend>pyserial</depend>
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>

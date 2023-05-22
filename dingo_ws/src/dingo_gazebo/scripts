@@ -1,0 +1,44 @@
+import rospy
+from sensor_msgs.msg import JointState
+from gazebo_msgs.msg import ModelState, ModelStates
+from gazebo_msgs.srv import SetModelState
+
+class JointStatesSubscriberPlugin:
+    def __init__(self):
+        self.joint_positions = {}
+
+        rospy.Subscriber('/joint_states', JointState, self.joint_states_callback)
+        self.set_model_state = rospy.ServiceProxy('/gazebo/set_model_state', SetModelState)
+
+    def joint_states_callback(self, msg):
+        for joint_name, position in zip(msg.name, msg.position):
+            self.joint_positions[joint_name] = position
+
+        self.actuate_robot()
+
+    def actuate_robot(self):
+        # Apply the joint positions to the simulated robot
+        model_state = ModelState()
+        model_state.model_name = 'your_robot_model_name'
+
+        for joint_name, position in self.joint_positions.items():
+            model_state.pose.position.z = position
+            model_state.twist.linear.x = 0.0
+            model_state.twist.linear.y = 0.0
+            model_state.twist.linear.z = 0.0
+            model_state.twist.angular.x = 0.0
+            model_state.twist.angular.y = 0.0
+            model_state.twist.angular.z = 0.0
+            model_state.reference_frame = 'world'
+
+            model_state.pose.orientation.x = 0.0
+            model_state.pose.orientation.y = 0.0
+            model_state.pose.orientation.z = 0.0
+            model_state.pose.orientation.w = 0.0
+
+            self.set_model_state(model_state)
+
+if __name__ == '__main__':
+    rospy.init_node('joint_states_subscriber_plugin')
+    plugin = JointStatesSubscriberPlugin()
+    rospy.spin()

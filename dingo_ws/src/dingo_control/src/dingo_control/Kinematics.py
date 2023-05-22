@@ -5,6 +5,7 @@ from math import *
 #import matplotlib.pyplot as plt
 from dingo_control.util import RotMatrix3D, point_to_rad
 from transforms3d.euler import euler2mat
+import rospy
 
 
 def leg_explicit_inverse_kinematics(r_body_foot, leg_index, config):
@@ -28,15 +29,11 @@ def leg_explicit_inverse_kinematics(r_body_foot, leg_index, config):
     #Determine if leg is a right or a left leg
     if leg_index == 1 or leg_index == 3:
         is_right = 0
-        #print("\n\n\n\nLEFT LEG:")
     else:
         is_right = 1
-        #print("\n\n\n\nRIGHT LEG:")
-
-    #print("input position ", r_body_foot, "is right?", is_right)
     
     #This inverse kinematics code has a different axis definition from pupper. Conversion to pupper frame:
-    x,y,z = r_body_foot
+    x,y,z = r_body_foot[0], r_body_foot[1], r_body_foot[2]
     if is_right: y = -y
 
     r_body_foot = np.array([x,y,z])
@@ -51,7 +48,6 @@ def leg_explicit_inverse_kinematics(r_body_foot, leg_index, config):
     x = r_body_foot_[0]
     y = r_body_foot_[1]
     z = r_body_foot_[2]
-    #print("x: ", x , "y: ", y, "z: ", z)
 
     # length of vector projected on the YZ plane. equiv. to len_A = sqrt(y**2 + z**2)
     len_A = norm([0,y,z])   
@@ -62,13 +58,12 @@ def leg_explicit_inverse_kinematics(r_body_foot, leg_index, config):
     a_1 = point_to_rad(y,z)                     
     a_2 = asin(sin(config.phi)*config.L1/len_A)
     a_3 = pi - a_2 - config.phi               
-    #print("a_1: ", a_1, "a_2: ", a_2, "a_3: ", a_3)
+
     # angle of link1 about the x-axis 
     if is_right: theta_1 = a_1 + a_3
     else: 
         theta_1 = a_1 + a_3
     if theta_1 >= 2*pi: theta_1 = np.mod(theta_1,2*pi)
-    #print("theta_1: ", degrees(theta_1))
     
     #Translate frame to the frame of the leg
     offset = np.array([0.0,config.L1*cos(theta_1),config.L1*sin(theta_1)])
@@ -85,7 +80,6 @@ def leg_explicit_inverse_kinematics(r_body_foot, leg_index, config):
     
     # xyz in the rotated coordinate system + offset due to link_1 removed
     x_, y_, z_ = j4_2_vec_[0], j4_2_vec_[1], j4_2_vec_[2]
-    #print("x_ ", x_, "y_", y_, "z_ ", z_)
     
     len_B = norm([x_, 0, z_]) # norm(j4-j2)
     #print("len_B ", len_B)
@@ -94,7 +88,7 @@ def leg_explicit_inverse_kinematics(r_body_foot, leg_index, config):
     if len_B >= (config.L2 + config.L3): 
         len_B = (config.L2 + config.L3) * 0.8
         # self.node.get_logger().warn('target coordinate: [%f %f %f] too far away' % (x, y, z))
-        print('target coordinate: [%f %f %f] too far away' % (x, y, z))
+        rospy.logwarn('target coordinate: [%f %f %f] too far away', x, y, z)
     
     # b_1 : angle between +ve x-axis and len_B (0 <= b_1 < 2pi)
     # b_2 : angle between len_B and link_2
@@ -103,31 +97,11 @@ def leg_explicit_inverse_kinematics(r_body_foot, leg_index, config):
     b_2 = acos((config.L2**2 + len_B**2 - config.L3**2) / (2 * config.L2 * len_B)) 
     b_3 = acos((config.L2**2 + config.L3**2 - len_B**2) / (2 * config.L2 * config.L3))  
     
-    #print("b_1 ", b_1, "b_2 ", b_2, "b_3 ", b_3)
-    # assuming theta_2 = 0 when the leg is pointing down (i.e., 270 degrees offset from the +ve x-axis)
     theta_2 = b_1 - b_2
     theta_3 = pi - b_3
-    #print("theta_2: ", degrees(theta_2))
-    #print("theta_3: ", degrees(theta_3))
-    
-    # CALCULATE THE COORDINATES OF THE JOINTS FOR VISUALIZATION
-    #j1 = np.array([0,0,0])
-    
-    # calculate joint 3
-    #j3_ = np.reshape(np.array([config.L2*cos(theta_2),0, config.L2*sin(theta_2)]),[3,1])
-    #j3 = np.asarray(j2 + np.reshape(np.linalg.inv(rot_mtx)*j3_, [1,3])).flatten()
-    
-    # calculate joint 4
-    #j4_ = j3_ + np.reshape(np.array([config.L3*cos(theta_2+theta_3),0, config.L3*sin(theta_2+theta_3)]), [3,1])
-    #j4 = np.asarray(j2 + np.reshape(np.linalg.inv(rot_mtx)*j4_, [1,3])).flatten()
-    
-    #Calculating theta_0 (angle of the servo attached to the linkage to achieve desired theta_3 and theta_2 combo)
-    #theta_0 = linkage_calculation(theta_2, theta_3)
 
     # modify angles to match robot's configuration (i.e., adding offsets)
-    angles = angle_corrector(angles=[theta_1, theta_2, theta_3], is_right=is_right)
-    #print("theta1: ", degrees(angles[0]),", theta2: ", degrees(angles[1]),", theta2: ",degrees(angles[2]))
-    #print("theta_1 ", degrees(angles[0]), "theta_2 ", degrees(angles[1]), "theta_3 ", degrees(angles[2]))
+    angles = angle_corrector(angles=[theta_1, theta_2, theta_3])
     return np.array(angles)
 
 
@@ -156,7 +130,17 @@ def four_legs_inverse_kinematics(r_body_foot, config):
         )
     return alpha #[Front Right, Front Left, Back Right, Back Left]
 
-def angle_corrector(angles=[0,0,0], is_right=1):
+def forward_kinematics(angles, config):
+    #Function which accepts three joint angles relative to the base frame of each leg, and returns the corresponding task space values relative to the base frame of each leg
+    #Equations from DH analysis
+    x = config.L3*sin(angles[1]+angles[2]) - config.L2*cos(angles[1])
+    y = 0.5*config.L2*cos(angles[0]+angles[1]) - config.L1*cos(angles[0]+(403*pi)/4500) - 0.5*config.L2*cos(angles[0]-angles[1]) - config.L3*cos(angles[1]+angles[2])*sin(angles[0])
+    z = 0.5*config.L2*sin(angles[0]-angles[1]) + config.L1*sin(angles[0]+(403*pi)/4500) - 0.5*config.L2*sin(angles[0]+angles[1]) - config.L3*cos(angles[1]+angles[2])*cos(angles[0])
+
+    return np.array([x,y,z])
+
+def angle_corrector(angles=[0,0,0]):
+    # assuming theta_2 = 0 when the leg is pointing down (i.e., 270 degrees offset from the +ve x-axis)
     angles[0] = angles[0]
     angles[1] = angles[1] - pi #theta2 offset
     angles[2] = angles[2] - pi/2 #theta3 offset
@@ -165,16 +149,5 @@ def angle_corrector(angles=[0,0,0], is_right=1):
     for index, theta in enumerate(angles):
         if theta > 2*pi: angles[index] = np.mod(theta,2*pi)
         if theta > pi: angles[index] = -(2*pi - theta)
-    #if is_right:
-    #   theta_1 = angles[0] - pi
-    #    theta_2 = angles[1] + 45*pi/180 # 45 degrees initial offset
-    #else: 
-    #    if angles[0] > pi:  
-    #        theta_1 = angles[0] - 2*pi
-    #    else: theta_1 = angles[0]
-    #    
-    #    theta_2 = -angles[1] - 45*pi/180
-
-    #theta_3 = -angles[2] + 45*pi/180
     return angles
 

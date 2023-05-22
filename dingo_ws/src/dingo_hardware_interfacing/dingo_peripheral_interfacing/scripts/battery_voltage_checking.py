@@ -39,6 +39,17 @@ def main():
 
     number_of_low_battery_detections = 0
 
+    estop_bit = GPIO.input(estop_pin_number)
+    battery_bit1 = GPIO.input(battery_pin1_number)
+    battery_bit2 = GPIO.input(battery_pin2_number)
+    battery_bit3 = GPIO.input(battery_pin3_number)
+
+    #Grab initial value and publish that immediately
+    if estop_bit == 0:
+        estop_publisher.publish(0)
+    elif estop_bit == 1:
+        estop_publisher.publish(1)
+        current_estop_bit = 1
     
     while not rospy.is_shutdown(): 
         # Read the digital values from the pins
