@@ -113,9 +113,9 @@ class DingoDriver:
             self.controller.publish_task_space_command(self.state.rotated_foot_locations)
             if self.is_sim:
                     self.publish_joints_to_sim(self.state.joint_angles)
-            # if self.is_physical:
-            #     # Update the pwm widths going to the servos
-            #     self.hardware_interface.set_actuator_postions(state.joint_angles)
+            if self.is_physical:
+                # Update the pwm widths going to the servos
+                self.hardware_interface.set_actuator_postions(self.state.joint_angles)
             while self.state.currently_estopped == 0:
                 time.start = rospy.Time.now()
 
@@ -134,7 +134,7 @@ class DingoDriver:
                     self.imu.read_orientation() if self.use_imu else np.array([0, 0, 0])
                 )
                 [yaw,pitch,roll] = self.state.euler_orientation
-                #print('Yaw: ',np.round(yaw,2),'Pitch: ',np.round(pitch,2),'Roll: ',np.round(roll,2))
+                # print('Yaw: ',np.round(yaw,2),'Pitch: ',np.round(pitch,2),'Roll: ',np.round(roll,2))
                 # Step the controller forward by dt
                 self.controller.run(self.state, command)
 
@@ -147,9 +147,9 @@ class DingoDriver:
                     #If running simulator, publish joint angles to gazebo controller:
                     if self.is_sim:
                         self.publish_joints_to_sim(self.state.joint_angles)
-                    # if self.is_physical:
-                    #     # Update the pwm widths going to the servos
-                    #     self.hardware_interface.set_actuator_postions(state.joint_angles)
+                    if self.is_physical:
+                        # Update the pwm widths going to the servos
+                        self.hardware_interface.set_actuator_postions(self.state.joint_angles)
                     
                     # rospy.loginfo('All angles: \n',np.round(np.degrees(state.joint_angles),2))
                     time.end = rospy.Time.now()
@@ -171,9 +171,9 @@ class DingoDriver:
                 self.controller.publish_task_space_command(self.state.rotated_foot_locations)
                 if self.is_sim:
                         self.publish_joints_to_sim(self.state.joint_angles)
-                # if self.is_physical:
-                #     # Update the pwm widths going to the servos
-                #     self.hardware_interface.set_actuator_postions(state.joint_angles)
+                if self.is_physical:
+                    # Update the pwm widths going to the servos
+                    self.hardware_interface.set_actuator_postions(self.state.joint_angles)
                 while self.state.currently_estopped == 0:
                     command = self.input_interface.get_command(self.state,self.message_rate)
                     if command.joystick_control_event == 1:

@@ -23,7 +23,7 @@ home = [0,0,90]
 low = [0,25,140]
 mid = [0,42,120]
 high = [0,50,110] #hip, upper leg, lower leg [0,42,125]    #[29, 17, 22, 9],
-pos = mid
+pos = home
 
 """ SERVO INDICES, CALIBRATION MULTIPLIERS AND OFFSETS
             #   ROW:    which joint of leg to control 0:hip, 1: upper leg, 2: lower leg

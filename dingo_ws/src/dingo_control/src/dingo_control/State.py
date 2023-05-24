@@ -9,7 +9,7 @@ class State:
         self.height = -0.20
         self.pitch = 0.0
         self.roll = 0.0
-        self.joystick_control_active = 0
+        self.joystick_control_active = 1
         self.behavior_state = BehaviorState.REST
         self.euler_orientation = [0,0,0]
         self.ticks = 0

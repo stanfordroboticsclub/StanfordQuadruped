@@ -188,14 +188,13 @@ class Controller:
         state.joint_angles = self.inverse_kinematics(
             state.foot_locations, self.config
         )
-        print(state.joint_angles)
         return state.joint_angles
     def stabilise_with_IMU(self,foot_locations,orientation):
         ''' Applies euler orientatin data of pitch roall and yaw to stabilise hte robt. Current only applying to pitch.'''
         yaw,pitch,roll = orientation
-        print('Yaw: ',np.round(yaw),'Pitch: ',np.round(pitch),'Roll: ',np.round(roll))
+        # print('Yaw: ',np.round(np.degrees(yaw)),'Pitch: ',np.round(np.degrees(pitch)),'Roll: ',np.round(np.degrees(roll)))
         correction_factor = 0.5
-        max_tilt = 0.4
+        max_tilt = 0.4 #radians
         roll_compensation = correction_factor * np.clip(-roll, -max_tilt, max_tilt)
         pitch_compensation = correction_factor * np.clip(-pitch, -max_tilt, max_tilt)
         rmat = euler2mat(roll_compensation, pitch_compensation, 0)
