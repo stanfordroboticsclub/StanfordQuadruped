@@ -157,6 +157,9 @@ class DingoDriver:
                     #rospy.loginfo(str(time.start-time.end))
 
                     # rospy.loginfo('State: \n',state)
+                else:
+                    if self.is_sim:
+                        self.publish_joints_to_sim(self.state.joint_angles)
                 self.rate.sleep()
 
             if self.state.currently_estopped == 0:
