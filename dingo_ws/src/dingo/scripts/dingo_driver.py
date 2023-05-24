@@ -138,7 +138,7 @@ class DingoDriver:
                 # Step the controller forward by dt
                 self.controller.run(self.state, command)
 
-                if self.state.behavior_state == 1: #If trotting
+                if self.state.behavior_state == BehaviorState.TROT: #If trotting
                     self.controller.publish_joint_space_command(self.state.joint_angles)
                     self.controller.publish_task_space_command(self.state.rotated_foot_locations)
                     #rospy.loginfo(state.joint_angles)
@@ -157,9 +157,6 @@ class DingoDriver:
                     #rospy.loginfo(str(time.start-time.end))
 
                     # rospy.loginfo('State: \n',state)
-                else:
-                    if self.is_sim:
-                        self.publish_joints_to_sim(self.state.joint_angles)
                 self.rate.sleep()
 
             if self.state.currently_estopped == 0:
