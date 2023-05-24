@@ -6,8 +6,8 @@ import rospy
 
 class HardwareInterface():
     def __init__(self,link):
-        self.pwm_max = 2310
-        self.pwm_min = 350
+        self.pwm_max = 2400
+        self.pwm_min = 370
         self.link = link
         self.servo_angles = np.zeros((3,4))
         self.kit = ServoKit(channels=16) #Defininng a new set of servos uising the Adafruit ServoKit LIbrary
@@ -22,9 +22,9 @@ class HardwareInterface():
                 #  2  [front_right_lower, front_left_lower, back_right_lower, back_left_lower]] 
 
            'pins' define the physical pin of the servos on the servoboard """
-        self.pins = np.array([[14,6,2,10], 
-                              [13,5,1,9], 
-                              [12,4,0,8]])
+        self.pins = np.array([[14,10,2,6], 
+                              [13,9,1,5], 
+                              [12,8,0,4]])
 
         """ 'servo_multipliers' and 'complementary_angle' both work to flip some angles, x, to (180-x) so that movement on each leg is consistent despite
             physical motor oritentation changes """
@@ -45,9 +45,9 @@ class HardwareInterface():
             - Offsets for LOWER leg servos map allign the servo so that it is vertically down at zero degrees. Note that IK requires a transformation of
                 angle_sent_to_servo = (180-angle_from_IK) + 90 degrees to map to this physcial servo location.  """
         self.physical_calibration_offsets = np.array(
-                                                [[83, 79, 108, 79], 
-                                                [28, 13, 28, 19], 
-                                                [22, 16, 24, 6]])
+                                                [[77, 81, 115, 76], 
+                                                [29, 8, 33, 13], 
+                                                [26, 13, 30, 4]])
         #applying calibration values to all servos
         self.create()
 
