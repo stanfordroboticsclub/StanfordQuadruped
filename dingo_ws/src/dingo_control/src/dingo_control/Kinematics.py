@@ -130,13 +130,14 @@ def four_legs_inverse_kinematics(r_body_foot, config):
         )
     return alpha #[Front Right, Front Left, Back Right, Back Left]
 
-def forward_kinematics(angles, config):
+def forward_kinematics(angles, config, is_right = 0):
     #Function which accepts three joint angles relative to the base frame of each leg, and returns the corresponding task space values relative to the base frame of each leg
     #Equations from DH analysis
     x = config.L3*sin(angles[1]+angles[2]) - config.L2*cos(angles[1])
     y = 0.5*config.L2*cos(angles[0]+angles[1]) - config.L1*cos(angles[0]+(403*pi)/4500) - 0.5*config.L2*cos(angles[0]-angles[1]) - config.L3*cos(angles[1]+angles[2])*sin(angles[0])
     z = 0.5*config.L2*sin(angles[0]-angles[1]) + config.L1*sin(angles[0]+(403*pi)/4500) - 0.5*config.L2*sin(angles[0]+angles[1]) - config.L3*cos(angles[1]+angles[2])*cos(angles[0])
-
+    if not is_right:
+        y = -y
     return np.array([x,y,z])
 
 def angle_corrector(angles=[0,0,0]):
