@@ -13,17 +13,17 @@ def leg_explicit_inverse_kinematics(r_body_foot, leg_index, config):
     
     Parameters
     ----------
-    r_body_foot : [type]
-        [description]
-    leg_index : [type]
-        [description]
-    config : [type]
-        [description]
+    r_body_foot : numpy array (3)
+        The x,y,z co-ordinates of the foot relative to the first leg frame
+    leg_index : int
+        The index of the leg (0-3), which represents which leg it is. 0 = Front left, 1 = Front right, 2 = Rear left, 3 = Rear right
+    config : Configuration class
+        Configuration class which contains all of the parameters of the Dingo (link lengths, max velocities, etc)
     
     Returns
     -------
-    numpy array (3)
-        Array of corresponding joint angles.
+    angles : numpy array (3)
+        Array of calculated joint angles (theta_1, theta_2, theta_3) for the input position
     """
 
     #Determine if leg is a right or a left leg
@@ -32,7 +32,7 @@ def leg_explicit_inverse_kinematics(r_body_foot, leg_index, config):
     else:
         is_right = 1
     
-    #This inverse kinematics code has a different axis definition from pupper. Conversion to pupper frame:
+    #Flip the y axis if the foot is a right foot to make calculation correct
     x,y,z = r_body_foot[0], r_body_foot[1], r_body_foot[2]
     if is_right: y = -y
 
@@ -51,7 +51,6 @@ def leg_explicit_inverse_kinematics(r_body_foot, leg_index, config):
 
     # length of vector projected on the YZ plane. equiv. to len_A = sqrt(y**2 + z**2)
     len_A = norm([0,y,z])   
-    #print("len_A: ", len_A)
     # a_1 : angle from the positive y-axis to the end-effector (0 <= a_1 < 2pi)
     # a_2 : angle bewtween len_A and leg's projection line on YZ plane
     # a_3 : angle between link1 and length len_A
@@ -81,13 +80,11 @@ def leg_explicit_inverse_kinematics(r_body_foot, leg_index, config):
     # xyz in the rotated coordinate system + offset due to link_1 removed
     x_, y_, z_ = j4_2_vec_[0], j4_2_vec_[1], j4_2_vec_[2]
     
-    len_B = norm([x_, 0, z_]) # norm(j4-j2)
-    #print("len_B ", len_B)
+    len_B = norm([x_, 0, z_])
     
     # handling mathematically invalid input, i.e., point too far away to reach
     if len_B >= (config.L2 + config.L3): 
         len_B = (config.L2 + config.L3) * 0.8
-        # self.node.get_logger().warn('target coordinate: [%f %f %f] too far away' % (x, y, z))
         rospy.logwarn('target coordinate: [%f %f %f] too far away', x, y, z)
     
     # b_1 : angle between +ve x-axis and len_B (0 <= b_1 < 2pi)
@@ -131,8 +128,22 @@ def four_legs_inverse_kinematics(r_body_foot, config):
     return alpha #[Front Right, Front Left, Back Right, Back Left]
 
 def forward_kinematics(angles, config, is_right = 0):
-    #Function which accepts three joint angles relative to the base frame of each leg, and returns the corresponding task space values relative to the base frame of each leg
-    #Equations from DH analysis
+    """Find the foot position corresponding to the given joint angles for a given leg and configuration
+    
+    Parameters
+    ----------
+    angles : numpy array (3)
+        desired joint angles: theta1, theta2, theta3 
+    config : Configuration class
+        Configuration class which contains all of the parameters of the Dingo (link lengths, max velocities, etc)
+    is_right : int
+        An integer indicating whether the leg is a left or right leg
+    
+    Returns
+    -------
+    angles : numpy array (3)
+        Array of corresponding task space values (x,y,z) relative to the base frame of each leg
+    """
     x = config.L3*sin(angles[1]+angles[2]) - config.L2*cos(angles[1])
     y = 0.5*config.L2*cos(angles[0]+angles[1]) - config.L1*cos(angles[0]+(403*pi)/4500) - 0.5*config.L2*cos(angles[0]-angles[1]) - config.L3*cos(angles[1]+angles[2])*sin(angles[0])
     z = 0.5*config.L2*sin(angles[0]-angles[1]) + config.L1*sin(angles[0]+(403*pi)/4500) - 0.5*config.L2*sin(angles[0]+angles[1]) - config.L3*cos(angles[1]+angles[2])*cos(angles[0])
