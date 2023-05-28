@@ -4,7 +4,7 @@
     <arg name="use_joystick" default="1"/>
     <arg name="use_keyboard" default="0"/>
     <arg name="serial_port" default="/dev/ttyS0"/>
-    <arg name="use_imu" default="1"/>
+    <arg name="use_imu" default="0"/>
 
     <group if="$(arg is_physical)">
         <!-- Communication Node between Arduino and Pi -->
