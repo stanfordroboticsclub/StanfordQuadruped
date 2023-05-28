@@ -1,12 +1,13 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 from adafruit_servokit import ServoKit
 import numpy as np
 import math as m
+import rospy
 
 class HardwareInterface():
     def __init__(self,link):
-        self.pwm_max = 2310
-        self.pwm_min = 350
+        self.pwm_max = 2400
+        self.pwm_min = 370
         self.link = link
         self.servo_angles = np.zeros((3,4))
         self.kit = ServoKit(channels=16) #Defininng a new set of servos uising the Adafruit ServoKit LIbrary
@@ -44,9 +45,9 @@ class HardwareInterface():
             - Offsets for LOWER leg servos map allign the servo so that it is vertically down at zero degrees. Note that IK requires a transformation of
                 angle_sent_to_servo = (180-angle_from_IK) + 90 degrees to map to this physcial servo location.  """
         self.physical_calibration_offsets = np.array(
-                                                [[83, 108, 108, 64], 
-                                                [28, 13, 32, 22], 
-                                                [22, 13, 24, 7]])
+                                                [[77, 81, 115, 76], 
+                                                [29, 8, 33, 13], 
+                                                [26, 13, 30, 4]])
         #applying calibration values to all servos
         self.create()
 
@@ -66,7 +67,7 @@ class HardwareInterface():
         """
         # Limit angles ot physical possiblity
         possible_joint_angles = impose_physical_limits(joint_angles)
-
+        
         #Convert to servo angles
         self.joint_angles_to_servo_angles(possible_joint_angles)
 
@@ -76,8 +77,7 @@ class HardwareInterface():
                 try:
                     self.kit.servo[self.pins[axis_index,leg_index]].angle = self.servo_angles[axis_index,leg_index]
                 except:
-                    print("Warning - IO error")
-                # print('NIce')
+                    rospy.logwarn("Warning - I2C IO error")
 
     ##  THis method is used only in the calibrate servos file will make something similar to command individual actuators. 
     # def set_actuator_position(self, joint_angle, axis, leg):

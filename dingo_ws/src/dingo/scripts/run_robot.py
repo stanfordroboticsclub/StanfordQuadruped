@@ -6,7 +6,7 @@ from std_msgs.msg import Float64
 import signal
 import socket
 import platform
-from dingo_nano_interfacing.msg import ElectricalMeasurements
+from dingo_peripheral_interfacing.msg import ElectricalMeasurements
 
 #Module for i2c testing
 import subprocess
@@ -20,7 +20,7 @@ else:
     is_sim = int(args[1])
     is_physical = int(args[2])
 
-from dingo_nano_interfacing.IMU import IMU
+from dingo_peripheral_interfacing.IMU import IMU
 from dingo_control.Controller import Controller
 from dingo_input_interfacing.InputInterface import InputInterface
 from dingo_control.State import State
@@ -103,7 +103,7 @@ def main(use_imu=False):
             command = input_interface.get_command(state,message_rate)
             # hardware_interface.relax_all_motors()
             #input_interface\.set_color(config.ps4_deactivated_color)
-            if command.activate_event == 1:
+            if command.joystick_control_event == 1:
                 break
             rate.sleep()
         print("Robot activated.")
@@ -118,7 +118,7 @@ def main(use_imu=False):
             time.start = rospy.Time.now()
             # Parse the udp joystick commands and then update the robot controller's parameters
             command = input_interface.get_command(state,message_rate)
-            if command.activate_event == 1:
+            if command.joystick_control_event == 1:
                 print("Deactivating Robot")
                 break
 
@@ -148,6 +148,7 @@ def main(use_imu=False):
                 hardware_interface.set_actuator_postions(state.joint_angles)
             
             # print('All angles: \n',np.round(np.degrees(state.joint_angles),2))
+            # print('All angles: \n',np.round(np.degrees(state.joint_angles[:,0] - state.joint_angles[:,3]),2))
             time.end = rospy.Time.now()
             #Uncomment following line if want to see how long it takes to execute a control iteration
             #print(str(time.start-time.end))

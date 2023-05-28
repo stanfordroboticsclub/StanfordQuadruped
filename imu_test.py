@@ -1,21 +1,33 @@
 import time
 import board
-from adafruit_lsm6ds.lsm6dsox import LSM6DSOX
-import numpy as np
-import math as m
+import adafruit_bno055
+
+''' THis script can be used to test outputs from the adafruit bno055 Absolute Orinetation IMU
+mounted on board the Dingo. '''
 
 i2c = board.I2C()  # uses board.SCL and board.SDA
-IMU = LSM6DSOX(i2c)
+sensor = adafruit_bno055.BNO055_I2C(i2c)
 
+# sensor.setAxisRemap(x, y, z, x_sign=AXIS_REMAP_NEGATIVE, y_sign=AXIS_REMAP_NEGATIVE, z_sign=AXIS_REMAP_POSITIVE)
+sensor.axis_remap = 1,1,2,-1,-1,0
 while True:
-    IMU_acc = np.array(IMU.acceleration) #[X,Y,Z]
-    #Transform axes to be the same as dingo
-    
-    x_acc = -IMU_acc[0]
-    y_acc = -IMU_acc[1]
-    z_acc = -IMU_acc[2]
-    pitch = m.atan()
-    print("Acceleration: X,Y,Z: ",np.round(IMU.acceleration,2)," m/s^2")
-    print("Gyro X:%.2f, Y: %.2f, Z: %.2f radians/s"%(IMU.gyro))
-    print("")
-    time.sleep(0.5)
+    # print("Temperature: {} degrees C".format(sensor.temperature))
+    # print("Accelerometer (m/s^2): {}".format(sensor.acceleration))
+    # print("Magnetometer (microteslas): {}".format(sensor.magnetic))
+    # print("Gyroscope (rad/sec): {}".format(sensor.gyro))
+    # print("Euler angle: {}".format(sensor.euler))
+    yaw,pitch,roll = sensor.euler
+    yaw = 360-yaw
+    pitch = -pitch
+    roll = roll - 30
+    last_euler = [yaw,pitch,roll]
+    print("Euler angle: {}".format(last_euler))
+    # print(sensor.axis_remap)
+    # print("Euler angle: {}".format(last_euler))
+    # print("Quaternion: {}".format(sensor.quaternion))
+    # print("Linear acceleration (m/s^2): {}".format(sensor.linear_acceleration))
+    # print("Gravity (m/s^2): {}".format(sensor.gravity))
+    # print()
+    # print('Sensor calibrated? ',sensor.calibrated)
+    # print('Sensor calibration status: ',sensor.calibration_status)
+    time.sleep(0.1)

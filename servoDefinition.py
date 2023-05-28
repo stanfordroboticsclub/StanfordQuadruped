@@ -6,8 +6,8 @@ import math as m
 
 class motor_config():
     def __init__(self):
-        self.pwm_max = 2310
-        self.pwm_min = 350
+        self.pwm_max = 2400
+        self.pwm_min = 370
         self.kit = ServoKit(channels=16) #Defininng a new set of servos uising the Adafruit ServoKit LIbrary
         
         #DefinING servo indices
@@ -30,6 +30,14 @@ class motor_config():
         self.back_right_hip   = 2
         self.back_right_upper = 1
         self.back_right_lower = 0
+        """ SERVO INDICES, CALIBRATION MULTIPLIERS AND OFFSETS
+            #   ROW:    which joint of leg to control 0:hip, 1: upper leg, 2: lower leg
+            #   COLUMN: which leg to control. 0: front-right, 1: front-left, 2: back-right, 3: back-left.
+
+                #               0                  1                2               3
+                #  0 [[front_right_hip  , front_left_hip  , back_right_hip  , back_left_hip  ]
+                #  1  [front_right_upper, front_left_upper, back_right_upper, back_left_upper]
+                #  2  [front_right_lower, front_left_lower, back_right_lower, back_left_lower]] """
 
         self.pins = np.array([[14,10,2,6], 
                               [13,9,1,5], 

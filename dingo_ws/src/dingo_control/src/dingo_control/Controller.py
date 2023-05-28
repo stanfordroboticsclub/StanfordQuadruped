@@ -103,7 +103,7 @@ class Controller:
         """
 
         ########## Update operating state based on command ######
-        if command.activate_event:
+        if command.joystick_control_event:
             state.behavior_state = self.activate_transition_mapping[state.behavior_state]
         elif command.trot_event:
             state.behavior_state = self.trot_transition_mapping[state.behavior_state]
@@ -125,7 +125,8 @@ class Controller:
             )
 
             # Construct foot rotation matrix to compensate for body tilt
-            (roll, pitch, yaw) = quat2euler(state.quat_orientation)
+            yaw,pitch,roll = state.euler_orientation
+            #print('Yaw: ',np.round(yaw),'Pitch: ',np.round(pitch),'Roll: ',np.round(roll))
             correction_factor = 0.8
             max_tilt = 0.4
             roll_compensation = correction_factor * np.clip(roll, -max_tilt, max_tilt)
@@ -137,31 +138,7 @@ class Controller:
             state.joint_angles = self.inverse_kinematics(
                 rotated_foot_locations, self.config
             )
-            self.publish_joint_space_command(state.joint_angles)
-            self.publish_task_space_command(rotated_foot_locations)
-        
-
-        elif state.behavior_state == BehaviorState.HOP:
-            state.foot_locations = (
-                self.config.default_stance
-                + np.array([0, 0, -0.09])[:, np.newaxis]
-            )
-            state.joint_angles = self.inverse_kinematics(
-                state.foot_locations, self.config
-            )
-            self.publish_joint_space_command(state.joint_angles)
-            self.publish_task_space_command(rotated_foot_locations)
-
-        elif state.behavior_state == BehaviorState.FINISHHOP:
-            state.foot_locations = (
-                self.config.default_stance
-                + np.array([0, 0, -0.22])[:, np.newaxis]
-            )
-            state.joint_angles = self.inverse_kinematics(
-                state.foot_locations, self.config
-            )
-            self.publish_joint_space_command(state.joint_angles)
-            self.publish_task_space_command(rotated_foot_locations)
+            state.rotated_foot_locations = rotated_foot_locations
 
         elif state.behavior_state == BehaviorState.REST:
             yaw_proportion = command.yaw_rate / self.config.max_yaw_rate
@@ -188,23 +165,39 @@ class Controller:
                 )
                 @ state.foot_locations
             )
+
+            # Construct foot rotation matrix to compensate for body tilt
+            rotated_foot_locations = self.stabilise_with_IMU(rotated_foot_locations,state.euler_orientation)
+
             state.joint_angles = self.inverse_kinematics(
                 rotated_foot_locations, self.config
             )
-            self.publish_joint_space_command(state.joint_angles)
-            self.publish_task_space_command(rotated_foot_locations)
+            state.rotated_foot_locations = rotated_foot_locations
 
         state.ticks += 1
         state.pitch = command.pitch
         state.roll = command.roll
         state.height = command.height
 
-    def set_pose_to_default(self):
+    def set_pose_to_default(self, state):
         state.foot_locations = (
             self.config.default_stance
             + np.array([0, 0, self.config.default_z_ref])[:, np.newaxis]
         )
+        print(state.foot_locations)
         state.joint_angles = self.inverse_kinematics(
             state.foot_locations, self.config
         )
-            
+        return state.joint_angles
+    def stabilise_with_IMU(self,foot_locations,orientation):
+        ''' Applies euler orientatin data of pitch roall and yaw to stabilise hte robt. Current only applying to pitch.'''
+        yaw,pitch,roll = orientation
+        # print('Yaw: ',np.round(np.degrees(yaw)),'Pitch: ',np.round(np.degrees(pitch)),'Roll: ',np.round(np.degrees(roll)))
+        correction_factor = 0.5
+        max_tilt = 0.4 #radians
+        roll_compensation = correction_factor * np.clip(-roll, -max_tilt, max_tilt)
+        pitch_compensation = correction_factor * np.clip(-pitch, -max_tilt, max_tilt)
+        rmat = euler2mat(roll_compensation, pitch_compensation, 0)
+
+        rotated_foot_locations = rmat.T @ foot_locations
+        return rotated_foot_locations
