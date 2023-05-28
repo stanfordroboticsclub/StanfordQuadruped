@@ -72,7 +72,7 @@ Arguments are:
 - is_sim (0/1): Should the code publish joint values to the simulator? Default: "0" (No)
 - use_joystick (0/1): Is a joystick being used for control? Default: "1" (Yes)
 - use_keyboard (0/1): Is the keyboard being used for control? Default: "0" (No)
-- (currently disabled) serial_port (name of port): The serial port that the nano is connected to. Default: "/dev/ttyS0"
+- (currently not used) serial_port (name of port): The serial port that the nano is connected to. Default: "/dev/ttyS0"
 - use_imu (0/1): Should IMU data be used to correct the robots joint angles? Default: "1" (Yes)
 
 With no arguments specified, it will assume a joystick controller is used for control and it will launch the hardware interface and enable IMU feedback. No joint data will be published for Gazebo to use to simulate the robot.
