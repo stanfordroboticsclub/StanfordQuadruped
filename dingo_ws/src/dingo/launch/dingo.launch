@@ -1,5 +1,4 @@
 <launch>
-    <arg name="launch_sim_environment" default="0"/>
     <arg name="is_sim" default="0"/>
     <arg name="is_physical" default="1"/>
     <arg name="use_joystick" default="1"/>
@@ -30,11 +29,6 @@
 
     <group if="$(arg use_keyboard)">
         <node pkg = "dingo_input_interfacing" type = "Keyboard.py" name = "keyboard_input_listener" output="screen"></node>
-    </group>
-
-    <!-- Gazebo simulator -->
-    <group if="$(arg launch_sim_environment)">
-        <include file="$(find dingo)/launch/dingo_simulator.launch" />
     </group>
     
     <!-- Dingo Driver -->
