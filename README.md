@@ -1,5 +1,9 @@
 # Dingo Quadruped
 
+<p align="center">
+    <img src="assets/JEL05566.jpg" style="align:centre" width="50%">
+</p>
+
 ## Overview
 This repository hosts the code for the Dingo Quadruped, a robot designed to be low-cost but capable of conducting research and being extensively modified with additional actuators and sensors. CAD for the Dingo can be found [here](https://grabcad.com/library/dingo-robot-quadruped-2).
 
@@ -11,13 +15,13 @@ The repo also includes a gazebo simulation of the Dingo, based on URDF file and 
 
 ## How Dingo_driver Works
 The following flow diagram shows a simplified overview of how a joystick command is handled by the driver to affect joint movements:
-<!-- ![Flow diagram of joystick inputs being converted to joint angle commands](assets/handover.jpg) -->
 <p align="center">
-    <img src="assets/handover.jpg" style="align:centre" width="50%">
+    <img src="assets/Dingo_driver flow diagram.png" style="align:centre" width="50%">
 </p>
 
 ## Project Structure
 ```.
+├── assets                                    Images used in the readme file
 ├── dingo_nano                                Code for the Arduino Nano V3 to read sensor data and send it to the Raspberry Pi
 └── dingo_ws                                  ROS workspace containing all required packages
    └── src
