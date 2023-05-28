@@ -1,7 +1,7 @@
 # Dingo Quadruped
 
 ## Overview
-This repository hosts the code for the Dingo Quadruped, a robot designed to be low-cost but capable quadruped that can conduct research and be extensively modified. CAD for the Dingo can be found [here](https://grabcad.com/library/dingo-robot-quadruped-2)
+This repository hosts the code for the Dingo Quadruped, a robot designed to be low-cost but capable quadruped that can conduct research and be extensively modified. CAD for the Dingo can be found [here](https://grabcad.com/library/dingo-robot-quadruped-2).
 
 This code is based on the [Stanford Pupper](https://github.com/stanfordroboticsclub/StanfordQuadruped) and [notspot](https://github.com/lnotspotl/notspot_sim_py) codebases, with extensive modifications.
 
@@ -35,7 +35,7 @@ The following flow diagram shows a simplified overview of how a joystick command
 ## Installation of Code
 ### Natively
 - Install Ubuntu 20.04
-- Install [ros-noetic](http://wiki.ros.org/noetic/Installation/Ubuntu). 
+- Install [ros-noetic](http://wiki.ros.org/noetic/Installation/Ubuntu)
 - Install git via `sudo apt-get install git`
 - Create a new folder in your home folder: `mkdir ~/any_folder_name`
 - Change directory to the new folder just created: `cd ~/any_folder_name`
