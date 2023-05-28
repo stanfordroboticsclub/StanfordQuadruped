@@ -1,7 +1,7 @@
 # Dingo Quadruped
 
 ## Overview
-This repository hosts the code for the Dingo Quadruped, a robot designed to be low-cost but capable quadruped that can conduct research and be extensively modified. CAD for the Dingo can be found [here](https://grabcad.com/library/dingo-robot-quadruped-2).
+This repository hosts the code for the Dingo Quadruped, a robot designed to be low-cost but capable of conducting research and being extensively modified with additional actuators and sensors. CAD for the Dingo can be found [here](https://grabcad.com/library/dingo-robot-quadruped-2).
 
 This code is based on the [Stanford Pupper](https://github.com/stanfordroboticsclub/StanfordQuadruped) and [notspot](https://github.com/lnotspotl/notspot_sim_py) codebases, with extensive modifications, including integration into ROS 1 Noetic.
 
