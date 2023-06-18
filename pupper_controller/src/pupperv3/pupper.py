@@ -12,28 +12,28 @@ from pupper_controller.src.pupperv3 import ros_interface
 
 
 class Pupper:
-
     def __init__(
         self,
+        half_robot: bool = False,
         LOG=False,
     ):
         self.config = config.Config()
         self.command = None
 
-        self.interface = ros_interface.Interface(self.config.pos_gain,
-                                                 self.config.vel_gain)
+        self.interface = ros_interface.Interface(
+            self.config.pos_gain, self.config.vel_gain
+        )
         self.controller = controller.Controller(
-            self.config, kinematics.four_legs_inverse_kinematics)
+            self.config, kinematics.four_legs_inverse_kinematics
+        )
         self.state = robot_state.RobotState(height=-0.05)
+
+        self.half_robot = half_robot
 
     def sleep(self, sleep_sec: float):
         self.interface.sleep(sleep_sec)
 
-    def slow_stand(self,
-                   min_height,
-                   max_height=None,
-                   duration=1.0,
-                   do_sleep=False):
+    def slow_stand(self, min_height, max_height=None, duration=1.0, do_sleep=False):
         """
         Blocking slow stand up behavior.
 
@@ -43,10 +43,11 @@ class Pupper:
         """
         if max_height is None:
             max_height = self.config.default_z_ref
-        for height in np.linspace(min_height, max_height,
-                                  int(duration / self.config.dt)):
+        for height in np.linspace(
+            min_height, max_height, int(duration / self.config.dt)
+        ):
             ob = self.get_observation()
-            self.step({'height': height})
+            self.step({"height": height})
             self.interface.sleep(self.config.dt)
 
     def start_trot(self):
@@ -63,31 +64,33 @@ class Pupper:
         action = defaultdict(int, action)
         self.command = command.Command(self.config.default_z_ref)
         # Update actions or use default value if no value provided
-        x_vel = action['x_velocity'] or 0.0
-        y_vel = action['y_velocity'] or 0.0
+        x_vel = action["x_velocity"] or 0.0
+        y_vel = action["y_velocity"] or 0.0
         self.command.horizontal_velocity = np.array((x_vel, y_vel))
-        self.command.yaw_rate = action['yaw_rate'] or 0.0
-        self.command.height = action['height'] or self.config.default_z_ref
-        self.command.pitch = action['pitch'] or 0.0
-        self.command.roll = action['roll'] or 0.0
-        self.config.x_shift = action['com_x_shift'] or self.config.x_shift
+        self.command.yaw_rate = action["yaw_rate"] or 0.0
+        self.command.height = action["height"] or self.config.default_z_ref
+        self.command.pitch = action["pitch"] or 0.0
+        self.command.roll = action["roll"] or 0.0
+        self.config.x_shift = action["com_x_shift"] or self.config.x_shift
 
         # Clip actions to reasonable values
         self.command.horizontal_velocity = np.clip(
             self.command.horizontal_velocity,
             (self.config.min_x_velocity, self.config.min_y_velocity),
-            (self.config.max_x_velocity, self.config.max_y_velocity))
-        self.command.yaw_rate = np.clip(self.command.yaw_rate,
-                                        self.config.min_yaw_rate,
-                                        self.config.max_yaw_rate)
-        self.command.height = np.clip(self.command.height,
-                                      self.config.min_height,
-                                      self.config.max_height)
-        self.command.pitch = np.clip(self.command.pitch, self.config.min_pitch,
-                                     self.config.max_pitch)
-        self.config.x_shift = np.clip(self.config.x_shift,
-                                      self.config.min_x_shift,
-                                      self.config.max_x_shift)
+            (self.config.max_x_velocity, self.config.max_y_velocity),
+        )
+        self.command.yaw_rate = np.clip(
+            self.command.yaw_rate, self.config.min_yaw_rate, self.config.max_yaw_rate
+        )
+        self.command.height = np.clip(
+            self.command.height, self.config.min_height, self.config.max_height
+        )
+        self.command.pitch = np.clip(
+            self.command.pitch, self.config.min_pitch, self.config.max_pitch
+        )
+        self.config.x_shift = np.clip(
+            self.config.x_shift, self.config.min_x_shift, self.config.max_x_shift
+        )
 
     def step(self, action, behavior_state_override=None):
         """
@@ -110,7 +113,10 @@ class Pupper:
             self.state.behavior_state = robot_state.BehaviorState.REST
 
         self.controller.run(self.state, self.command)
-        self.interface.set_joint_angles(self.state.joint_angles)
+        if self.half_robot:
+            self.interface.set_joint_angles(self.state.joint_angles[:, :2])
+        else:
+            self.interface.set_joint_angles(self.state.joint_angles)
         # self.interface.set_joint_angles(np.zeros((3,4)))
         return self.get_observation()
 
@@ -130,9 +136,9 @@ class Pupper:
         """
         # reads up to 1024 bytes # TODO fix hardware interface code
         self.interface.read_incoming_data()
-        base_roll_pitch = np.array([
-            self.interface.robot_state.roll, self.interface.robot_state.pitch
-        ])
+        base_roll_pitch = np.array(
+            [self.interface.robot_state.roll, self.interface.robot_state.pitch]
+        )
         joint_positions = self.interface.robot_state.joint_angles.T.flatten()
         return np.concatenate((base_roll_pitch, joint_positions))
 

@@ -1,15 +1,18 @@
 from pupper_controller.src.pupperv3 import pupper
 import time
+import argparse
+
 """
 TODO: Control-C causes an error. Says ROS wasn't shut down
 """
 
 
-def run_example():
-    pup = pupper.Pupper()
+def run_example(half_robot: bool = False):
+    pup = pupper.Pupper(half_robot=half_robot)
     pup.reset()
-    print("starting...")
+    print("Standing up...")
     pup.slow_stand(min_height=-0.06, duration=0.2, do_sleep=True)
+    print("Starting trot...")
     pup.start_trot()
     last_control = pup.time()
     try:
@@ -28,12 +31,18 @@ def run_example():
                     "y_velocity": 0.0,
                     "yaw_rate": 0.0,
                     "height": -0.18,
-                    "com_x_shift": 0.005
-                })
+                    "com_x_shift": 0.005,
+                }
+            )
 
     finally:
         pup.shutdown()
 
 
 if __name__ == "__main__":
-    run_example()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--half", action="store_true", help="Enable flag half")
+    args = parser.parse_args()
+    if args.half:
+        print("Only commanding half of robot")
+    run_example(args.half)

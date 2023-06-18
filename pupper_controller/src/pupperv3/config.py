@@ -57,10 +57,12 @@ class Config:
                                         [1, 0, 1, 1], [1, 1, 1, 0]])
         self.overlap_time = (
             # 0.0
+            # 0.5
             0.05  # duration of the phase where all four feet are on the ground
         )
         self.swing_time = (
             # 2.0
+            # 1.5
             0.15  # duration of the phase when only two feet are on the ground
         )
 
