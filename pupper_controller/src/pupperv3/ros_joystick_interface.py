@@ -30,7 +30,9 @@ class Joystick:
     def joystick_values(self):
         msg = self.joy_sub.latest_msg()
         if msg is None:
-            print("Warning: No joystick message received yet.")
+            print(
+                "Warning: No joystick message received yet. Make sure you are running `ros2 run joy joy_node` in another shell"
+            )
             return self.default_message
         elif time.time() - self.joy_sub.latest_msg_time > self.message_timeout:
             print(
