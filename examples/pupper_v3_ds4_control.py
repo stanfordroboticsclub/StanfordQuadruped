@@ -1,9 +1,11 @@
 from pupper_controller.src.pupperv3 import pupper, ros_joystick_interface
 import time
 import argparse
+
 """
 TODO: Control-C causes an error. Says ROS wasn't shut down
 """
+
 
 def run_example(half_robot=False):
     joystick = ros_joystick_interface.Joystick()
@@ -11,8 +13,8 @@ def run_example(half_robot=False):
     pup.reset()
     print("starting...")
     pup.slow_stand(min_height=-0.06, duration=1.0, do_sleep=True)
-    # pup.start_trot()
     last_control = pup.time()
+    com_x_shift = -0.02
     try:
         while True:
             # Busy-wait until it's time to run the control loop again
@@ -28,16 +30,21 @@ def run_example(half_robot=False):
                 behavior_state_override = "trot"
             else:
                 behavior_state_override = "rest"
-            print("received joystick values: ", joystick_vals)
-            pup.step(action={
-                "x_velocity": joystick_vals["left_y"] / 1.5,
-                "y_velocity": -joystick_vals["left_x"] / 1.5,
-                "yaw_rate": -joystick_vals["right_x"] * 4,
-                "pitch": joystick_vals["right_y"] * -0.25,
-                "height": -0.15,
-                "com_x_shift": 0#-0.03
-            },
-                     behavior_state_override=behavior_state_override)
+            com_x_shift += joystick_vals["d_pad_y"] * pup.config.dt / 100.0
+            com_x_shift = min(max(com_x_shift, -0.05), 0.05)
+            if(joystick_vals["connected"]):
+                print(f"com_x_shift: {com_x_shift:0.4f} joystick values: {joystick_vals}")
+            pup.step(
+                action={
+                    "x_velocity": joystick_vals["left_y"] / 1.5,
+                    "y_velocity": -joystick_vals["left_x"] / 1.5,
+                    "yaw_rate": -joystick_vals["right_x"] * 4,
+                    "pitch": joystick_vals["right_y"] * -0.25,
+                    "height": -0.15,
+                    "com_x_shift": com_x_shift,
+                },
+                behavior_state_override=behavior_state_override,
+            )
 
     finally:
         pup.shutdown()
@@ -45,6 +52,6 @@ def run_example(half_robot=False):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--half', action='store_true', help='Enable flag half')
+    parser.add_argument("--half", action="store_true", help="Enable flag half")
     args = parser.parse_args()
     run_example(half_robot=args.half)
