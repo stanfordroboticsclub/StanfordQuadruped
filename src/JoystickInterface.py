@@ -50,6 +50,7 @@ class JoystickInterface:
             event = [r - 256 if r > 127 else r for r in report]
             msg["lx"] = event[3] / 127
             msg["ly"] = event[4] / 127
+            msg["ry"] = event[5] / 127
             msg["rx"] = event[6] / 127
             msg["L1"] = event[7]
             msg["circle"] = event[9]
@@ -94,7 +95,7 @@ class JoystickInterface:
         message_rate = MESSAGE_RATE
         message_dt = 1.0 / message_rate
 
-        pitch = 0
+        pitch = msg["ry"] * 0.35
         deadbanded_pitch = deadband(pitch, self.config.pitch_deadband)
         pitch_rate = clipped_first_order_filter(
             state.pitch,
