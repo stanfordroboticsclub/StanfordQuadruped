@@ -2,11 +2,10 @@ import numpy as np
 
 
 class Config:
-
     def __init__(self):
         #################### ACTAUTOR ####################
-        self.pos_gain = 7.5 # 7.5 is good
-        self.vel_gain = 0.5 # 0.5 is good
+        self.pos_gain = 7.5  # 7.5 is good
+        self.vel_gain = 0.5  # 0.5 is good
 
         #################### COMMANDS ####################
         self.min_x_velocity = -0.6
@@ -15,8 +14,8 @@ class Config:
         self.max_y_velocity = 0.6
         self.min_yaw_rate = -4
         self.max_yaw_rate = 4
-        self.min_pitch = -30.0 * np.pi / 180.0
-        self.max_pitch = 30.0 * np.pi / 180.0
+        self.min_pitch = -40.0 * np.pi / 180.0
+        self.max_pitch = 40.0 * np.pi / 180.0
 
         #################### MOVEMENT PARAMS ####################
         self.z_time_constant = 0.02
@@ -26,11 +25,11 @@ class Config:
         self.max_pitch_rate = 0.15
         self.roll_speed = 0.16  # maximum roll rate [rad/s]
         self.yaw_time_constant = 0.3
-        self.max_stance_yaw = 0.8
+        self.max_stance_yaw = 0.7
         self.max_stance_yaw_rate = 2.0
 
-        self.min_height = -0.16
-        self.max_height = -0.10
+        self.min_height = -0.25
+        self.max_height = -0.08
 
         #################### STANCE ####################
         self.delta_x = 0.1
@@ -53,8 +52,9 @@ class Config:
         #################### GAIT #######################
         self.dt = 0.01
         self.num_phases = 4
-        self.contact_phases = np.array([[1, 1, 1, 0], [1, 0, 1, 1],
-                                        [1, 0, 1, 1], [1, 1, 1, 0]])
+        self.contact_phases = np.array(
+            [[1, 1, 1, 0], [1, 0, 1, 1], [1, 0, 1, 1], [1, 1, 1, 0]]
+        )
         self.overlap_time = (
             # 0.0
             # 0.5
@@ -79,37 +79,45 @@ class Config:
         self.HIP_T = 0.0214
         self.HIP_OFFSET = 0.0132
 
-        self.LEG_ORIGINS = np.array([
-            [self.LEG_FB, self.LEG_FB, -self.LEG_FB, -self.LEG_FB],
-            [-self.LEG_LR, self.LEG_LR, -self.LEG_LR, self.LEG_LR],
-            [0, 0, 0, 0],
-        ])
+        self.LEG_ORIGINS = np.array(
+            [
+                [self.LEG_FB, self.LEG_FB, -self.LEG_FB, -self.LEG_FB],
+                [-self.LEG_LR, self.LEG_LR, -self.LEG_LR, self.LEG_LR],
+                [0, 0, 0, 0],
+            ]
+        )
 
-        self.ABDUCTION_OFFSETS = np.array([
-            -self.ABDUCTION_OFFSET,
-            self.ABDUCTION_OFFSET,
-            -self.ABDUCTION_OFFSET,
-            self.ABDUCTION_OFFSET,
-        ])
+        self.ABDUCTION_OFFSETS = np.array(
+            [
+                -self.ABDUCTION_OFFSET,
+                self.ABDUCTION_OFFSET,
+                -self.ABDUCTION_OFFSET,
+                self.ABDUCTION_OFFSET,
+            ]
+        )
 
-        self.MOTOR_DIRECTIONS = np.array([
-            [-1, 1, -1, 1],
-            [-1, -1, -1, -1],
-            [-1, 1, -1, 1],
-        ])
+        self.MOTOR_DIRECTIONS = np.array(
+            [
+                [-1, 1, -1, 1],
+                [-1, -1, -1, -1],
+                [-1, 1, -1, 1],
+            ]
+        )
 
     @property
     def default_stance(self):
-        return np.array([
+        return np.array(
             [
-                self.delta_x + self.x_shift,
-                self.delta_x + self.x_shift,
-                -self.delta_x + self.x_shift,
-                -self.delta_x + self.x_shift,
-            ],
-            [-self.delta_y, self.delta_y, -self.delta_y, self.delta_y],
-            [0, 0, 0, 0],
-        ])
+                [
+                    self.delta_x + self.x_shift,
+                    self.delta_x + self.x_shift,
+                    -self.delta_x + self.x_shift,
+                    -self.delta_x + self.x_shift,
+                ],
+                [-self.delta_y, self.delta_y, -self.delta_y, self.delta_y],
+                [0, 0, 0, 0],
+            ]
+        )
 
     ################## SWING ###########################
     @property
@@ -146,10 +154,9 @@ class Config:
 
     @property
     def phase_ticks(self):
-        return np.array([
-            self.overlap_ticks, self.swing_ticks, self.overlap_ticks,
-            self.swing_ticks
-        ])
+        return np.array(
+            [self.overlap_ticks, self.swing_ticks, self.overlap_ticks, self.swing_ticks]
+        )
 
     @property
     def phase_length(self):

@@ -29,6 +29,7 @@ class Joystick:
 
     def joystick_values(self):
         msg = self.joy_sub.latest_msg()
+        # print(msg)
         if msg is None:
             print(
                 "Warning: No joystick message received yet. Make sure you are running `ros2 run joy joy_node` in another shell"
@@ -49,6 +50,8 @@ class Joystick:
                 "right_y": msg.axes[4],
                 "L2": msg.axes[2],
                 "d_pad_y": msg.axes[7],
+                "triangle": msg.buttons[3],
+                "x": msg.buttons[0],
                 "connected": True,
             }
 
