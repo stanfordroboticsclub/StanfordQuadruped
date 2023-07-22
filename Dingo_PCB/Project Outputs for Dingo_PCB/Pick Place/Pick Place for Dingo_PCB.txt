@@ -1,0 +1,40 @@
+Altium Designer Pick and Place Locations
+C:\Users\calve\Monash University\FYP - Robot Quadruped - Documents\10. Electrical\PCB\Dingo_PCB\Project Outputs for Dingo_PCB\Pick Place\Pick Place for Dingo_PCB.txt
+
+========================================================================================================================
+File Design Information:
+
+Date:       06/03/23
+Time:       21:12
+Revision:   Not in VersionControl
+Variant:    No variations
+Units used: mil
+
+Designator Comment                          Layer    Footprint                       Center-X(mil) Center-Y(mil) Rotation Description                                                                                       
+MH4        "Mounting Hole Non-Plated 3.2mm" TopLayer MH3.2mm                         3031.496      1456.693      0        "Mounting Hole Non-Plated 3.2mm drill hole"                                                       
+MH3        "Mounting Hole Non-Plated 3.2mm" TopLayer MH3.2mm                         3031.496      118.110       0        "Mounting Hole Non-Plated 3.2mm drill hole"                                                       
+MH2        "Mounting Hole Non-Plated 3.2mm" TopLayer MH3.2mm                         118.110       1456.693      0        "Mounting Hole Non-Plated 3.2mm drill hole"                                                       
+MH1        "Mounting Hole Non-Plated 3.2mm" TopLayer MH3.2mm                         118.110       118.110       0        "Mounting Hole Non-Plated 3.2mm drill hole"                                                       
+R2         10k                              TopLayer TE_CONNECTIVITY_CRGCQ0805_IPC_A 1811.024      1043.307      180      ""                                                                                                
+R1         47k                              TopLayer TE_CONNECTIVITY_CRGCQ1206_IPC_A 1555.118      1043.307      180      ""                                                                                                
+J20        Fan2                             TopLayer JST_0_MFG                       2736.220      1395.669      0        ""                                                                                                
+J19        Fan1                             TopLayer JST_0_MFG                       2381.890      135.827       0        ""                                                                                                
+J18        Temp4                            TopLayer JST_0_MFG                       2736.220      137.795       0        ""                                                                                                
+J17        Temp3                            TopLayer JST_0_MFG                       413.386       135.827       0        ""                                                                                                
+J16        Temp2                            TopLayer JST_0_MFG                       767.716       1397.638      0        ""                                                                                                
+J15        Temp1                            TopLayer JST_0_MFG                       413.386       1395.669      0        ""                                                                                                
+J14        5Vout3                           TopLayer JST_0_MFG                       1417.323      706.693       0        ""                                                                                                
+J13        12Vout3                          TopLayer JST_0_MFG                       2480.315      706.693       0        ""                                                                                                
+J12        5Vout2                           TopLayer JST_0_MFG                       1062.992      706.693       0        ""                                                                                                
+J11        12Vout2                          TopLayer JST_0_MFG                       1771.653      708.661       0        ""                                                                                                
+J10        TeensyADCport                    TopLayer PHOENIX_CONTACT_1935776_0       1712.599      1377.953      180      "CONN 2 Position Wire to Board Terminal Block Horizontal with Board 0.197" (5.00mm) Through Hole" 
+J9         5Vout1                           TopLayer JST_0_MFG                       708.661       706.693       0        ""                                                                                                
+J8         12Vout1                          TopLayer JST_0_MFG                       2125.984      708.661       0        ""                                                                                                
+J7         "5V rail return"                 TopLayer PHOENIX_CONTACT_1935776_0       2145.669      1377.953      180      "CONN 2 Position Wire to Board Terminal Block Horizontal with Board 0.197" (5.00mm) Through Hole" 
+J6         "12V rail return"                TopLayer PHOENIX_CONTACT_1935776_0       2952.756      787.402       90       "CONN 2 Position Wire to Board Terminal Block Horizontal with Board 0.197" (5.00mm) Through Hole" 
+J5         "To 12V rail"                    TopLayer PHOENIX_CONTACT_1935776_0       1850.394      196.850       0        "CONN 2 Position Wire to Board Terminal Block Horizontal with Board 0.197" (5.00mm) Through Hole" 
+J4         "To 5V rail"                     TopLayer PHOENIX_CONTACT_1935776_0       1417.323      196.850       0        "CONN 2 Position Wire to Board Terminal Block Horizontal with Board 0.197" (5.00mm) Through Hole" 
+J3         "To 7.8V rail"                   TopLayer PHOENIX_CONTACT_1935776_0       984.252       196.850       0        "CONN 2 Position Wire to Board Terminal Block Horizontal with Board 0.197" (5.00mm) Through Hole" 
+J2         "Spare connector"                TopLayer PHOENIX_CONTACT_1935776_0       1279.528      1377.953      180      "CONN 2 Position Wire to Board Terminal Block Horizontal with Board 0.197" (5.00mm) Through Hole" 
+J1         "battery Input"                  TopLayer PHOENIX_CONTACT_1935776_0       196.850       787.402       270      "CONN 2 Position Wire to Board Terminal Block Horizontal with Board 0.197" (5.00mm) Through Hole" 
+D1         Diode                            TopLayer DIODES_INC_SMA_MFG              1240.158      1043.307      180      ""                                                                                                

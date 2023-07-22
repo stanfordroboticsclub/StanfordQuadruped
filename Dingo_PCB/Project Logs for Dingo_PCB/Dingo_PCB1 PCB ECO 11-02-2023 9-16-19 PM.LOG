@@ -1,0 +1,238 @@
+Added Component: Designator=D1(Diodes_Inc_SMA_MFG)
+Added Component: Designator=J1(Phoenix_Contact_1935776_0)
+Add component (AddParameter): Name = "ComponentLink1Description"; Value = "Upverter"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "ComponentLink1URL"; Value = "https://upverter.com/upn/revision/23a85baadd8e96ab/"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "ComponentLink2Description"; Value = "Datasheet"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "ComponentLink2URL"; Value = "http://select.phoenixcontact.com/phoenix/dwld/00846397_00_fam.pdf?cp=y&asid2=080208969559730"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Digikey Description"; Value = "CONN 2 Position Wire to Board Terminal Block Horizontal with Board 0.197" (5.00mm) Through Hole"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Digikey Part Number"; Value = "277-6405-ND"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "helpURL"; Value = "https://upverter.com/upn/revision/23a85baadd8e96ab/"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Is Female"; Value = "yes"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Lead Free"; Value = "yes"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Manufacturer"; Value = "Phoenix Contact"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Mouser Part Number"; Value = "651-1935776"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Package"; Value = "CONN_PTH_TERMINAL BLOCK"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Part Number"; Value = "1935776"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Price"; Value = "0.394437234895"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "RoHS"; Value = "TRUE"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Supplier 1"; Value = "Digi-Key"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Supplier 2"; Value = "Mouser"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Supplier Part Number 1"; Value = "277-6405-ND"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Supplier Part Number 2"; Value = "651-1935776"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Temperature"; Value = "to"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Voltage"; Value = "300V"; VariantName = "[No Variations]"
+Added Component: Designator=J2(Phoenix_Contact_1935776_0)
+Add component (AddParameter): Name = "ComponentLink1Description"; Value = "Upverter"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "ComponentLink1URL"; Value = "https://upverter.com/upn/revision/23a85baadd8e96ab/"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "ComponentLink2Description"; Value = "Datasheet"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "ComponentLink2URL"; Value = "http://select.phoenixcontact.com/phoenix/dwld/00846397_00_fam.pdf?cp=y&asid2=080208969559730"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Digikey Description"; Value = "CONN 2 Position Wire to Board Terminal Block Horizontal with Board 0.197" (5.00mm) Through Hole"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Digikey Part Number"; Value = "277-6405-ND"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "helpURL"; Value = "https://upverter.com/upn/revision/23a85baadd8e96ab/"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Is Female"; Value = "yes"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Lead Free"; Value = "yes"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Manufacturer"; Value = "Phoenix Contact"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Mouser Part Number"; Value = "651-1935776"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Package"; Value = "CONN_PTH_TERMINAL BLOCK"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Part Number"; Value = "1935776"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Price"; Value = "0.394437234895"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "RoHS"; Value = "TRUE"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Supplier 1"; Value = "Digi-Key"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Supplier 2"; Value = "Mouser"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Supplier Part Number 1"; Value = "277-6405-ND"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Supplier Part Number 2"; Value = "651-1935776"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Temperature"; Value = "to"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Voltage"; Value = "300V"; VariantName = "[No Variations]"
+Added Component: Designator=J3(Phoenix_Contact_1935776_0)
+Add component (AddParameter): Name = "ComponentLink1Description"; Value = "Upverter"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "ComponentLink1URL"; Value = "https://upverter.com/upn/revision/23a85baadd8e96ab/"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "ComponentLink2Description"; Value = "Datasheet"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "ComponentLink2URL"; Value = "http://select.phoenixcontact.com/phoenix/dwld/00846397_00_fam.pdf?cp=y&asid2=080208969559730"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Digikey Description"; Value = "CONN 2 Position Wire to Board Terminal Block Horizontal with Board 0.197" (5.00mm) Through Hole"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Digikey Part Number"; Value = "277-6405-ND"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "helpURL"; Value = "https://upverter.com/upn/revision/23a85baadd8e96ab/"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Is Female"; Value = "yes"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Lead Free"; Value = "yes"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Manufacturer"; Value = "Phoenix Contact"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Mouser Part Number"; Value = "651-1935776"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Package"; Value = "CONN_PTH_TERMINAL BLOCK"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Part Number"; Value = "1935776"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Price"; Value = "0.394437234895"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "RoHS"; Value = "TRUE"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Supplier 1"; Value = "Digi-Key"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Supplier 2"; Value = "Mouser"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Supplier Part Number 1"; Value = "277-6405-ND"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Supplier Part Number 2"; Value = "651-1935776"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Temperature"; Value = "to"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Voltage"; Value = "300V"; VariantName = "[No Variations]"
+Added Component: Designator=J4(Phoenix_Contact_1935776_0)
+Add component (AddParameter): Name = "ComponentLink1Description"; Value = "Upverter"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "ComponentLink1URL"; Value = "https://upverter.com/upn/revision/23a85baadd8e96ab/"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "ComponentLink2Description"; Value = "Datasheet"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "ComponentLink2URL"; Value = "http://select.phoenixcontact.com/phoenix/dwld/00846397_00_fam.pdf?cp=y&asid2=080208969559730"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Digikey Description"; Value = "CONN 2 Position Wire to Board Terminal Block Horizontal with Board 0.197" (5.00mm) Through Hole"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Digikey Part Number"; Value = "277-6405-ND"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "helpURL"; Value = "https://upverter.com/upn/revision/23a85baadd8e96ab/"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Is Female"; Value = "yes"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Lead Free"; Value = "yes"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Manufacturer"; Value = "Phoenix Contact"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Mouser Part Number"; Value = "651-1935776"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Package"; Value = "CONN_PTH_TERMINAL BLOCK"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Part Number"; Value = "1935776"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Price"; Value = "0.394437234895"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "RoHS"; Value = "TRUE"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Supplier 1"; Value = "Digi-Key"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Supplier 2"; Value = "Mouser"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Supplier Part Number 1"; Value = "277-6405-ND"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Supplier Part Number 2"; Value = "651-1935776"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Temperature"; Value = "to"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Voltage"; Value = "300V"; VariantName = "[No Variations]"
+Added Component: Designator=J5(Phoenix_Contact_1935776_0)
+Add component (AddParameter): Name = "ComponentLink1Description"; Value = "Upverter"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "ComponentLink1URL"; Value = "https://upverter.com/upn/revision/23a85baadd8e96ab/"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "ComponentLink2Description"; Value = "Datasheet"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "ComponentLink2URL"; Value = "http://select.phoenixcontact.com/phoenix/dwld/00846397_00_fam.pdf?cp=y&asid2=080208969559730"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Digikey Description"; Value = "CONN 2 Position Wire to Board Terminal Block Horizontal with Board 0.197" (5.00mm) Through Hole"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Digikey Part Number"; Value = "277-6405-ND"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "helpURL"; Value = "https://upverter.com/upn/revision/23a85baadd8e96ab/"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Is Female"; Value = "yes"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Lead Free"; Value = "yes"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Manufacturer"; Value = "Phoenix Contact"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Mouser Part Number"; Value = "651-1935776"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Package"; Value = "CONN_PTH_TERMINAL BLOCK"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Part Number"; Value = "1935776"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Price"; Value = "0.394437234895"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "RoHS"; Value = "TRUE"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Supplier 1"; Value = "Digi-Key"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Supplier 2"; Value = "Mouser"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Supplier Part Number 1"; Value = "277-6405-ND"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Supplier Part Number 2"; Value = "651-1935776"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Temperature"; Value = "to"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Voltage"; Value = "300V"; VariantName = "[No Variations]"
+Added Component: Designator=J6(Phoenix_Contact_1935776_0)
+Add component (AddParameter): Name = "ComponentLink1Description"; Value = "Upverter"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "ComponentLink1URL"; Value = "https://upverter.com/upn/revision/23a85baadd8e96ab/"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "ComponentLink2Description"; Value = "Datasheet"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "ComponentLink2URL"; Value = "http://select.phoenixcontact.com/phoenix/dwld/00846397_00_fam.pdf?cp=y&asid2=080208969559730"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Digikey Description"; Value = "CONN 2 Position Wire to Board Terminal Block Horizontal with Board 0.197" (5.00mm) Through Hole"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Digikey Part Number"; Value = "277-6405-ND"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "helpURL"; Value = "https://upverter.com/upn/revision/23a85baadd8e96ab/"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Is Female"; Value = "yes"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Lead Free"; Value = "yes"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Manufacturer"; Value = "Phoenix Contact"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Mouser Part Number"; Value = "651-1935776"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Package"; Value = "CONN_PTH_TERMINAL BLOCK"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Part Number"; Value = "1935776"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Price"; Value = "0.394437234895"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "RoHS"; Value = "TRUE"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Supplier 1"; Value = "Digi-Key"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Supplier 2"; Value = "Mouser"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Supplier Part Number 1"; Value = "277-6405-ND"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Supplier Part Number 2"; Value = "651-1935776"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Temperature"; Value = "to"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Voltage"; Value = "300V"; VariantName = "[No Variations]"
+Added Component: Designator=J7(Phoenix_Contact_1935776_0)
+Add component (AddParameter): Name = "ComponentLink1Description"; Value = "Upverter"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "ComponentLink1URL"; Value = "https://upverter.com/upn/revision/23a85baadd8e96ab/"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "ComponentLink2Description"; Value = "Datasheet"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "ComponentLink2URL"; Value = "http://select.phoenixcontact.com/phoenix/dwld/00846397_00_fam.pdf?cp=y&asid2=080208969559730"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Digikey Description"; Value = "CONN 2 Position Wire to Board Terminal Block Horizontal with Board 0.197" (5.00mm) Through Hole"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Digikey Part Number"; Value = "277-6405-ND"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "helpURL"; Value = "https://upverter.com/upn/revision/23a85baadd8e96ab/"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Is Female"; Value = "yes"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Lead Free"; Value = "yes"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Manufacturer"; Value = "Phoenix Contact"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Mouser Part Number"; Value = "651-1935776"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Package"; Value = "CONN_PTH_TERMINAL BLOCK"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Part Number"; Value = "1935776"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Price"; Value = "0.394437234895"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "RoHS"; Value = "TRUE"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Supplier 1"; Value = "Digi-Key"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Supplier 2"; Value = "Mouser"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Supplier Part Number 1"; Value = "277-6405-ND"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Supplier Part Number 2"; Value = "651-1935776"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Temperature"; Value = "to"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Voltage"; Value = "300V"; VariantName = "[No Variations]"
+Added Component: Designator=J8(JST_0_MFG)
+Added Component: Designator=J9(JST_0_MFG)
+Added Component: Designator=J10(Phoenix_Contact_1935776_0)
+Add component (AddParameter): Name = "ComponentLink1Description"; Value = "Upverter"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "ComponentLink1URL"; Value = "https://upverter.com/upn/revision/23a85baadd8e96ab/"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "ComponentLink2Description"; Value = "Datasheet"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "ComponentLink2URL"; Value = "http://select.phoenixcontact.com/phoenix/dwld/00846397_00_fam.pdf?cp=y&asid2=080208969559730"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Digikey Description"; Value = "CONN 2 Position Wire to Board Terminal Block Horizontal with Board 0.197" (5.00mm) Through Hole"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Digikey Part Number"; Value = "277-6405-ND"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "helpURL"; Value = "https://upverter.com/upn/revision/23a85baadd8e96ab/"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Is Female"; Value = "yes"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Lead Free"; Value = "yes"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Manufacturer"; Value = "Phoenix Contact"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Mouser Part Number"; Value = "651-1935776"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Package"; Value = "CONN_PTH_TERMINAL BLOCK"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Part Number"; Value = "1935776"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Price"; Value = "0.394437234895"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "RoHS"; Value = "TRUE"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Supplier 1"; Value = "Digi-Key"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Supplier 2"; Value = "Mouser"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Supplier Part Number 1"; Value = "277-6405-ND"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Supplier Part Number 2"; Value = "651-1935776"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Temperature"; Value = "to"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Voltage"; Value = "300V"; VariantName = "[No Variations]"
+Added Component: Designator=J11(JST_0_MFG)
+Added Component: Designator=J12(JST_0_MFG)
+Added Component: Designator=J13(JST_0_MFG)
+Added Component: Designator=J14(JST_0_MFG)
+Added Component: Designator=J15(JST_0_MFG)
+Added Component: Designator=J16(JST_0_MFG)
+Added Component: Designator=J17(JST_0_MFG)
+Added Component: Designator=J18(JST_0_MFG)
+Added Component: Designator=J19(JST_0_MFG)
+Added Component: Designator=J20(JST_0_MFG)
+Add Component: Footprint Not Found RESC3126X65N
+Add Component: Footprint Not Found RES0402_CRG_TYCO_TYC
+Added Pin To Net: NetName=5V Pin=J7-1
+Added Pin To Net: NetName=5V Pin=J9-1
+Added Pin To Net: NetName=5V Pin=J12-1
+Added Pin To Net: NetName=5V Pin=J14-1
+Added Pin To Net: NetName=5V Pin=J15-1
+Added Pin To Net: NetName=5V Pin=J16-1
+Added Pin To Net: NetName=5V Pin=J17-1
+Added Pin To Net: NetName=5V Pin=J19-1
+Added Pin To Net: NetName=5V Pin=J20-1
+Added Net: Name=5V
+Added Pin To Net: NetName=12V Pin=J6-1
+Added Pin To Net: NetName=12V Pin=J8-1
+Added Pin To Net: NetName=12V Pin=J11-1
+Added Pin To Net: NetName=12V Pin=J13-1
+Added Net: Name=12V
+Added Pin To Net: NetName=BatVolt Pin=D1-2
+Added Pin To Net: NetName=BatVolt Pin=J1-1
+Added Pin To Net: NetName=BatVolt Pin=J2-1
+Added Pin To Net: NetName=BatVolt Pin=J3-1
+Added Pin To Net: NetName=BatVolt Pin=J4-1
+Added Pin To Net: NetName=BatVolt Pin=J5-1
+Added Net: Name=BatVolt
+Added Pin To Net: NetName=GND Pin=J1-2
+Added Pin To Net: NetName=GND Pin=J2-2
+Added Pin To Net: NetName=GND Pin=J3-2
+Added Pin To Net: NetName=GND Pin=J4-2
+Added Pin To Net: NetName=GND Pin=J5-2
+Added Pin To Net: NetName=GND Pin=J6-2
+Added Pin To Net: NetName=GND Pin=J7-2
+Added Pin To Net: NetName=GND Pin=J8-2
+Added Pin To Net: NetName=GND Pin=J9-2
+Added Pin To Net: NetName=GND Pin=J10-2
+Added Pin To Net: NetName=GND Pin=J11-2
+Added Pin To Net: NetName=GND Pin=J12-2
+Added Pin To Net: NetName=GND Pin=J13-2
+Added Pin To Net: NetName=GND Pin=J14-2
+Added Pin To Net: NetName=GND Pin=J15-2
+Added Pin To Net: NetName=GND Pin=J16-2
+Added Pin To Net: NetName=GND Pin=J17-2
+Added Pin To Net: NetName=GND Pin=J18-2
+Added Pin To Net: NetName=GND Pin=J19-2
+Added Pin To Net: NetName=GND Pin=J20-2
+Added Net: Name=GND
+Added Pin To Net: NetName=NetD1_1 Pin=D1-1
+Added Net: Name=NetD1_1
+Added Pin To Net: NetName=NetJ10_1 Pin=J10-1
+Added Net: Name=NetJ10_1

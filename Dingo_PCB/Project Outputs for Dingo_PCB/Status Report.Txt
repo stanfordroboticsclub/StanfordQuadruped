@@ -1,0 +1,16 @@
+Project Outputs Generation Report
+---------------------------------
+Start Output Generation At 9:16:52 PM On 6/03/2023
+
+Output: NC Drill Files
+Type  : NC Drill
+From  : PCB Document [Dingo_PCB.PcbDoc]
+   Generated File[Dingo_PCB.TXT]
+   Generated File[Dingo_PCB.LDP]
+   Generated File[Dingo_PCB.DRR]
+
+
+Files Generated   : 3
+Documents Printed : 0
+
+Finished Output Generation At 9:16:52 PM On 6/03/2023

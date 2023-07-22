@@ -1,0 +1,6 @@
+Added Component: Designator=R1(TE_Connectivity_CRGCQ1206_IPC_A)
+Added Component: Designator=R2(TE_Connectivity_CRGCQ0805_IPC_A)
+Added Pin To Net: NetName=NetJ10_1 Pin=R1-1
+Added Pin To Net: NetName=NetD1_1 Pin=R1-2
+Added Pin To Net: NetName=GND Pin=R2-1
+Added Pin To Net: NetName=NetJ10_1 Pin=R2-2
