@@ -1,9 +1,9 @@
 from dataclasses import dataclass
 import numpy as np
 from numpy import sin, cos
+from numba import njit
 
 
-@dataclass
 class LegConfig:
     motor_x: float  # x-axis measure of motor to motor distance
     motor_y: float  # y-axis measure of motor to motor distance
@@ -13,6 +13,7 @@ class LegConfig:
     link_3: float  # length (+) of lower leg
 
 
+@njit
 def leg_fk(qA, qB, qC, leg_config):
     """Only works for right-sided legs"""
     MX = leg_config.motor_x
@@ -36,6 +37,7 @@ def leg_fk(qA, qB, qC, leg_config):
     return np.array((Fx, Fy, Fz))
 
 
+@njit
 def leg_jacobian(qA, qB, qC, leg_config):
     result = np.zeros((3, 3))
     LX = leg_config.link_2_x
@@ -62,9 +64,10 @@ def leg_jacobian(qA, qB, qC, leg_config):
     return result
 
 
+@njit
 def leg_ik(center_to_foot_vector, leg_config, initial_guess=None, alpha=1.0):
-    """Use newton's method. 
-    
+    """Use newton's method.
+
     With a good guess it takes about 4 iterations or 0.0002s to converge"""
 
     # Use initial guess for joint angles if provided
@@ -73,21 +76,22 @@ def leg_ik(center_to_foot_vector, leg_config, initial_guess=None, alpha=1.0):
     for i in range(20):
         matrix = np.linalg.pinv(leg_jacobian(*guess, leg_config))
         error = leg_fk(*guess, leg_config) - center_to_foot_vector
-        step = - alpha * matrix @ error
+        step = -alpha * matrix @ error
 
         # prevent big solver steps
         guess += np.clip(step, -1, 1)
         if np.linalg.norm(error) < 1e-6:
             break
-
+    # print("Took {} iterations to converge".format(i))
     # constrain to -pi to pi
-    guess = np.fmod(guess + np.pi, 2 * np.pi) - np.pi 
+    guess = np.fmod(guess + np.pi, 2 * np.pi) - np.pi
     return guess
 
 
+@njit
 def four_legs_inverse_kinematics(r_body_foot, config, initial_guess=None):
     """Find the joint angles for all twelve DOF correspoinding to the given matrix of body-relative foot positions.
-    
+
     Parameters
     ----------
     r_body_foot : numpy array (3,4)
@@ -95,7 +99,7 @@ def four_legs_inverse_kinematics(r_body_foot, config, initial_guess=None):
     config : Config object
         Object of robot configuration parameters.
     initial_guess
-    
+
     Returns
     -------
     numpy array (3,4)
@@ -108,16 +112,18 @@ def four_legs_inverse_kinematics(r_body_foot, config, initial_guess=None):
 
     # print(r_body_foot)
     for i in range(4):
-        leg_config = LegConfig(motor_x=config.LEG_ORIGINS[0, i],
-                               motor_y=config.LEG_ORIGINS[1, i],
-                               abduction_offset=config.ABDUCTION_OFFSETS[i],
-                               link_2_x=0.07,
-                               link_2_z=0.07,
-                               link_3=config.LEG_L2)
-        alpha[:, i] = leg_ik(r_body_foot[:, i],
-                             leg_config,
-                             initial_guess=initial_guess[:, i])
-        # FK model treats shank vertical as zero angle while 
+        leg_config = LegConfig(
+            motor_x=config.LEG_ORIGINS[0, i],
+            motor_y=config.LEG_ORIGINS[1, i],
+            abduction_offset=config.ABDUCTION_OFFSETS[i],
+            link_2_x=0.07,
+            link_2_z=0.07,
+            link_3=config.LEG_L2,
+        )
+        alpha[:, i] = leg_ik(
+            r_body_foot[:, i], leg_config, initial_guess=initial_guess[:, i]
+        )
+        # FK model treats shank vertical as zero angle while
         # simulator and real robot use 30 deg angle
         alpha[2, i] += np.radians(30)
 
@@ -130,12 +136,14 @@ def four_legs_inverse_kinematics(r_body_foot, config, initial_guess=None):
 
 
 if __name__ == "__main__":
-    leg_config = LegConfig(motor_X=0.2,
-                           motor_y=0.2,
-                           abduction_offset=-0.05,
-                           link_2_x=0.05,
-                           link_2_z=0.05,
-                           link_3=0.1)
+    leg_config = LegConfig(
+        motor_x=0.2,
+        motor_y=0.2,
+        abduction_offset=-0.05,
+        link_2_x=0.05,
+        link_2_z=0.05,
+        link_3=0.1,
+    )
 
     # q0 = (0, 0.5, 0.5)
     q0 = np.random.randn(3)
@@ -149,9 +157,9 @@ if __name__ == "__main__":
 
     print(leg_jacobian(0, 0, 0, leg_config))
 
-    four_legs_r = np.array([[0, 0, 0, 0], [0, 0, 0, 0],
-                            [-0.1, -0.1, -0.1, -0.1]])
+    four_legs_r = np.array([[0, 0, 0, 0], [0, 0, 0, 0], [-0.1, -0.1, -0.1, -0.1]])
     from pupper_controller.src.pupperv3 import config
+
     config = config.Config()
     alpha = four_legs_inverse_kinematics(four_legs_r, config)
     print("r: ", four_legs_r)
