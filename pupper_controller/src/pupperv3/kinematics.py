@@ -74,7 +74,7 @@ def leg_ik(center_to_foot_vector, leg_config, initial_guess=None, alpha=1.0):
     guess = np.zeros(3) if initial_guess is None else initial_guess
 
     for i in range(20):
-        matrix = np.linalg.pinv(leg_jacobian(*guess, leg_config))
+        matrix = np.linalg.inv(leg_jacobian(*guess, leg_config))
         error = leg_fk(*guess, leg_config) - center_to_foot_vector
         step = -alpha * matrix @ error
 
