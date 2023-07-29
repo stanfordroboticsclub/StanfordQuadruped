@@ -15,7 +15,7 @@ class LegConfig:
     link_3: float  # length (+) of lower leg
 
 
-@njit
+@njit(cache=True)
 def leg_fk(
     qA: float,
     qB: float,
@@ -49,7 +49,7 @@ def leg_fk(
     return np.array((Fx, Fy, Fz))
 
 
-@njit
+@njit(cache=True)
 def leg_jacobian(
     qA: float,
     qB: float,
@@ -83,7 +83,7 @@ def leg_jacobian(
     return result
 
 
-@njit
+@njit(cache=True)
 def leg_ik(
     center_to_foot_vector: np.ndarray,
     motor_x: float,
