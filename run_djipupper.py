@@ -97,8 +97,8 @@ def main(FLAGS):
                         state.activation = 0
                         continue
                     controller.run(state, command)
-                    hardware_interface.set_cartesian_positions(
-                        state.final_foot_locations
+                    hardware_interface.set_actuator_postions(
+                        state.joint_angles
                     )
                     last_loop = now
     except KeyboardInterrupt:
