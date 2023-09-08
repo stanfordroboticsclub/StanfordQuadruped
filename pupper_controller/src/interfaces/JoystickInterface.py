@@ -1,6 +1,6 @@
 import numpy as np
 import time
-from pupper_controller.src.common.robot_state import BehaviorState, State
+from pupper_controller.src.common.robot_state import BehaviorState, RobotState
 from pupper_controller.src.common.command import Command
 from pupper_controller.src.common.utilities import deadband, clipped_first_order_filter
 

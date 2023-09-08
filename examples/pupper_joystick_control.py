@@ -25,7 +25,7 @@ def run_example():
 
     try:
         while True:
-            command = joystick_interface.get_command()
+            command = joystick_interface.get_command(pup.state)
             pup.step(action={"x_velocity": command.horizontal_velocity[0],
                              "y_velocity": command.horizontal_velocity[1],
                              "yaw_rate": command.yaw_rate,
