@@ -12,10 +12,10 @@ def run_example(half_robot=False):
     pup = pupper.Pupper(half_robot=half_robot)
     pup.reset()
     print("starting...")
-    pup.slow_stand(min_height=-0.11, duration=1.0, do_sleep=True)
+    pup.slow_stand(min_height=-0.08, duration=1.0, do_sleep=True)
     last_control = pup.time()
-    com_x_shift = -0.02
-    height = -0.15
+    com_x_shift = 0 # -0.02
+    height = -0.12
     try:
         while True:
             # Busy-wait until it's time to run the control loop again
@@ -40,10 +40,10 @@ def run_example(half_robot=False):
             )
             height = min(max(height, -0.25), -0.05)
 
-            if joystick_vals["connected"]:
-                print(
-                    f"com_x_shift: {com_x_shift:0.4f} height: {height:0.4f} joystick values: {joystick_vals}"
-                )
+            # if joystick_vals["connected"]:
+            #     print(
+            #         f"com_x_shift: {com_x_shift:0.4f} height: {height:0.4f} joystick values: {joystick_vals}"
+            #     )
             pup.step(
                 action={
                     "x_velocity": joystick_vals["left_y"] / 1.5,
@@ -55,6 +55,7 @@ def run_example(half_robot=False):
                 },
                 behavior_state_override=behavior_state_override,
             )
+            print("Foot coordinates: \n", pup.state.final_foot_locations)
 
     finally:
         pup.shutdown()
