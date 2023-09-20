@@ -21,6 +21,8 @@ class Joystick:
             "right_y": 0,
             "L2": 0,
             "d_pad_y": 0,
+            "x": 0,
+            "triangle": 0,
             "connected": False,
         }
 
