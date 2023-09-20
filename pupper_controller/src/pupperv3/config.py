@@ -33,11 +33,11 @@ class Config:
 
         #################### STANCE ####################
         self.delta_x = 0.1
-        self.delta_y = 0.07
+        self.delta_y = 0.06
         self.x_shift = -0.01
         self.min_x_shift = -0.05
         self.max_x_shift = 0.05
-        self.default_z_ref = -0.16
+        self.default_z_ref = -0.12
 
         #################### SWING ######################
         self.z_coeffs = None
@@ -67,10 +67,11 @@ class Config:
         )
 
         ######################## GEOMETRY ######################
-        self.LEG_FB = 0.10  # front-back distance from center line to leg axis
+        self.LEG_FB = 0.075  # front-back distance from center line to leg axis
         self.LEG_LR = 0.05  # left-right distance from center line to leg plane
-        self.LEG_L2 = 0.11
-        self.LEG_L1 = 0.08
+        self.LEG_L1_X = 0.07
+        self.LEG_L1_Z = 0.05
+        self.LEG_L2 = 0.088
         self.ABDUCTION_OFFSET = 0.02  # distance from abduction axis to leg
         self.FOOT_RADIUS = 0.01
 
