@@ -9,6 +9,7 @@ import rospkg
 import socket
 import time
 from std_msgs.msg import Float64
+from dingo_peripheral_interfacing.msg import ElectricalMeasurements
 
 rospack = rospkg.RosPack()
 rospack.get_path('dingo_peripheral_interfacing') + "/lib/emptybatterystatus_white.png"
@@ -21,8 +22,8 @@ class DingoDisplayNode:
         self.RST = 27
         self.DC = 25
         self.BL = 18
-        self.bus = 0 
-        self.device = 0 
+        self.bus = 0
+        self.device = 0
         self.ssid = ''
         self.ipAddress = ''
         self.disp = LCD_1inch47.LCD_1inch47()
@@ -31,12 +32,24 @@ class DingoDisplayNode:
         # Clear display.
         self.disp.clear()
 
-        self.battery_percentage_subscriber = rospy.Subscriber("/battery_percentage", Float64, self.update_battery_percentage)
+        self.battery_voltage_subscriber = rospy.Subscriber("/electrical_measurements", ElectricalMeasurements, self.update_battery_percentage)
 
         self.battery_percentage = 0.7  # Number between 0 and 1
-    
+
     def update_battery_percentage(self, message):
-        self.battery_percentage = message.data
+
+        # max_voltage and min_voltage for 4s lipo battery
+        max_voltage = 16.8
+        min_voltage = 14.0
+
+        # Ensure the received voltage is within expected bounds
+        battery_voltage_level = max(min(message.battery_voltage_level, max_voltage), min_voltage)
+
+        # Convert to percentage
+        self.battery_percentage = (battery_voltage_level - min_voltage) / (max_voltage - min_voltage)
+
+        # rospy.loginfo("Battery voltage level: {}".format(message.battery_voltage_level))
+        # rospy.loginfo("Updated battery percentage: {:.2f}%".format(self.battery_percentage * 100))
 
     def run(self):
         try:
@@ -72,7 +85,7 @@ class DingoDisplayNode:
                 batt_fill = "RED"
             elif 0.20 < self.battery_percentage <=0.60:
                 batt_fill = "#d49b00" #yellow
-            else: 
+            else:
                 batt_fill = "#09ab00" #green
 
             batt_draw.rounded_rectangle([(42,92),(42+(153*self.battery_percentage) ,170)],8,fill = batt_fill)
@@ -86,9 +99,6 @@ class DingoDisplayNode:
             image1 = image1.rotate(0)
             image1 = image1.transpose(Image.ROTATE_270)
             self.disp.ShowImage(image1)
-
-            
-
 
             ## SSID and IP are calcultated after displaying so that they can run on the second loop
             #rospy.loginfo("Connecting to Wi-Fi...")

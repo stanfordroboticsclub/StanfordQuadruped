@@ -1,12 +1,12 @@
-#ifndef _ROS_dingo_nano_interfacing_ElectricalMeasurements_h
-#define _ROS_dingo_nano_interfacing_ElectricalMeasurements_h
+#ifndef _ROS_dingo_peripheral_interfacing_ElectricalMeasurements_h
+#define _ROS_dingo_peripheral_interfacing_ElectricalMeasurements_h
 
 #include <stdint.h>
 #include <string.h>
 #include <stdlib.h>
 #include "ros/msg.h"
 
-namespace dingo_nano_interfacing
+namespace dingo_peripheral_interfacing
 {
 
   class ElectricalMeasurements : public ros::Msg
@@ -77,7 +77,7 @@ namespace dingo_nano_interfacing
      return offset;
     }
 
-    virtual const char * getType() override { return "dingo_nano_interfacing/ElectricalMeasurements"; };
+    virtual const char * getType() override { return "dingo_peripheral_interfacing/ElectricalMeasurements"; };
     virtual const char * getMD5() override { return "7cd8bf648ee5631ca57dfdbcfb5a9043"; };
 
   };

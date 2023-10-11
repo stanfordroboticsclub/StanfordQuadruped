@@ -51,6 +51,61 @@ The following flow diagram shows a simplified overview of how a joystick command
 - Source the workspace: `source devel/setup.bash`
 - (Optional) Add a line to .bashrc to automatically source the workspace: `echo "source ~/any_folder_name/DingoQuadruped/dingo_ws/devel/setup.bash" >> ~/.bashrc`, `source ~/.bashrc`
 
+#### Additional Notes
+To run ROS as non-root, must set permissions correctly via udev for several /dev files.
+    - Add the following to /etc/udev/rules.d/99-ROS.rules
+       KERNEL=="ttyS0", OWNER="root", GROUP="ros", MODE="0660"
+       KERNEL=="spi", OWNER="root", GROUP="ros", MODE="0660"
+       KERNEL=="i2c", OWNER="root", GROUP="ros", MODE="0660"
+       KERNEL=="gpiomem", OWNER="root", GROUP="ros", MODE="0660"
+       KERNEL=="mem", OWNER="root", GROUP="ros", MODE="0660"
+    - Add new group to user account: `sudo groupadd ros && sudo adduser <username> ros`
+    - Reload udev rules: `sudo udevadm control --reload-rules && sudo udevadm trigger`
+
+These steps will be required to get serial comms working between the Pi and Nano.
+    - Run the following to install ROS serial
+        `sudo apt-get update`
+        `sudo apt-get install ros-noetic-rosserial-python ros-noetic-rosserial-arduino`
+    - See above for udev changess needed for ttyS0 
+    - The Ubuntu serial console must be disabled or it will conflict with serial comms.
+        `sudo systemctl disable serial-getty@ttyS0.service --now`
+        `sudo systemctl stop serial-getty@ttyS0.service`
+        `sudo systemctl mask serial-getty@ttyS0.service`
+
+For getting bluetooth controller working (for instance PS4 controller)
+More info here: https://www.makeuseof.com/manage-bluetooth-linux-with-bluetoothctl/
+    - Install bluetooth: 
+        `sudo apt-get install bluetooth bluez bluez-tools`
+        `sudo apt-get install pi-bluetooth`
+    - To pair and connect a controller:
+        `bluetoothctl scan on`
+        `bluetooth pair AA:BB:CC:11:22:33` (example device)
+        `bluetooth connect AA:BB:CC:11:22:33`
+    - To test the controller
+        `jstest /dev/input/js0`
+
+To get WiFi working
+    - Edit the file /etc/netplan/50-cloud-init.yaml 
+    - Add the following to the bottom of the file
+```.   
+    wifis:
+        wlan0:
+            optional: true
+            dhcp4: true
+            access-points:
+                "<wifi SSID>":
+                    password: "<wifi password>"
+```  
+
+If getting an error with "rounded_rectangle", need to install later version of Pillow.
+    - Upgrade pillow with `pip3 install --upgrade Pillow`
+
+It's a good idea to backup the sdcard every so often. Here is how to do that on linux.
+    - Take out the sdcard from the Raspberry Pi and mount it into another linux system.
+    - Run these commands to backup/restore. Replace source/destination appropriately.
+        Backup to file: `sudo dd if=/dev/sdb of=~/dingo_backup.img bs=4M status=progress`
+        Restore back to sdcard: `sudo dd if=dingo_backup of=/dev/sdb bs=4M status=progress`
+
 ### Docker Container
 The files inside the base directory enable a docker container to be built and the code to inspected and debugged in visual studio code. This is mostly for debugging purposes, and is best for an external device debugging or adding to the code, rather than being used on the quadruped itself. Note: These instructions assume a linux OS.
 #### Preparing vscode

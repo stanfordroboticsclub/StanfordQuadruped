@@ -1,28 +1,45 @@
 #include <ros.h>
 #include <std_msgs/Bool.h>
 #include <std_msgs/Float32.h>
-#include <dingo_nano_interfacing/ElectricalMeasurements.h>
+#include <ElectricalMeasurements.h>
 #include <avr/sleep.h>
 
 ros::NodeHandle_<ArduinoHardware, 5, 5, 128, 256> arduino_nano_node; //(max) 5 publishers, 2 subscribers, 64 byte input buffer, 256 byte output buffer. Default is 25,25,512,512
 
 //Declare global message variables for storing data to publish
 std_msgs::Bool emergency_stop_msg;
-dingo_nano_interfacing::ElectricalMeasurements electrical_measurement_msg;
+dingo_peripheral_interfacing::ElectricalMeasurements electrical_measurement_msg;
 
 //Declare publishers for data to be published on topics
 ros::Publisher emergency_stop_status_publisher("emergency_stop_status", &emergency_stop_msg);
 ros::Publisher electrical_measurement_publisher("electrical_measurements", &electrical_measurement_msg);
 
-//Declare subscribers for data to be received when published to a topic
+//Declare constants
+const int publish_interval = 1; // publish voltage every 1 second
 
+const int number_stored_battery_voltage_measurements = 30; // number of battery voltage values to average against
+const int number_stored_buck_voltage_measurements = 5; // number of buck voltage values to average against
 
-//Declare global variables
-const int number_stored_battery_voltage_measurements = 30; //number of electrical measurements (e.g. voltage values) to keep at any one time
-const int number_stored_buck_voltage_measurements = 3;
-float battery_voltage_array[number_stored_battery_voltage_measurements];
-float servo_buck_voltage_array[number_stored_buck_voltage_measurements];
-int battery_voltage_array_index = 0; //variable for the index at which the current measurement is stored in the corresponding array of measurements
+const float battery_R1 = 45.5; // resistor value between the pos battery terminal and nano pin
+const float battery_R2 = 9.87; // resistor value between the neg battery terminal and nano pin
+const float battery_minimum_voltage = 14.0;
+const float battery_reference_voltage = 16.8;
+const float battery_diode_drop = 0.2;
+const float battery_fine_tuning = 1.067;
+
+const float servobuck_R1 = 400.0; // resistor value between the pos buck terminal and nano pin
+const float servobuck_R2 = 400.0; // resistor value between the neg buck terminal and nano pin
+const float servobuck_minimum_voltage = 6.0;
+const float servobuck_reference_voltage = 7.0;
+const float servobuck_fine_tuning = 1.055;
+
+// Declare global variables
+float battery_buck_voltage_array[number_stored_battery_voltage_measurements] = {0.0};
+float servobuck_voltage_array[number_stored_buck_voltage_measurements] = {0.0};
+
+float battery_filtered_voltage = 0.0;
+float servobuck_filtered_voltage = 0.0;
+
 int buck_voltage_array_index = 0;
 int number_of_low_battery_detections = 0;
 int number_of_low_buck_voltage_detections = 0;
@@ -30,49 +47,34 @@ bool currently_estopped = 0;
 
 void setup()
 {
-  //This function is required by arduino standards, and is run once on startup to initialise ros, publishers, subscribers and array initial values
+  // This function is required by arduino standards, and is run once on startup to initialise ros, publishers, subscribers and array initial values
   Serial.begin(57600);
+
   while (!Serial.available()) {
     delay(1000); // Wait 1 second before checking again
   }
+
   arduino_nano_node.getHardware()->setBaud(57600);
-  //initialise ros node, and advertise publishers
+  // Initialise ros node, and advertise publishers
   arduino_nano_node.initNode();
   arduino_nano_node.advertise(emergency_stop_status_publisher);
   arduino_nano_node.advertise(electrical_measurement_publisher);
 
-  //multiple spins and delays to allow time for publishers to be properly setup before data is collected and transmitted
-  arduino_nano_node.spinOnce();
-  delay(1000);
-  arduino_nano_node.spinOnce();
-  delay(1000);
-  arduino_nano_node.spinOnce();
-  delay(1000);
-
-  //go through arrays of measurements and set all values to initially be zero
-  for (int i = 0; i < number_stored_battery_voltage_measurements; i++)
-  {
-    battery_voltage_array[i] = 0.0;
-    
-  }
-
-  for (int i = 0; i < number_stored_buck_voltage_measurements; i++)
-  {
-    servo_buck_voltage_array[i] = 0.0;
-    
-  }
-  
+  // Multiple spins and delays to allow time for publishers to be properly setup before data is collected and transmitted
+  arduino_nano_node.spinOnce(); delay(1000);
+  arduino_nano_node.spinOnce(); delay(1000);
+  arduino_nano_node.spinOnce(); delay(1000);
 }
 
 void shutdown()
 {
-  //shuts the arduino down if the voltage level is too low
+  // Shuts the arduino down if the voltage level is too low
 
-  //Log the shutdown in ROS logs
+  // Log the shutdown in ROS logs
   arduino_nano_node.logwarn("BATTERY VOLTAGE TOO LOW: NANO POWERING DOWN");
   delay(1000);
 
-  //Put arduino to sleep, which is as close to shutdown as possible
+  // Put arduino to sleep, which is as close to shutdown as possible
   set_sleep_mode(SLEEP_MODE_PWR_DOWN);  
   sleep_enable();
   sleep_cpu ();             
@@ -80,132 +82,74 @@ void shutdown()
 
 void checkBatteryVoltageLevel()
 {
-  //retrieves the current voltage of the battery. Uses this and previous stored voltages to calculate the average voltage of the battery, then publishes to pi
-  //This function also checks that the battery voltage is above the minimum, and will call the shutdown code if the voltage is too low
-
-  //Declare constants used by the function
-  const float battery_R1 = 26.1; //^3, resistance value of the resistor between the tve battery terminal and the pin
-  const float battery_R2 = 9.96; //^3, resistance value of the resistor between the -ve battery terminal and the pin
-  const int minimum_battery_voltage = 15;
-  const float diode_drop = 0.22;
+  // Retrieves the current voltage of the battery. Uses this and previous stored voltages to calculate the average voltage of the battery, then publishes to pi
+  // This function also checks that the battery voltage is above the minimum, and will call the shutdown code if the voltage is too low
   
-  //Get the voltage at the analogue port of the arduino
+  // Get the voltage at the analogue port of the arduino
   int sensorValue = analogRead(A0);
   
-  //convert this voltage into the actual battery voltage and store into an array of voltage readings
+  // Convert this voltage into the actual battery voltage and store into an array of voltage readings
   float pin_voltage = sensorValue * (5.0 / 1023.0);
-  float current_voltage = pin_voltage * ((battery_R1+battery_R2)/battery_R2) + diode_drop;
+  float current_voltage = pin_voltage * ((battery_R1+battery_R2)/battery_R2) + battery_diode_drop;
 
-  current_voltage = current_voltage * 0.93;
+  // Fine tuning adjustment
+  current_voltage = current_voltage * battery_fine_tuning;
 
-  battery_voltage_array[battery_voltage_array_index] = current_voltage;
+  float battery_average_voltage = calculateAverageVoltage(
+    current_voltage, battery_buck_voltage_array, number_stored_battery_voltage_measurements, battery_filtered_voltage, battery_reference_voltage);
 
-  //using the array of the most recent voltage readings, calculate the current average voltage of the battery
-  float sum_of_voltages = 0;
-  int numberOfVoltagesUsed = 0;
-  for (int j = 0; j < number_stored_battery_voltage_measurements; j++)
-  {
-    if (battery_voltage_array[j] > 2.0)
-    {
-      sum_of_voltages = sum_of_voltages + battery_voltage_array[j];
-      numberOfVoltagesUsed = numberOfVoltagesUsed + 1;
-    }
-      
-  } 
-  //note: if the sum of voltages is zero, set current_battery_voltage to zero to avoid NaN from 0/x
-  float current_battery_voltage;
-  if (sum_of_voltages != 0.0)
-  {
-    current_battery_voltage = sum_of_voltages/numberOfVoltagesUsed;
-  }
-  else
-  {
-    current_battery_voltage = 0.0;
-  }
+  // Serial.println(String(pin_voltage));
+  // Serial.println(String(battery_average_voltage));
 
-  //write the current average voltage to the publisher message
-  electrical_measurement_msg.battery_voltage_level = current_voltage;
+  // Write the current average voltage to the publisher message
+  electrical_measurement_msg.battery_voltage_level = battery_average_voltage;
 
-  //Check whether the voltage is below the minimum. If so, increment the number of low battery detections. If too many have occured, order shutdown of nano
-  if (current_battery_voltage < minimum_battery_voltage)
+  // Check whether the voltage is below the minimum. If so, increment the number of low battery detections. If too many have occured, order shutdown of nano
+  if (battery_average_voltage < battery_minimum_voltage)
   {
     if (number_of_low_battery_detections > 30)
     {
-      shutdown();
+      shutdown(); // TODO: ROS topic to shutdown pi as well
     }
     else
     {
       number_of_low_battery_detections++;
     }
     
-  } //Decrement number of low battery detections if it was above zero and the battery voltage is above the minimum acceptable
-  else if (current_battery_voltage > minimum_battery_voltage && number_of_low_battery_detections > 0)
+  } // Decrement number of low battery detections if it was above zero and the battery voltage is above the minimum acceptable
+  else if (battery_average_voltage > battery_minimum_voltage && number_of_low_battery_detections > 0)
   {
     number_of_low_battery_detections = number_of_low_battery_detections - 1;
-  }
-
-  //increment the index for where electrical measurements are kept inside respective array
-  if (battery_voltage_array_index == number_stored_battery_voltage_measurements - 1)
-  {
-    battery_voltage_array_index = 0;
-  }
-  else
-  {
-    battery_voltage_array_index++;
   }
 }
 
 void checkBuckVoltageLevel()
 {
-  //retrieves the current voltage of the buck converter output. Uses this and previous voltages to calculate the average voltage of the buck converter output, then publishes to pi
-  //This function also checks whether the buck converter has dropped to zero. If it has for long enough, the e-stop must have been pressed to shut down power to the buck and servos, so publish this
-  //Also checks when the voltage increases again, indicating that the e-stop has been released, and publishes this as well
+  // Retrieves the current voltage of the buck converter output. Uses this and previous voltages to calculate the average voltage of the buck converter output, then publishes to pi
+  // This function also checks whether the buck converter has dropped to zero. If it has for long enough, the e-stop must have been pressed to shut down power to the buck and servos, so publish this
+  // Also checks when the voltage increases again, indicating that the e-stop has been released, and publishes this as well
 
-  //Declare constants used by the function
-  const int buck_R1 = 10; //^3
-  const int buck_R2 = 10; //^3
-  const int minimum_buck_voltage = 6;
-  
-  //Get the voltage at the analogue port of the arduino
+  // Get the voltage at the analogue port of the arduino
   int sensorValue = analogRead(A1);
 
-  //convert this voltage into the actual buck converter output voltage and store into an array of voltage readings
-  float current_voltage = sensorValue * (5.0 / 1023.0) * ((buck_R1+buck_R2)/buck_R2);
+  // Convert this voltage into the actual buck converter output voltage and store into an array of voltage readings
+  float pin_voltage = sensorValue * (5.0 / 1023.0);
+  float current_voltage = pin_voltage * ((servobuck_R1+servobuck_R2)/servobuck_R2);
 
-  current_voltage = current_voltage * 0.91;
+  // Fine tuning adjustment
+  current_voltage = current_voltage * servobuck_fine_tuning;
 
-  //Arduino will read a NaN when the voltage is zero, so account for this
+  float servobuck_average_voltage = calculateAverageVoltage(
+    current_voltage, servobuck_voltage_array, number_stored_buck_voltage_measurements, servobuck_filtered_voltage, servobuck_reference_voltage);
 
-  servo_buck_voltage_array[buck_voltage_array_index] = current_voltage;
+  // Serial.println(String(pin_voltage));
+  // Serial.println(String(servobuck_average_voltage));
 
-  //using the array of the most recent voltage readings, calculate the current average voltage of the buck converter output
-  float sum_of_voltages = 0;
-  int numberOfVoltagesUsed = 0;
-  for (int j = 0; j < number_stored_buck_voltage_measurements; j++)
-  {
-    if (servo_buck_voltage_array[j] > 2.0)
-    {
-      sum_of_voltages = sum_of_voltages + servo_buck_voltage_array[j];
-      numberOfVoltagesUsed = numberOfVoltagesUsed + 1;
-    }
-      
-  } 
-  //note: if the sum of voltages is zero, set current_buck_voltage to zero to avoid NaN from 0/x
-  float current_buck_voltage;
-  if (sum_of_voltages != 0.0)
-  {
-    current_buck_voltage = sum_of_voltages/numberOfVoltagesUsed;
-  }
-  else
-  {
-    current_buck_voltage = 0.0;
-  }
+  // Write the current average voltage to the publisher message
+  electrical_measurement_msg.servo_buck_voltage_level = servobuck_average_voltage;
 
-  //write the current average voltage to the publisher message
-  electrical_measurement_msg.servo_buck_voltage_level = current_buck_voltage;
-
-  //check whether the buck converter voltage has dropped to 0 (or near 0). If it has, send message that the e-stop has been pressed
-  if (current_buck_voltage < minimum_buck_voltage)
+  // Check whether the buck converter voltage has dropped to 0 (or near 0). If it has, send message that the e-stop has been pressed
+  if (servobuck_average_voltage < servobuck_minimum_voltage)
   {
     if (number_of_low_buck_voltage_detections < 3)
     {
@@ -218,8 +162,8 @@ void checkBuckVoltageLevel()
       emergency_stop_status_publisher.publish(&emergency_stop_msg);
 
     }
-  } //if buck converter voltage has recently increased from 0, send message that e-stop has been released
-  else if (current_buck_voltage > minimum_buck_voltage)
+  } // If buck converter voltage has recently increased from 0, send message that e-stop has been released
+  else if (servobuck_average_voltage > servobuck_minimum_voltage)
   {
     if (number_of_low_buck_voltage_detections > 0)
     {
@@ -233,7 +177,7 @@ void checkBuckVoltageLevel()
     }
   }
 
-  //increment the index for where electrical measurements are kept inside respective array
+  // Increment the index for where electrical measurements are kept inside respective array
   if (buck_voltage_array_index == number_stored_buck_voltage_measurements - 1)
   {
     buck_voltage_array_index = 0;
@@ -246,20 +190,80 @@ void checkBuckVoltageLevel()
 
 void loop()
 {
-  //This function is required by arduino and runs constantly in a loop while it is powered
-  //it calls functions to measure sensor data on every loop, publishing this data to topics. Also spins topics to clear buffers
-  
-  //check voltage of battery and buck converter output
+  // This function is required by arduino and runs constantly in a loop while it is powered
+  // It calls functions to measure sensor data on every loop, publishing this data to topics. Also spins topics to clear buffers
+
+  static unsigned long lastPublishMillis = 0;  // last time the message was published
+  unsigned long currentMillis = millis();  // current time
+    
+  // Check voltage of battery and buck converter output
   checkBatteryVoltageLevel();
   checkBuckVoltageLevel();
 
-  //publish electrical measurements to the electrical measurement topic
-  electrical_measurement_publisher.publish(&electrical_measurement_msg);
+  
+  // Publish electrical measurements to the electrical measurement topic
+  if (currentMillis - lastPublishMillis >= publish_interval * 1000) {
+    electrical_measurement_publisher.publish(&electrical_measurement_msg);
+    lastPublishMillis = currentMillis;
+  }
 
-  //spin nodes
+  // Spin nodes
   arduino_nano_node.spinOnce();
 
-  //Runs every 100ms at the moment.
+  // Runs every 100ms at the moment.
   delay(100); //NOTE: ros-serial does not have an equivalent ros sleep function, so need to use native delay. Not a major issue for us.
   
+}
+
+float calculateAverageVoltage(float last_voltage, float voltage_array[], int voltage_array_size, float& filtered_voltage, float reference_voltage) {
+    float sum_of_voltages = 0.0;
+
+    // Shift voltages in array
+    for(int i = 0; i < voltage_array_size-1; i++) {
+        voltage_array[i] = voltage_array[i + 1];
+    }
+    // Assign the last voltage reading to the last element
+    voltage_array[voltage_array_size-1] = last_voltage;
+
+    // Calculate the current average of all the voltages in the array
+    for (int i = 0; i < voltage_array_size; i++) {
+        sum_of_voltages += voltage_array[i];
+    }
+    
+    float average_voltage = (sum_of_voltages / voltage_array_size);
+    
+    // The filtered voltage should just be set to reference voltage if averaging array is not fully populated
+    // And battery voltage should only update if current average is lower than the previous average.
+    if (reference_voltage == servobuck_reference_voltage)
+    {
+      filtered_voltage = average_voltage;   
+    } else {
+      if (find_min(voltage_array, voltage_array_size) == 0) {
+          filtered_voltage = reference_voltage;
+      } else if (average_voltage < filtered_voltage) {
+          filtered_voltage = average_voltage;
+      } 
+    } 
+
+    return filtered_voltage;
+}
+
+int find_min(float arr[], int n) {
+    int min_val = arr[0];
+    for(int i = 1; i < n; i++) {
+        if(arr[i] < min_val) {
+            min_val = arr[i];
+        }
+    }
+    return min_val;
+}
+
+int find_max(float arr[], int n) {
+    int max_val = arr[0];
+    for(int i = 1; i < n; i++) {
+        if(arr[i] > max_val) {
+            max_val = arr[i];
+        }
+    }
+    return max_val;
 }

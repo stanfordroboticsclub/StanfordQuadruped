@@ -8,8 +8,7 @@
 
     <group if="$(arg is_physical)">
         <!-- Communication Node between Arduino and Pi -->
-        <!--<node pkg="rosserial_python" type="serial_node.py"
-        name="dingo_rosserial" args="$(arg serial_port)" output="screen"/>-->
+        <node pkg="rosserial_python" type="serial_node.py" name="dingo_rosserial" args="$(arg serial_port)" output="screen"/>
 
         <!--<node pkg = "dingo_nano_interfacing" type = "battery_voltage_checking.py" name = "battery_voltage" output="screen"></node>-->
 
