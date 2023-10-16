@@ -9,7 +9,7 @@ VelocityFnType = Callable[
 ]
 
 
-@njit
+@njit(cache=True)
 def spline_matrix(time_left: float) -> np.ndarray:
     return np.array(
         (
@@ -21,7 +21,7 @@ def spline_matrix(time_left: float) -> np.ndarray:
     )
 
 
-@njit
+@njit(cache=True)
 def spline_constants(
     x0: float, x1: float, v0: float, v1: float, time_left: float
 ) -> np.ndarray:
@@ -30,12 +30,12 @@ def spline_constants(
     return np.linalg.solve(A, b)
 
 
-@njit
+@njit(cache=True)
 def spline_velocity(constants: np.ndarray, t: float) -> float:
     return 3 * constants[0] * t**2 + 2 * constants[1] * t + constants[2]
 
 
-@njit
+@njit(cache=True)
 def swing_velocity_spline(
     touchdown_location: np.ndarray,
     foot_location: np.ndarray,
@@ -71,7 +71,7 @@ def swing_velocity_spline(
     )
 
 
-@njit
+@njit(cache=True)
 def swing_velocity_linear(
     touchdown_location: np.ndarray,
     foot_location: np.ndarray,
