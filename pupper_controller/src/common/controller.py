@@ -12,8 +12,7 @@ from transforms3d.axangles import axangle2mat
 
 
 class Controller:
-    """Controller and planner object
-    """
+    """Controller and planner object"""
 
     def __init__(self, config, inverse_kinematics):
         self.config = config
@@ -24,17 +23,16 @@ class Controller:
         self.contact_modes = np.zeros(4)
         self.gait_controller = gaits.GaitController(self.config)
         self.swing_controller = swing_controller.SwingController(self.config)
-        self.stance_controller = stance_controller.StanceController(
-            self.config)
+        self.stance_controller = stance_controller.StanceController(self.config)
         self.virtual_vehicle = static_gait.VirtualVehicle()
 
         self.activate_transition_mapping = {
             robot_state.BehaviorState.REST: robot_state.BehaviorState.REST,
-            robot_state.BehaviorState.DEACTIVATED: robot_state.BehaviorState.REST
+            robot_state.BehaviorState.DEACTIVATED: robot_state.BehaviorState.REST,
         }
         self.deactivate_transition_mapping = {
             robot_state.BehaviorState.DEACTIVATED: robot_state.BehaviorState.DEACTIVATED,
-            robot_state.BehaviorState.REST: robot_state.BehaviorState.DEACTIVATED
+            robot_state.BehaviorState.REST: robot_state.BehaviorState.DEACTIVATED,
         }
         self.trot_transition_mapping = {
             robot_state.BehaviorState.TROT: robot_state.BehaviorState.TROT,
@@ -64,19 +62,31 @@ class Controller:
         new_foot_locations = np.zeros((3, 4))
         for leg_index in range(4):
             contact_mode = contact_modes[leg_index]
-            foot_location = state.foot_locations[:, leg_index]
+            # stance
             if contact_mode == 1:
                 new_location = self.stance_controller.next_foot_location(
                     leg_index, state, command
                 )
+            # swing
             else:
                 swing_proportion = (
                     self.gait_controller.subphase_ticks(state.ticks)
                     / self.config.swing_ticks
                 )
-                new_location = self.swing_controller.next_foot_location(
-                    swing_proportion, leg_index, state, command
+                # linear
+                new_location = self.swing_controller.next_foot_locations_linear(
+                    swing_prop=swing_proportion,
+                    leg_index=leg_index,
+                    state=state,
+                    command=command,
                 )
+                # spline
+                # new_location = self.swing_controller.next_foot_locations_spline(
+                #     swing_prop=swing_proportion,
+                #     leg_index=leg_index,
+                #     state=state,
+                #     command=command,
+                # )
             new_foot_locations[:, leg_index] = new_location
         return new_foot_locations, contact_modes
 
@@ -106,12 +116,11 @@ class Controller:
             state.behavior_state = self.stand_transition_mapping[state.behavior_state]
 
         if state.behavior_state == robot_state.BehaviorState.TROT:
-            state.foot_locations, contact_modes = self.step_gait(
-                state, command)
+            state.foot_locations, contact_modes = self.step_gait(state, command)
             # Apply the desired body rotation
             state.final_foot_locations = (
-                euler2mat(command.pitch, command.roll, 0.0,
-                          'syxz') @ state.foot_locations
+                euler2mat(command.pitch, command.roll, 0.0, "syxz")
+                @ state.foot_locations
             )
             state.joint_angles = self.inverse_kinematics(
                 state.final_foot_locations, self.config, state.joint_angles
@@ -119,15 +128,19 @@ class Controller:
 
         if state.behavior_state == robot_state.BehaviorState.WALK:
             self.virtual_vehicle.command_velocity(
-                command.horizontal_velocity[0], command.horizontal_velocity[1], command.yaw_rate)
+                command.horizontal_velocity[0],
+                command.horizontal_velocity[1],
+                command.yaw_rate,
+            )
             self.virtual_vehicle.increment_time()
             state.foot_locations = np.vstack(
-                self.virtual_vehicle.get_relative_foot_positions(command.height)).T
+                self.virtual_vehicle.get_relative_foot_positions(command.height)
+            ).T
 
             # Apply the desired body rotation
             state.final_foot_locations = (
-                euler2mat(command.pitch, command.roll, 0.0,
-                          'syxz') @ state.foot_locations
+                euler2mat(command.pitch, command.roll, 0.0, "syxz")
+                @ state.foot_locations
             )
             state.joint_angles = self.inverse_kinematics(
                 state.final_foot_locations, self.config, state.joint_angles
@@ -148,8 +161,7 @@ class Controller:
             )
             # Apply the desired body rotation
             state.final_foot_locations = (
-                euler2mat(command.pitch, command.roll,
-                          self.smoothed_yaw, 'syxz')
+                euler2mat(command.pitch, command.roll, self.smoothed_yaw, "syxz")
                 @ state.foot_locations
             )
             state.joint_angles = self.inverse_kinematics(
