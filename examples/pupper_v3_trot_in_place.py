@@ -31,7 +31,6 @@ def run_example(half_robot: bool = False, log: bool = False, x_velocity: float =
                     "y_velocity": 0.0,
                     "yaw_rate": 0.0,
                     "height": -0.18,
-                    "com_x_shift": 0.005,
                 }
             )
 
@@ -47,4 +46,4 @@ if __name__ == "__main__":
     args = parser.parse_args()
     if args.half:
         print("Only commanding half of robot")
-    run_example(half_robot=args.half, logs=args.log, x_velocity=args.x_velocity)
+    run_example(half_robot=args.half, log=args.log, x_velocity=args.x_velocity)
