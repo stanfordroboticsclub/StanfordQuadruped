@@ -18,7 +18,7 @@ class Config:
         self.max_pitch = 40.0 * np.pi / 180.0
 
         #################### MOVEMENT PARAMS ####################
-        self.z_time_constant = 0.02
+        self.z_time_constant = 0.01
         self.z_speed = 0.03  # maximum speed [m/s]
         self.pitch_deadband = 0.02
         self.pitch_time_constant = 0.25
@@ -50,7 +50,7 @@ class Config:
         )
 
         #################### GAIT #######################
-        self.dt = 0.01
+        self.dt = 0.005
         self.num_phases = 4
         self.contact_phases = np.array(
             [[1, 1, 1, 0], [1, 0, 1, 1], [1, 0, 1, 1], [1, 1, 1, 0]]
@@ -127,26 +127,15 @@ class Config:
     @z_clearance.setter
     def z_clearance(self, z):
         self.__z_clearance = z
-        # b_z = np.array([0, 0, 0, 0, self.__z_clearance])
-        # A_z = np.array(
-        #     [
-        #         [0, 0, 0, 0, 1],
-        #         [1, 1, 1, 1, 1],
-        #         [0, 0, 0, 1, 0],
-        #         [4, 3, 2, 1, 0],
-        #         [0.5 ** 4, 0.5 ** 3, 0.5 ** 2, 0.5 ** 1, 0.5 ** 0],
-        #     ]
-        # )
-        # self.z_coeffs = solve(A_z, b_z)
 
     ########################### GAIT ####################
     @property
     def overlap_ticks(self):
-        return int(self.overlap_time / self.dt)
+        return int(round(self.overlap_time / self.dt))
 
     @property
     def swing_ticks(self):
-        return int(self.swing_time / self.dt)
+        return int(round(self.swing_time / self.dt))
 
     @property
     def stance_ticks(self):

@@ -30,7 +30,6 @@ def run_example(half_robot: bool = False, log: bool = False, x_velocity: float =
                     "x_velocity": x_velocity,
                     "y_velocity": 0.0,
                     "yaw_rate": 0.0,
-                    "height": -0.18,
                 }
             )
 

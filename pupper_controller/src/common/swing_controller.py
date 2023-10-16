@@ -122,22 +122,24 @@ class SwingController:
         triangular: bool, whether to use a triangular or cubic interpolation"""
 
     def swing_height(self, swing_phase: float, triangular: bool = False):
+        next_swing_phase = swing_phase + 1.0 / self.config.swing_ticks
+        print("swing_height: phase= ", swing_phase, " next_phase= ", next_swing_phase)
         if triangular:
-            if swing_phase < 0.5:
-                swing_height_ = swing_phase / 0.5 * self.config.z_clearance
+            if next_swing_phase <= 0.5:
+                next_swing_height = next_swing_phase / 0.5 * self.config.z_clearance
             else:
-                swing_height_ = self.config.z_clearance * (
-                    1 - (swing_phase - 0.5) / 0.5
+                next_swing_height = self.config.z_clearance * (
+                    1 - (next_swing_phase - 0.5) / 0.5
                 )
         else:
             interpolant = lambda t: self.config.z_clearance * (-2 * t**3 + 3 * t**2)
-            if swing_phase < 0.5:
-                segment_phase = swing_phase / 0.5
-                swing_height_ = interpolant(segment_phase)
+            if next_swing_phase < 0.5:
+                segment_phase = next_swing_phase / 0.5
+                next_swing_height = interpolant(segment_phase)
             else:
-                segment_phase = 1 - (swing_phase - 0.5) / 0.5
-                swing_height_ = interpolant(segment_phase)
-        return swing_height_
+                segment_phase = 1 - (next_swing_phase - 0.5) / 0.5
+                next_swing_height = interpolant(segment_phase)
+        return next_swing_height
 
     """
     Computes the next foot location using a linear interpolation.
@@ -164,7 +166,7 @@ class SwingController:
             self.swing_foot_velocities[0:2, leg_index] = -command.horizontal_velocity
 
         foot_location = state.foot_locations[:, leg_index]
-        swing_height_ = self.swing_height(swing_prop)
+        swing_height_ = self.swing_height(swing_prop, triangular=False)
         touchdown_location = self.raibert_touchdown_location(
             leg_index=leg_index, command=command
         )

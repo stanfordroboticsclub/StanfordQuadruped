@@ -74,19 +74,19 @@ class Controller:
                     / self.config.swing_ticks
                 )
                 # linear
-                new_location = self.swing_controller.next_foot_locations_linear(
-                    swing_prop=swing_proportion,
-                    leg_index=leg_index,
-                    state=state,
-                    command=command,
-                )
-                # spline
-                # new_location = self.swing_controller.next_foot_locations_spline(
+                # new_location = self.swing_controller.next_foot_locations_linear(
                 #     swing_prop=swing_proportion,
                 #     leg_index=leg_index,
                 #     state=state,
                 #     command=command,
                 # )
+                # spline
+                new_location = self.swing_controller.next_foot_locations_spline(
+                    swing_prop=swing_proportion,
+                    leg_index=leg_index,
+                    state=state,
+                    command=command,
+                )
             new_foot_locations[:, leg_index] = new_location
         return new_foot_locations, contact_modes
 
