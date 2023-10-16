@@ -15,7 +15,7 @@ class Pupper:
     def __init__(
         self,
         half_robot: bool = False,
-        LOG=False,
+        log=False,
     ):
         self.config = config.Config()
         self.command = None
@@ -29,6 +29,15 @@ class Pupper:
         self.state = robot_state.RobotState(height=-0.05)
 
         self.half_robot = half_robot
+
+        if log:
+            self.logfile_name = "foot_coordinates.csv"
+            with open(self.logfile_name, "w") as csvfile:
+                csvfile.write(
+                    "fr_x,fr_y,fr_z,fl_x,fl_y,fl_z,br_x,br_y,br_z,bl_x,bl_y,bl_z\n"
+                )
+        else:
+            self.logfile_name = None
 
     def sleep(self, sleep_sec: float):
         self.interface.sleep(sleep_sec)
@@ -113,6 +122,15 @@ class Pupper:
             self.state.behavior_state = robot_state.BehaviorState.REST
 
         self.controller.run(self.state, self.command)
+        print("Ticks: ", self.state.ticks)
+
+        if self.logfile_name:
+            with open(self.logfile_name, "a") as csvfile:
+                for foot in self.state.final_foot_locations.T:
+                    data = "{},{},{},".format(foot[0], foot[1], foot[2])
+                    csvfile.write(data)
+                csvfile.write("\n")
+
         if self.half_robot:
             self.interface.set_joint_angles(self.state.joint_angles[:, :2])
         else:
