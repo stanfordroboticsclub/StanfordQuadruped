@@ -123,7 +123,6 @@ class SwingController:
 
     def swing_height(self, swing_phase: float, triangular: bool = False):
         next_swing_phase = swing_phase + 1.0 / self.config.swing_ticks
-        print("swing_height: phase= ", swing_phase, " next_phase= ", next_swing_phase)
         if triangular:
             if next_swing_phase <= 0.5:
                 next_swing_height = next_swing_phase / 0.5 * self.config.z_clearance
