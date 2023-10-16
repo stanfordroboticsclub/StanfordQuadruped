@@ -15,7 +15,7 @@ class LegConfig:
     link_3: float  # length (+) of lower leg
 
 
-@njit
+@njit(cache=True)
 def leg_fk(
     qA: float,
     qB: float,
@@ -49,7 +49,7 @@ def leg_fk(
     return np.array((Fx, Fy, Fz))
 
 
-@njit
+@njit(cache=True)
 def leg_jacobian(
     qA: float,
     qB: float,
@@ -83,7 +83,7 @@ def leg_jacobian(
     return result
 
 
-@njit
+@njit(cache=True)
 def leg_ik(
     center_to_foot_vector: np.ndarray,
     motor_x: float,
@@ -159,8 +159,8 @@ def four_legs_inverse_kinematics(r_body_foot, config, initial_guess=None):
             motor_x=config.LEG_ORIGINS[0, i],
             motor_y=config.LEG_ORIGINS[1, i],
             abduction_offset=config.ABDUCTION_OFFSETS[i],
-            link_2_x=0.07,
-            link_2_z=0.07,
+            link_2_x=config.LEG_L1_X,
+            link_2_z=config.LEG_L1_Z,
             link_3=config.LEG_L2,
         )
         alpha[:, i] = leg_ik(

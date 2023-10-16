@@ -25,8 +25,8 @@ class Interface:
         self.executor.add_node(self.sleep_node)
         # self.executor.add_node(self.joy_sub)
 
-        self.sub_thread = threading.Thread(target=self.sub_thread_fn)
-        self.sub_thread.start()
+        # self.sub_thread = threading.Thread(target=self.sub_thread_fn)
+        # self.sub_thread.start()
 
     def time(self):
         return self.sleep_node.get_clock().now().nanoseconds / 1.0e9
@@ -122,25 +122,3 @@ class JointStateSub(Node):
         self.latest_lock.release()
         return res
 
-
-# class Joystick:
-
-#     def __init__(self):
-#         self.joy_sub = JoystickSub()
-#         self.sub_thread = threading.Thread(target=self.sub_thread_fn)
-#         self.sub_thread.start()
-
-#     def sub_thread_fn(self):
-#         rclpy.spin(self.joy_sub)
-
-# class JoystickSub(Node):
-
-#     def __init__(self):
-#         super().__init__('joystick_sub')
-#         self.subscriber_ = self.create_subscription(
-#             Joy, '/joy', self.joy_callback, rclpy.qos.qos_profile_sensor_data)
-#         self.latest_joy_ = None
-
-#     def joy_callback(self, msg):
-#         print("got joystick message!")
-#         print(msg)
