@@ -170,6 +170,9 @@ class SwingController:
             leg_index=leg_index, command=command
         )
         time_left = self.config.dt * self.config.swing_ticks * (1.0 - swing_prop)
+
+        # TODO(nathankau) replace generalizing on v with generalizing on next foot position!
+        # Caveat: will also need to track foot velocity
         v = velocity_fn(
             touchdown_location=touchdown_location,
             foot_location=foot_location,
