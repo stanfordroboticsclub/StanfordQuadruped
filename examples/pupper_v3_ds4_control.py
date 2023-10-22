@@ -5,6 +5,9 @@ import argparse
 DEFAULT_X_SHIFT = 0.0
 DEFAULT_TROT_HEIGHT = -0.12
 
+filtered_control_rate = 200.0
+alpha = 0.99
+
 
 def run_example(half_robot=False):
     joystick = ros_joystick_interface.Joystick()
@@ -21,7 +24,10 @@ def run_example(half_robot=False):
             while pup.time() - last_control < pup.config.dt:
                 # Reduce sleep time if your sim runs > 10x realtime
                 time.sleep(0.0005)
+            filtered_control_rate = alpha * filtered_control_rate + \
+                (1-alpha) / (pup.time() - last_control)
             last_control = pup.time()
+            print("Ticks: ", pup.state.ticks, "Rate: ", filtered_control_rate)
 
             # Run the control loop
             observation = pup.get_observation()
@@ -35,7 +41,8 @@ def run_example(half_robot=False):
             com_x_shift = min(max(com_x_shift, -0.05), 0.05)
 
             height += (
-                (joystick_vals["x"] - joystick_vals["triangle"]) * pup.config.dt / 25.0
+                (joystick_vals["x"] - joystick_vals["triangle"]
+                 ) * pup.config.dt / 25.0
             )
             height = min(max(height, -0.25), -0.05)
 
