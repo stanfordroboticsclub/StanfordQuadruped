@@ -5,9 +5,6 @@ import argparse
 DEFAULT_X_SHIFT = 0.0
 DEFAULT_TROT_HEIGHT = -0.12
 
-filtered_control_rate = 200.0
-alpha = 0.99
-
 
 def run_example(half_robot=False):
     joystick = ros_joystick_interface.Joystick()
@@ -18,16 +15,18 @@ def run_example(half_robot=False):
     last_control = pup.time()
     com_x_shift = DEFAULT_X_SHIFT
     height = DEFAULT_TROT_HEIGHT
+    filtered_control_rate = 200.0
+    alpha = 0.95
     try:
         while True:
             # Busy-wait until it's time to run the control loop again
             while pup.time() - last_control < pup.config.dt:
                 # Reduce sleep time if your sim runs > 10x realtime
-                time.sleep(0.0005)
+                time.sleep(0.0001)
             filtered_control_rate = alpha * filtered_control_rate + \
                 (1-alpha) / (pup.time() - last_control)
             last_control = pup.time()
-            print("Ticks: ", pup.state.ticks, "Rate: ", filtered_control_rate)
+            print("Ticks: ", pup.state.ticks, "Update Rate: ", filtered_control_rate)
 
             # Run the control loop
             observation = pup.get_observation()
@@ -37,19 +36,14 @@ def run_example(half_robot=False):
             else:
                 behavior_state_override = "rest"
 
-            com_x_shift += joystick_vals["d_pad_y"] * pup.config.dt / 100.0
+            com_x_shift += -1.0 * joystick_vals["d_pad_y"] * pup.config.dt / 100.0
             com_x_shift = min(max(com_x_shift, -0.05), 0.05)
-
             height += (
                 (joystick_vals["x"] - joystick_vals["triangle"]
                  ) * pup.config.dt / 25.0
             )
             height = min(max(height, -0.25), -0.05)
 
-            # if joystick_vals["connected"]:
-            #     print(
-            #         f"com_x_shift: {com_x_shift:0.4f} height: {height:0.4f} joystick values: {joystick_vals}"
-            #     )
             pup.step(
                 action={
                     "x_velocity": joystick_vals["left_y"] / 1.5,
@@ -61,7 +55,7 @@ def run_example(half_robot=False):
                 },
                 behavior_state_override=behavior_state_override,
             )
-            print("Foot coordinates: \n", pup.state.final_foot_locations)
+            # print("Foot coordinates: \n", pup.state.final_foot_locations)
 
     finally:
         pup.shutdown()

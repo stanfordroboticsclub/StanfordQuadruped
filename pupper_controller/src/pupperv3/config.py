@@ -50,7 +50,7 @@ class Config:
         )
 
         #################### GAIT #######################
-        self.dt = 0.01
+        self.dt = 0.00666667
         self.num_phases = 4
         self.contact_phases = np.array(
             [[1, 1, 1, 0], [1, 0, 1, 1], [1, 0, 1, 1], [1, 1, 1, 0]]

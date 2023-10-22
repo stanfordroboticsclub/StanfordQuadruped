@@ -5,6 +5,7 @@ from collections import defaultdict
 from pupper_controller.src.common import controller
 from pupper_controller.src.common import command
 from pupper_controller.src.common import robot_state
+from pupper_controller.src.common import utilities
 from pupper_controller.src.pupperv3 import config
 
 from pupper_controller.src.pupperv3 import kinematics
@@ -64,6 +65,7 @@ class Pupper:
         pupper_command.trot_event = True
         self.controller.run(self.state, pupper_command)
 
+
     def _update_actions(self, action):
         """
         Update the command and config based on the given action dictionary.
@@ -80,7 +82,7 @@ class Pupper:
         self.command.height = action["height"] or self.config.default_z_ref
         self.command.pitch = action["pitch"] or 0.0
         self.command.roll = action["roll"] or 0.0
-        self.config.x_shift = action["com_x_shift"] or self.config.x_shift
+        self.config.x_shift = utilities.value_or_default(action["com_x_shift"], self.config.x_shift)
 
         # Clip actions to reasonable values
         self.command.horizontal_velocity = np.clip(
@@ -122,7 +124,7 @@ class Pupper:
             self.state.behavior_state = robot_state.BehaviorState.REST
 
         self.controller.run(self.state, self.command)
-        print("Ticks: ", self.state.ticks)
+        # print("Ticks: ", self.state.ticks)
 
         if self.logfile_name:
             with open(self.logfile_name, "a") as csvfile:
