@@ -32,16 +32,16 @@ class Config:
         self.max_height = -0.08
 
         #################### STANCE ####################
-        self.delta_x = 0.1
-        self.delta_y = 0.06
-        self.x_shift = -0.01
+        self.delta_x = 0.075#0.1
+        self.delta_y = 0.08#0.06
+        self.x_shift = 0.0#-0.025
         self.min_x_shift = -0.05
         self.max_x_shift = 0.05
         self.default_z_ref = -0.12
 
         #################### SWING ######################
         self.z_coeffs = None
-        self.z_clearance = 0.06
+        self.z_clearance = 0.05#0.06
         self.alpha = (
             0.5  # Ratio between touchdown distance and total horizontal stance movement
         )
@@ -50,7 +50,7 @@ class Config:
         )
 
         #################### GAIT #######################
-        self.dt = 0.00666667
+        self.dt = 0.02#0.00666667
         self.num_phases = 4
         self.contact_phases = np.array(
             [[1, 1, 1, 0], [1, 0, 1, 1], [1, 0, 1, 1], [1, 1, 1, 0]]
@@ -58,12 +58,13 @@ class Config:
         self.overlap_time = (
             # 0.0
             # 0.5
-            0.05  # duration of the phase where all four feet are on the ground
+            0.01
+            # 0.05  # duration of the phase where all four feet are on the ground
         )
         self.swing_time = (
             # 2.0
             # 1.5
-            0.15  # duration of the phase when only two feet are on the ground
+            0.2  # duration of the phase when only two feet are on the ground
         )
 
         ######################## GEOMETRY ######################

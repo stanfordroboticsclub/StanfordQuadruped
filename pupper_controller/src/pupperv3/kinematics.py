@@ -175,7 +175,7 @@ def four_legs_inverse_kinematics(r_body_foot, config, initial_guess=None):
         )
         # FK model treats shank vertical as zero angle while
         # simulator and real robot use 30 deg angle
-        alpha[2, i] += np.radians(30)
+        alpha[2, i] += np.radians(45)
 
     alpha *= config.MOTOR_DIRECTIONS
     return alpha

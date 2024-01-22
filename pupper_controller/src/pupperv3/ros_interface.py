@@ -2,8 +2,9 @@ import queue
 from pupper_controller.src.common import robot_state
 from rclpy.node import Node
 import rclpy
-from pupper_interfaces.msg import JointCommand
+# from pupper_interfaces.msg import JointCommand
 from sensor_msgs.msg import JointState, Joy
+from std_msgs.msg import Float64MultiArray
 import numpy as np
 import time
 import threading
@@ -73,23 +74,26 @@ class JointCommandPub(Node):
     def __init__(self, pos_gain, vel_gain):
         super().__init__("pupper_v3_joint_command_publisher")
         self.publisher_ = self.create_publisher(
-            JointCommand, "/joint_commands", QoSPresetProfiles.SENSOR_DATA.value
+            Float64MultiArray, "/forward_position_controller/commands", QoSPresetProfiles.SENSOR_DATA.value
         )
         self.pos_gain = pos_gain
         self.vel_gain = vel_gain
 
     def pub_joint_angles(self, joint_angles):
         n_joints = joint_angles.size
-        msg = JointCommand()
-        msg.header.stamp = self.get_clock().now().to_msg()
-        msg.kp = tuple(np.ones(n_joints) * self.pos_gain)
-        msg.kd = tuple(np.ones(n_joints) * self.vel_gain)
-        msg.position_target = tuple(joint_angles.T.flatten())
-        msg.velocity_target = tuple(np.zeros(n_joints))
-        msg.feedforward_torque = tuple(np.zeros(n_joints))
+        # msg = JointCommand()
+        # msg.header.stamp = self.get_clock().now().to_msg()
+        # msg.kp = tuple(np.ones(n_joints) * self.pos_gain)
+        # msg.kd = tuple(np.ones(n_joints) * self.vel_gain)
+        # msg.position_target = tuple(joint_angles.T.flatten())
+        # msg.velocity_target = tuple(np.zeros(n_joints))
+        # msg.feedforward_torque = tuple(np.zeros(n_joints))
 
         # DEBUG
         # msg.position_target = [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+
+        msg = Float64MultiArray()
+        msg.data = tuple(joint_angles.T.flatten())
 
         self.publisher_.publish(msg)
 
