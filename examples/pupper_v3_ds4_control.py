@@ -2,8 +2,8 @@ from pupper_controller.src.pupperv3 import pupper, ros_joystick_interface
 import time
 import argparse
 
-DEFAULT_X_SHIFT = -0.005
-DEFAULT_TROT_HEIGHT = -0.1  # -0.085
+DEFAULT_X_SHIFT = -0.025
+DEFAULT_TROT_HEIGHT = -0.13  # -0.085
 
 
 def run_example(half_robot=False):
@@ -39,25 +39,24 @@ def run_example(half_robot=False):
 
             com_x_shift += -1.0 * joystick_vals["d_pad_y"] * pup.config.dt / 100.0
             com_x_shift = min(max(com_x_shift, -0.05), 0.05)
-            com_x_shift = DEFAULT_X_SHIFT
-            # height += (
-            #     (joystick_vals["x"] - joystick_vals["triangle"]
-            #      ) * pup.config.dt / 25.0
-            # )
+            height += (
+                (joystick_vals["x"] - joystick_vals["triangle"]) * pup.config.dt / 25.0
+            )
             height = min(max(height, -0.25), -0.05)
 
             pup.step(
                 action={
                     "x_velocity": joystick_vals["left_y"] * 0.5,
-                    "y_velocity": -joystick_vals["left_x"] * -0.25,
-                    "yaw_rate": -joystick_vals["right_x"] * -2.0,  # 4,
+                    "y_velocity": -joystick_vals["left_x"] * 0.25,
+                    "yaw_rate": -joystick_vals["right_x"] * 4,
                     "pitch": joystick_vals["right_y"] * -0.5,
                     "height": height,
                     "com_x_shift": com_x_shift,
                 },
                 behavior_state_override=behavior_state_override,
             )
-            print("Foot coordinates: \n", pup.state.final_foot_locations)
+            print("xshift: ", com_x_shift, " height: ", height)
+            # print("Foot coordinates: \n", pup.state.final_foot_locations)
 
     finally:
         pup.shutdown()
