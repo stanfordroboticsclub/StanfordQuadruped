@@ -32,16 +32,16 @@ class Config:
         self.max_height = -0.08
 
         #################### STANCE ####################
-        self.delta_x = 0.08
-        self.delta_y = 0.06
-        self.x_shift = 0.025
+        self.delta_x = 0.085
+        self.delta_y = 0.09  # 0.06
+        self.x_shift = 0.0
         self.min_x_shift = -0.05
         self.max_x_shift = 0.05
         self.default_z_ref = -0.12
 
         #################### SWING ######################
         self.z_coeffs = None
-        self.z_clearance = 0.05  # 0.06
+        self.z_clearance = 0.06  # 0.09
         self.alpha = (
             0.5  # Ratio between touchdown distance and total horizontal stance movement
         )
@@ -50,7 +50,7 @@ class Config:
         )
 
         #################### GAIT #######################
-        self.dt = 0.01  # 0.00666667
+        self.dt = 0.00666667
         self.num_phases = 4
         self.contact_phases = np.array(
             [[1, 1, 1, 0], [1, 0, 1, 1], [1, 0, 1, 1], [1, 1, 1, 0]]
@@ -58,18 +58,18 @@ class Config:
         self.overlap_time = (
             # 0.0
             # 0.5
-            0.01
-            # 0.05  # duration of the phase where all four feet are on the ground
+            # 0.10
+            0.05  # duration of the phase where all four feet are on the ground
         )
         self.swing_time = (
             # 2.0
             # 1.5
-            0.2  # duration of the phase when only two feet are on the ground
+            0.15  # duration of the phase when only two feet are on the ground
         )
 
         ######################## GEOMETRY ######################
         self.LEG_FB = 0.075  # front-back distance from center line to leg axis
-        self.LEG_LR = 0.05  # left-right distance from center line to leg plane
+        self.LEG_LR = 0.075  # left-right distance from center line to leg plane
         self.LEG_L1_X = 0.07
         self.LEG_L1_Z = 0.05
         self.LEG_L2 = 0.088
