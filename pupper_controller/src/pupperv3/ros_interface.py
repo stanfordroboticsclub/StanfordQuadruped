@@ -2,6 +2,7 @@ import queue
 from pupper_controller.src.common import robot_state
 from rclpy.node import Node
 import rclpy
+
 # from pupper_interfaces.msg import JointCommand
 from sensor_msgs.msg import JointState, Joy
 from std_msgs.msg import Float64MultiArray
@@ -73,8 +74,15 @@ class SleepNode(Node):
 class JointCommandPub(Node):
     def __init__(self, pos_gain, vel_gain):
         super().__init__("pupper_v3_joint_command_publisher")
-        self.publisher_ = self.create_publisher(
-            Float64MultiArray, "/forward_position_controller/commands", QoSPresetProfiles.SENSOR_DATA.value
+        self.pos_publisher = self.create_publisher(
+            Float64MultiArray,
+            "/forward_position_controller/commands",
+            QoSPresetProfiles.SENSOR_DATA.value,
+        )
+        self.vel_publisher = self.create_publisher(
+            Float64MultiArray,
+            "/forward_velocity_controller/commands",
+            QoSPresetProfiles.SENSOR_DATA.value,
         )
         self.pos_gain = pos_gain
         self.vel_gain = vel_gain
@@ -92,10 +100,18 @@ class JointCommandPub(Node):
         # DEBUG
         # msg.position_target = [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
-        msg = Float64MultiArray()
-        msg.data = tuple(joint_angles.T.flatten())
+        pos_msg = Float64MultiArray()
+        pos_msg.data = tuple(joint_angles.T.flatten())
+        self.pos_publisher.publish(pos_msg)
 
-        self.publisher_.publish(msg)
+    def pub_joint_angles_velocities(self, joint_angles, joint_velocities):
+        pos_msg = Float64MultiArray()
+        pos_msg.data = tuple(joint_angles.T.flatten())
+        self.pos_publisher.publish(pos_msg)
+
+        vel_msg = Float64MultiArray()
+        vel_msg.data = tuple(joint_velocities.T.flatten())
+        self.vel_publisher.publish(vel_msg)
 
         # self.get_logger().info(f"Publishing: {msg.header}")
 
@@ -125,4 +141,3 @@ class JointStateSub(Node):
         res = np.array(self.latest_, copy=True)
         self.latest_lock.release()
         return res
-

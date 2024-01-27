@@ -13,6 +13,9 @@ class RobotState:
         self.behavior_state = BehaviorState.REST
 
         self.ticks = 0
+
+        # [i, j] index corresponds to ith joint on jth leg
+        # e.g. each column is one leg
         self.foot_locations = np.zeros((3, 4))
         self.final_foot_locations = np.zeros((3, 4))
         self.joint_angles = np.zeros((3, 4))
