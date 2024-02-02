@@ -125,10 +125,10 @@ class Controller:
             new_joint_angles = self.inverse_kinematics(
                 state.final_foot_locations, self.config, state.joint_angles
             )
-            self.joint_velocities = (
+            state.joint_velocities = (
                 new_joint_angles - state.joint_angles
             ) / self.config.dt
-            self.joint_angles = new_joint_angles
+            state.joint_angles = new_joint_angles
 
         if state.behavior_state == robot_state.BehaviorState.WALK:
             self.virtual_vehicle.command_velocity(
@@ -149,10 +149,10 @@ class Controller:
             new_joint_angles = self.inverse_kinematics(
                 state.final_foot_locations, self.config, state.joint_angles
             )
-            self.joint_velocities = (
+            state.joint_velocities = (
                 new_joint_angles - state.joint_angles
             ) / self.config.dt
-            self.joint_angles = new_joint_angles
+            state.joint_angles = new_joint_angles
 
         elif state.behavior_state == robot_state.BehaviorState.REST:
             yaw_proportion = command.yaw_rate / self.config.max_yaw_rate
@@ -175,10 +175,10 @@ class Controller:
             new_joint_angles = self.inverse_kinematics(
                 state.final_foot_locations, self.config, state.joint_angles
             )
-            self.joint_velocities = (
+            state.joint_velocities = (
                 new_joint_angles - state.joint_angles
             ) / self.config.dt
-            self.joint_angles = new_joint_angles
+            state.joint_angles = new_joint_angles
 
         state.ticks += 1
         state.pitch = command.pitch
