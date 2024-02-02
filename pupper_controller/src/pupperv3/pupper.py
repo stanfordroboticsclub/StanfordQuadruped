@@ -65,7 +65,6 @@ class Pupper:
         pupper_command.trot_event = True
         self.controller.run(self.state, pupper_command)
 
-
     def _update_actions(self, action):
         """
         Update the command and config based on the given action dictionary.
@@ -82,7 +81,9 @@ class Pupper:
         self.command.height = action["height"] or self.config.default_z_ref
         self.command.pitch = action["pitch"] or 0.0
         self.command.roll = action["roll"] or 0.0
-        self.config.x_shift = utilities.value_or_default(action["com_x_shift"], self.config.x_shift)
+        self.config.x_shift = utilities.value_or_default(
+            action["com_x_shift"], self.config.x_shift
+        )
 
         # Clip actions to reasonable values
         self.command.horizontal_velocity = np.clip(
