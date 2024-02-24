@@ -95,18 +95,6 @@ class JointCommandPub(Node):
         self.vel_gain = vel_gain
 
     def pub_joint_angles(self, joint_angles):
-        n_joints = joint_angles.size
-        # msg = JointCommand()
-        # msg.header.stamp = self.get_clock().now().to_msg()
-        # msg.kp = tuple(np.ones(n_joints) * self.pos_gain)
-        # msg.kd = tuple(np.ones(n_joints) * self.vel_gain)
-        # msg.position_target = tuple(joint_angles.T.flatten())
-        # msg.velocity_target = tuple(np.zeros(n_joints))
-        # msg.feedforward_torque = tuple(np.zeros(n_joints))
-
-        # DEBUG
-        # msg.position_target = [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-
         pos_msg = Float64MultiArray()
         pos_msg.data = tuple(joint_angles.T.flatten())
         self.pos_publisher.publish(pos_msg)
@@ -119,8 +107,6 @@ class JointCommandPub(Node):
         vel_msg = Float64MultiArray()
         vel_msg.data = tuple(joint_velocities.T.flatten())
         self.vel_publisher.publish(vel_msg)
-
-        # self.get_logger().info(f"Publishing: {msg.header}")
 
 
 class JointStateSub(Node):
