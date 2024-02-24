@@ -45,6 +45,13 @@ class Interface:
     def set_joint_angles(self, joint_angles: np.array):
         self.pub.pub_joint_angles(joint_angles)
 
+    def set_joint_angles_velocities(
+        self, joint_angles: np.array, joint_velocities: np.array
+    ):
+        self.pub.pub_joint_angles_velocities(
+            joint_angles=joint_angles, joint_velocities=joint_velocities
+        )
+
     def read_incoming_data(self):
         self.robot_state.joint_angles = self.sub.latest()
 
