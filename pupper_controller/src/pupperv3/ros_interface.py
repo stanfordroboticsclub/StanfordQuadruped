@@ -2,8 +2,9 @@ import queue
 from pupper_controller.src.common import robot_state
 from rclpy.node import Node
 import rclpy
-from pupper_interfaces.msg import JointCommand
+# from pupper_interfaces.msg import JointCommand
 from sensor_msgs.msg import JointState, Joy
+from std_msgs.msg import Float64MultiArray
 import numpy as np
 import time
 import threading
@@ -25,8 +26,8 @@ class Interface:
         self.executor.add_node(self.sleep_node)
         # self.executor.add_node(self.joy_sub)
 
-        # self.sub_thread = threading.Thread(target=self.sub_thread_fn)
-        # self.sub_thread.start()
+        self.sub_thread = threading.Thread(target=self.sub_thread_fn)
+        self.sub_thread.start()
 
     def time(self):
         return self.sleep_node.get_clock().now().nanoseconds / 1.0e9
@@ -73,23 +74,33 @@ class JointCommandPub(Node):
     def __init__(self, pos_gain, vel_gain):
         super().__init__("pupper_v3_joint_command_publisher")
         self.publisher_ = self.create_publisher(
-            JointCommand, "/joint_commands", QoSPresetProfiles.SENSOR_DATA.value
+            Float64MultiArray, "/forward_position_controller/commands", QoSPresetProfiles.SENSOR_DATA.value
         )
         self.pos_gain = pos_gain
         self.vel_gain = vel_gain
 
     def pub_joint_angles(self, joint_angles):
         n_joints = joint_angles.size
-        msg = JointCommand()
-        msg.header.stamp = self.get_clock().now().to_msg()
-        msg.kp = tuple(np.ones(n_joints) * self.pos_gain)
-        msg.kd = tuple(np.ones(n_joints) * self.vel_gain)
-        msg.position_target = tuple(joint_angles.T.flatten())
-        msg.velocity_target = tuple(np.zeros(n_joints))
-        msg.feedforward_torque = tuple(np.zeros(n_joints))
+        # msg = JointCommand()
+        # msg.header.stamp = self.get_clock().now().to_msg()
+        # msg.kp = tuple(np.ones(n_joints) * self.pos_gain)
+        # msg.kd = tuple(np.ones(n_joints) * self.vel_gain)
+        # msg.position_target = tuple(joint_angles.T.flatten())
+        # msg.velocity_target = tuple(np.zeros(n_joints))
+        # msg.feedforward_torque = tuple(np.zeros(n_joints))
+
+        msg = Float64MultiArray()
 
         # DEBUG
-        # msg.position_target = [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+        # msg.data = (-0.25, 0.0, 0.5, 0.25, 0.0, -0.5, -0.25, 0.0, 0.5, 0.25, 0.0, -0.5)
+        # msg.data = (0.75, 0.0, -1.5, -0.75, 0.0, 1.5, 0.65, 0.0, -1.5, -0.65, 0.0, 1.5)
+        # msg.data = (0.75/2, 0.0, -1.5/2, -0.75/2, 0.0, 1.5/2, 0.75, 0.0, -1.5, -0.75, 0.0, 1.5)
+        # msg.data = (0.65, 0.0, -1.5, -0.65, 0.0, 1.5, 0.65, 0.0, -1.5, -0.65, 0.0, 1.5)
+        # msg.data = (0.0, 0.0, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+        # FR, FL, BR, BL
+
+        msg.data = tuple(joint_angles.T.flatten())
+
 
         self.publisher_.publish(msg)
 
@@ -113,7 +124,16 @@ class JointStateSub(Node):
         # Don't actually need this lock bc we're using single threaded executor
         self.latest_lock.acquire()
         # reshape assuming some number of full legs are specified (3, 6, 12)
-        self.latest_ = np.array(msg.position).reshape((-1, 3)).T
+        joint_names = msg.name
+        joint_name_mapping = {'leg_front_r_1': 0, 'leg_front_r_2': 1, 'leg_front_r_3': 2,
+        'leg_front_l_1': 3, 'leg_front_l_2': 4, 'leg_front_l_3': 5,
+        'leg_back_r_1': 6, 'leg_back_r_2': 7, 'leg_back_r_3': 8,
+        'leg_back_l_1': 9, 'leg_back_l_2': 10, 'leg_back_l_3': 11}
+        joint_angles = np.zeros((12,))
+        for joint_name, joint_angle in zip(joint_names, msg.position):
+            joint_angles[joint_name_mapping[joint_name]] = joint_angle
+        self.latest_ = joint_angles.reshape((4, 3)).T
+        # self.latest_ = np.array(msg.position)
         self.latest_lock.release()
 
     def latest(self):

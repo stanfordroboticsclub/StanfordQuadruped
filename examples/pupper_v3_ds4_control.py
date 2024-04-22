@@ -2,7 +2,7 @@ from pupper_controller.src.pupperv3 import pupper, ros_joystick_interface
 import time
 import argparse
 
-DEFAULT_X_SHIFT = 0.0
+DEFAULT_X_SHIFT = -0.0095#-0.035
 DEFAULT_TROT_HEIGHT = -0.12
 
 
@@ -11,11 +11,11 @@ def run_example(half_robot=False):
     pup = pupper.Pupper(half_robot=half_robot)
     pup.reset()
     print("starting...")
-    pup.slow_stand(min_height=-0.08, duration=1.0, do_sleep=True)
+    # pup.slow_stand(min_height=-0.08, duration=1.0, do_sleep=True)
     last_control = pup.time()
     com_x_shift = DEFAULT_X_SHIFT
     height = DEFAULT_TROT_HEIGHT
-    filtered_control_rate = 200.0
+    filtered_control_rate = 100.0
     alpha = 0.95
     try:
         while True:
@@ -26,7 +26,7 @@ def run_example(half_robot=False):
             filtered_control_rate = alpha * filtered_control_rate + \
                 (1-alpha) / (pup.time() - last_control)
             last_control = pup.time()
-            print("Ticks: ", pup.state.ticks, "Update Rate: ", filtered_control_rate)
+            # print("Ticks: ", pup.state.ticks, "Update Rate: ", filtered_control_rate)
 
             # Run the control loop
             observation = pup.get_observation()
@@ -38,18 +38,19 @@ def run_example(half_robot=False):
 
             com_x_shift += -1.0 * joystick_vals["d_pad_y"] * pup.config.dt / 100.0
             com_x_shift = min(max(com_x_shift, -0.05), 0.05)
+            com_x_shift = DEFAULT_X_SHIFT
             height += (
-                (joystick_vals["x"] - joystick_vals["triangle"]
+                (-joystick_vals["x"] + joystick_vals["triangle"]
                  ) * pup.config.dt / 25.0
             )
             height = min(max(height, -0.25), -0.05)
 
             pup.step(
                 action={
-                    "x_velocity": joystick_vals["left_y"] / 1.5,
-                    "y_velocity": -joystick_vals["left_x"] / 1.5,
-                    "yaw_rate": -joystick_vals["right_x"] * 4,
-                    "pitch": joystick_vals["right_y"] * -0.5,
+                    "x_velocity": joystick_vals["left_y"] / 2.0,#1.5,
+                    "y_velocity": -joystick_vals["left_x"] / 4.0,#1.5,
+                    "yaw_rate": joystick_vals["right_x"] * -3.0,#-4,
+                    "pitch": joystick_vals["right_y"] * 0.5,
                     "height": height,
                     "com_x_shift": com_x_shift,
                 },

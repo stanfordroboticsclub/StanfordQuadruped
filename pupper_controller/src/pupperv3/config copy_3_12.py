@@ -32,11 +32,11 @@ class Config:
         self.max_height = -0.08
 
         #################### STANCE ####################
-        self.delta_x = 0.075#0.09
+        self.delta_x = 0.09
         self.delta_y = 0.08#0.06
         self.x_shift = 0.0
-        self.min_x_shift = -0.2
-        self.max_x_shift = 0.2
+        self.min_x_shift = -0.05
+        self.max_x_shift = 0.05
         self.default_z_ref = -0.12
 
         #################### SWING ######################
@@ -50,7 +50,7 @@ class Config:
         )
 
         #################### GAIT #######################
-        self.dt = 0.00666667
+        self.dt = 0.02#0.00666667
         self.num_phases = 4
         self.contact_phases = np.array(
             [[1, 1, 1, 0], [1, 0, 1, 1], [1, 0, 1, 1], [1, 1, 1, 0]]
@@ -117,7 +117,7 @@ class Config:
                     -self.delta_x + self.x_shift,
                     -self.delta_x + self.x_shift,
                 ],
-                [-self.delta_y - 0.01, self.delta_y + 0.01, -self.delta_y, self.delta_y],
+                [-self.delta_y, self.delta_y, -self.delta_y, self.delta_y],
                 [0, 0, 0, 0],
             ]
         )
