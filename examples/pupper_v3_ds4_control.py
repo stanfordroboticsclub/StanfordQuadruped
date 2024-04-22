@@ -2,7 +2,7 @@ from pupper_controller.src.pupperv3 import pupper, ros_joystick_interface
 import time
 import argparse
 
-DEFAULT_X_SHIFT = -0.0095#-0.035
+DEFAULT_X_SHIFT = -0.01 #-0.035
 DEFAULT_TROT_HEIGHT = -0.12
 
 
@@ -26,7 +26,7 @@ def run_example(half_robot=False):
             filtered_control_rate = alpha * filtered_control_rate + \
                 (1-alpha) / (pup.time() - last_control)
             last_control = pup.time()
-            # print("Ticks: ", pup.state.ticks, "Update Rate: ", filtered_control_rate)
+            print("Ticks: ", pup.state.ticks, "Update Rate: ", filtered_control_rate)
 
             # Run the control loop
             observation = pup.get_observation()
@@ -38,9 +38,8 @@ def run_example(half_robot=False):
 
             com_x_shift += -1.0 * joystick_vals["d_pad_y"] * pup.config.dt / 100.0
             com_x_shift = min(max(com_x_shift, -0.05), 0.05)
-            com_x_shift = DEFAULT_X_SHIFT
             height += (
-                (-joystick_vals["x"] + joystick_vals["triangle"]
+                (joystick_vals["x"] - joystick_vals["triangle"]
                  ) * pup.config.dt / 25.0
             )
             height = min(max(height, -0.25), -0.05)
