@@ -1,5 +1,25 @@
 # Stanford Quadruped
 
+# End-of-life notice
+Thank you everyone for your interest and support over the last 5 years for this project! 
+
+We are hard at work building the new version, Pupper v3, and so would like to stop supporting this project (Pupper v1). Thanks for your understanding! Pupper v3 is fully open source and build instructions will be released in the coming months. 
+
+![20240701_232332](https://github.com/stanfordroboticsclub/StanfordQuadruped/assets/1295426/96d09d2b-9d99-4a0b-b30b-6e317d7b286b)
+
+![20240701_231506](https://github.com/stanfordroboticsclub/StanfordQuadruped/assets/1295426/d9875ccf-be3f-496c-a22b-aaab4f5fc9fd)
+
+![IMG_2942](https://github.com/stanfordroboticsclub/StanfordQuadruped/assets/1295426/c6f1de38-a013-402b-a1e2-f924573ec48e)
+
+Quick specs for Pupper v3
+* Powerful 400W GIM4305 brushless motors
+* Raspberry Pi 5
+* Reinforcement learning locomotion policy out-of-the-box
+* Luxonis SR depth camera
+* LCD screen for debugging and facial expressions
+* Roughly $1000 BOM
+
+
 ## Overview
 This repository hosts the code for Stanford Pupper and Stanford Woofer, Raspberry Pi-based quadruped robots that can trot, walk, and jump. 
 
