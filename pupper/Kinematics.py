@@ -69,7 +69,7 @@ def leg_explicit_inverse_kinematics(r_body_foot, leg_index, config):
 
 
 def four_legs_inverse_kinematics(r_body_foot, config):
-    """Find the joint angles for all twelve DOF correspoinding to the given matrix of body-relative foot positions.
+    """Find the joint angles for all twelve DOF corresponding to the given matrix of body-relative foot positions.
     
     Parameters
     ----------
